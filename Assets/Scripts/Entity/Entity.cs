@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MonsterLove.StateMachine;
+using UnityEngine.Serialization;
 
 public abstract class Entity : LivingEntity
 {
@@ -18,7 +19,8 @@ public abstract class Entity : LivingEntity
     
     protected StateMachine<EStates> fsm;
 
-    [SerializeField] protected EntitySO entityData; 
+    [SerializeField] protected EntitySO entitySO;
+    public EntitySO EntitySO => entitySO;
 
     // Attack
     [SerializeField] protected LayerMask targetLayer;
@@ -26,7 +28,7 @@ public abstract class Entity : LivingEntity
     protected bool HasTarget => targetEntity != null && !targetEntity.IsDead;
 
     protected float lastAttackTime = 0.0f;
-    protected bool IsAttackable => Time.time >= lastAttackTime + entityData.AttackPerSecond;
+    protected bool IsAttackable => Time.time >= lastAttackTime + entitySO.AttackPerSecond;
 
     [SerializeField] protected EStates state;
 
@@ -60,7 +62,6 @@ public abstract class Entity : LivingEntity
     
     protected virtual void Init_Enter()
     {
-        Debug.Log("Init_Enter");
         if(targetEntity == null)
             fsm.ChangeState(EStates.Idle);
         else
@@ -122,14 +123,12 @@ public abstract class Entity : LivingEntity
     protected virtual void Track_Enter()
     {
         anim.SetBool(IsWalk, true);
-        Debug.Log(name + " :: Track_Enter");
     }
 
     protected virtual void Track_Update()
     {
-        Debug.Log(name + " :: Track_Update");
         float distance = Vector3.Distance(targetEntity.transform.position, transform.position);
-        if (distance <= entityData.AttackRange && fsm.State != EStates.Attack)
+        if (distance <= entitySO.AttackRange && fsm.State != EStates.Attack)
             fsm.ChangeState(EStates.Attack);
         else
             TrackFlow();
@@ -152,7 +151,7 @@ public abstract class Entity : LivingEntity
     
     protected void OnAttack1Trigger()
     {
-        DamageMessage dmgMsg = new DamageMessage(this.gameObject, entityData.AttackPower);
+        DamageMessage dmgMsg = new DamageMessage(this.gameObject, entitySO.AttackPower);
         targetEntity.ApplyDamage(dmgMsg);
                 
         fsm.ChangeState(EStates.Track);

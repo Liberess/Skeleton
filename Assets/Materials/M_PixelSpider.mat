@@ -14,7 +14,6 @@ Material:
   m_ValidKeywords:
   - COLOR_GRADING_ON
   - PROPIXELIZER_DITHERING_ON
-  - RECEIVE_SHADOWS_ON
   - USE_OBJECT_POSITION_ON
   m_InvalidKeywords: []
   m_LightmapFlags: 4
@@ -107,7 +106,7 @@ Material:
     m_Floats:
     - COLOR_GRADING: 1
     - PROPIXELIZER_DITHERING: 1
-    - RECEIVE_SHADOWS: 1
+    - RECEIVE_SHADOWS: 0
     - USE_OBJECT_POSITION: 1
     - _AlphaClip: 0
     - _AlphaClipThreshold: 0.5

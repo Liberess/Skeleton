@@ -17,4 +17,4 @@ MonoBehaviour:
   attackPower: 1
   attackRange: 1
   attackPerSecond: 1
-  moveSpeed: 0.1
+  moveSpeed: 1

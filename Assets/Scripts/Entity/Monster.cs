@@ -53,23 +53,24 @@ public class Monster : Entity
     protected override void Init_Enter()
     {
         agent.isStopped = false;
-        agent.stoppingDistance = entityData.AttackRange * 0.5f;
-        agent.speed = entityData.MoveSpeed;
+        agent.stoppingDistance = entitySO.AttackRange * 0.5f;
+        agent.speed = entitySO.MoveSpeed;
         
         base.Init_Enter();
     }
 
     protected override void TrackFlow()
     {
-        if(agent.isStopped)
-            Debug.Log(name + " :: stop");
-        
-        agent.SetDestination(targetEntity.transform.position);
+        if (!agent.pathPending)
+            agent.SetDestination(targetEntity.transform.position);
     }
 
     protected override void Track_Enter()
     {
         agent.isStopped = false;
+        agent.updatePosition = true;
+        agent.updateRotation = true;
+
         base.Track_Enter();
     }
 
@@ -86,6 +87,10 @@ public class Monster : Entity
             if (HasTarget && IsAttackable)
             {
                 agent.isStopped = true;
+                agent.velocity = Vector3.zero;
+                agent.updatePosition = false;
+                agent.updateRotation = false;
+                
                 lastAttackTime = Time.time;
 
                 if(!anim.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
