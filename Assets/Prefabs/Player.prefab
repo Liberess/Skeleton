@@ -3674,7 +3674,7 @@ GameObject:
   - component: {fileID: 1661519486039492335}
   - component: {fileID: 4848690066812556759}
   - component: {fileID: 4757025001912524504}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3745,7 +3745,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 64
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!114 &4757025001912524504
 MonoBehaviour:
@@ -3759,5 +3759,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e20094c3849fdb6469bfc057fc3b3f93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  originHp: 100
+  currentHp: 0
+  minTimeBetDamaged: 0.1
+  entityData: {fileID: 11400000, guid: 9fff56c861d382a409d6096c3220385a, type: 2}
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  targetEntity: {fileID: 0}
   joystick: {fileID: 0}
   moveSpeed: 5
