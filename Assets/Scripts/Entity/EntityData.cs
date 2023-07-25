@@ -3,21 +3,12 @@ using UnityEngine;
 [System.Serializable]
 public class EntityData
 {
-    [SerializeField] private string entityName = "None";
-    public string EntityName => entityName;
+    public string entityName = "None";
 
-    [SerializeField] private int healthPoint = 10;
-    public int HealthPoint => healthPoint;
+    public int healthPoint = 10;
 
-    [SerializeField] private int attackPower = 1;
-    public int AttackPower => attackPower;
-
-    [SerializeField, Range(0.1f, 100.0f)] private float attackRange = 1.0f;
-    public float AttackRange => attackRange;
-
-    [SerializeField, Range(0.1f, 100.0f)] private float attackPerSecond = 1.0f;
-    public float AttackPerSecond => attackPerSecond;
-
-    [SerializeField, Range(0.1f, 100.0f)] private float moveSpeed = 3.0f;
-    public float MoveSpeed => moveSpeed;
+    public int attackPower = 1;
+    [Range(0.1f, 100.0f)] public float attackRange = 1.0f;
+    [Range(0.1f, 100.0f)] public float attackPerSecond = 1.0f;
+    [Range(0.1f, 100.0f)] public float moveSpeed = 3.0f;
 }

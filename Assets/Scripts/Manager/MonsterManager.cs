@@ -10,6 +10,7 @@ public class MonsterManager : MonoBehaviour
     
     [SerializeField, Range(1, 100)] private int monsterInitAmount = 30;
     [SerializeField] private GameObject[] monsterPrefabs;
+    [SerializeField] private EntitySO[] monsterSOs;
     private Queue<Monster> monsterQueue = new Queue<Monster>();
 
     private int spawnCount = 0;
@@ -22,6 +23,8 @@ public class MonsterManager : MonoBehaviour
         { EMonsterType.Test2, 1}
     };
 
+    public List<Monster> SpawnedMonsterList { get; } = new List<Monster>();
+
     private void Awake()
     {
         if (Instance == null)
@@ -32,7 +35,7 @@ public class MonsterManager : MonoBehaviour
 
     private void Start()
     {
-        //gameMgr = GameManager.Instance;
+        gameMgr = GameManager.Instance;
         Initialize(monsterInitAmount);
         gameMgr.NextWaveAction += () => Spawn();
         Spawn();
@@ -99,9 +102,7 @@ public class MonsterManager : MonoBehaviour
         if (spawnCount > maxSpawnCount)
             spawnCount = maxSpawnCount;
         gameMgr.UpdateRemainZombieUI(spawnCount);
-
-        List<Monster> zombieList = new List<Monster>();
-
+        
         var picker = new Rito.WeightedRandomPicker<EMonsterType>();
         picker.Add(EMonsterType.Spider, spawnWeightDic[EMonsterType.Spider]);
         picker.Add(EMonsterType.Test1, spawnWeightDic[EMonsterType.Test1]);
@@ -115,11 +116,14 @@ public class MonsterManager : MonoBehaviour
             var randPos = Utility.GetRandPointOnNavMesh(targetPos, 3f, NavMesh.AllAreas);
             monster.transform.position = randPos;
             monster.GetComponent<NavMeshAgent>().enabled = true;
-            //monster.EntitySO.AttackPower = monster.ZombieData.Damage * gameMgr.Wave;
-            //monster.SetOriginHp(monster.ZombieData.Hp * gameMgr.Wave);
+            monster.SetupEntityData(monsterSOs[(int)pick].entityData);
+            monster.EntityData.attackPower = monster.EntityData.attackPower * gameMgr.Wave;
+            monster.EntityData.healthPoint = monster.EntityData.healthPoint * gameMgr.Wave;
+            monster.DeathAction += () => SpawnedMonsterList.Remove(monster);
             monster.DeathAction += () => gameMgr.UpdateRemainZombieUI(--spawnCount);
             monster.DeathAction += () => ++GameManager.Instance.currentkillCount;
-            zombieList.Add(monster);
+            
+            SpawnedMonsterList.Add(monster);
         }
 
         spawnWeightDic[EMonsterType.Spider] =

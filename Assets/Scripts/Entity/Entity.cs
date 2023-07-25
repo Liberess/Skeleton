@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 using MonsterLove.StateMachine;
 using UnityEngine.Serialization;
@@ -16,11 +17,11 @@ public abstract class Entity : LivingEntity
         Attack,
         Die
     }
-    
+
     protected StateMachine<EStates> fsm;
 
-    [SerializeField] protected EntitySO entitySO;
-    public EntitySO EntitySO => entitySO;
+    [SerializeField] protected EntityData entityData;
+    public EntityData EntityData => entityData;
 
     // Attack
     [SerializeField] protected LayerMask targetLayer;
@@ -28,7 +29,7 @@ public abstract class Entity : LivingEntity
     protected bool HasTarget => targetEntity != null && !targetEntity.IsDead;
 
     protected float lastAttackTime = 0.0f;
-    protected bool IsAttackable => Time.time >= lastAttackTime + entitySO.AttackPerSecond;
+    protected bool IsAttackable => Time.time >= lastAttackTime + entityData.attackPerSecond;
 
     [SerializeField] protected EStates state;
 
@@ -51,6 +52,11 @@ public abstract class Entity : LivingEntity
         fsm.ChangeState(EStates.Init);
     }
 
+    public void SetupEntityData([NotNull] EntityData entityData)
+    {
+        this.entityData = entityData ?? throw new ArgumentNullException($"[{nameof(entityData)}] 데이터가 존재하지 않습니다.");
+    }
+
     protected virtual void Start()
     {
         DeathAction += () =>
@@ -59,20 +65,20 @@ public abstract class Entity : LivingEntity
             gameObject.layer = LayerMask.NameToLayer("Ignore");
         };
     }
-    
+
     protected virtual void Init_Enter()
     {
-        if(targetEntity == null)
+        if (targetEntity == null)
             fsm.ChangeState(EStates.Idle);
         else
             fsm.ChangeState(EStates.Track);
     }
-    
+
     protected virtual void Idle_Enter()
     {
         anim.SetBool(IsWalk, false);
     }
-    
+
     protected virtual void Idle_Update()
     {
         if (targetEntity == null || targetEntity && !targetEntity.gameObject.activeSelf)
@@ -99,10 +105,9 @@ public abstract class Entity : LivingEntity
             fsm.ChangeState(EStates.Track);
         }
     }
-    
+
     protected virtual void Idle_Exit()
     {
-
     }
 
     protected virtual void Control_Enter()
@@ -112,7 +117,6 @@ public abstract class Entity : LivingEntity
 
     protected virtual void Control_FixedUpdate()
     {
-
     }
 
     protected virtual void Control_Exit()
@@ -128,7 +132,7 @@ public abstract class Entity : LivingEntity
     protected virtual void Track_Update()
     {
         float distance = Vector3.Distance(targetEntity.transform.position, transform.position);
-        if (distance <= entitySO.AttackRange && fsm.State != EStates.Attack)
+        if (distance <= entityData.attackRange && fsm.State != EStates.Attack)
             fsm.ChangeState(EStates.Attack);
         else
             TrackFlow();
@@ -140,26 +144,24 @@ public abstract class Entity : LivingEntity
     {
         anim.SetBool(IsWalk, false);
     }
-    
+
     protected virtual void Attack_Enter()
     {
-
     }
 
     protected virtual void Attack_Update() => AttackFlow();
     protected abstract void AttackFlow();
-    
+
     protected void OnAttack1Trigger()
     {
-        DamageMessage dmgMsg = new DamageMessage(this.gameObject, entitySO.AttackPower);
+        DamageMessage dmgMsg = new DamageMessage(this.gameObject, entityData.attackPower);
         targetEntity.ApplyDamage(dmgMsg);
-                
+
         fsm.ChangeState(EStates.Track);
     }
 
     protected virtual void Attack_Exit()
     {
-        
     }
 
     public override void Die()

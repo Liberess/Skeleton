@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
@@ -32,10 +33,9 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private GameObject gameOverCanvas;
     
-    [SerializeField] private TextMeshProUGUI waveTxt;
-    [SerializeField] private TextMeshProUGUI moneyTxt;
-    [SerializeField] private TextMeshProUGUI shopMoneyTxt;
-    [SerializeField] private TextMeshProUGUI timeTxt;
+    [SerializeField] private TextMeshProUGUI stageTxt;
+    [SerializeField] private TextMeshProUGUI karmaTxt;
+    [SerializeField] private TextMeshProUGUI shopKarmaTxt;
     [SerializeField] private TextMeshProUGUI remainTxt;
 
     public UnityAction NextWaveAction;
@@ -43,11 +43,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private bool isPlaying = true;
     public bool IsPlaying => isPlaying;
-    
-    private float waveTime = 0.0f;
-    
-    [SerializeField] private float originWaveTime = 120.0f;
-
+ 
     private int wave = 1;
     public int Wave => wave;
 
@@ -63,13 +59,13 @@ public class GameManager : MonoBehaviour
 
             if (gold > 0)
             {
-                moneyTxt.text = string.Concat("<color=#ffd900>Gold</color> : ", $"{gold:#,###}");
-                shopMoneyTxt.text = string.Concat("<color=#ffd900>Gold</color> : ", $"{gold:#,###}");
+                karmaTxt.text = string.Concat("<color=#ffd900>Gold</color> : ", $"{gold:#,###}");
+                shopKarmaTxt.text = string.Concat("<color=#ffd900>Gold</color> : ", $"{gold:#,###}");
             }
             else
             {
-                moneyTxt.text = string.Concat("<color=#ffd900>Gold</color> : 0");
-                shopMoneyTxt.text = string.Concat("<color=#ffd900>Gold</color> : 0");   
+                karmaTxt.text = string.Concat("<color=#ffd900>Gold</color> : 0");
+                shopKarmaTxt.text = string.Concat("<color=#ffd900>Gold</color> : 0");   
             }            
         }
     }
@@ -90,8 +86,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         dataMgr = DataManager.Instance;
-        
-        waveTime = originWaveTime;
+
         ++dataMgr.GameData.waveCount;
 
         Gold = 50;
@@ -105,7 +100,6 @@ public class GameManager : MonoBehaviour
         NextWaveAction += () =>
         {
             ++wave;
-            waveTime = originWaveTime;
             ++dataMgr.GameData.waveCount;
             UpdateGameUI();
         };
@@ -113,37 +107,17 @@ public class GameManager : MonoBehaviour
         //AudioManager.Instance.PlayBGM(EBGMName.InGame);
     }
 
-    private void Update()
-    {
-        if (isPlaying)
-        {
-            if (waveTime > 0)
-            {
-                waveTime -= Time.deltaTime;
-            }
-            else
-            {
-                waveTime = originWaveTime;
-                NextWaveAction?.Invoke();
-            }
-            
-            timeTxt.text = string.Concat("Survive Time : ", string.Format("{0:N2}", waveTime));
-        }
-    }
-
     public void GetGold(int value) => Gold += value;
 
     public void OnClickNext()
     {
-        waveTime = originWaveTime;
         NextWaveAction?.Invoke();
     }
 
     private void UpdateGameUI()
     {
-        waveTxt.text = string.Concat("Wave ", wave);
-        timeTxt.text = string.Concat("Survive Time : ", string.Format("{0:N2}", waveTime));
-        moneyTxt.text = string.Concat("<color=#ffd900>Gold</color> : ", gold);
+        stageTxt.text = string.Concat("Wave ", wave);
+        karmaTxt.text = string.Concat("<color=#ffd900>Gold</color> : ", gold);
     }
 
     public void UpdateRemainZombieUI(int count)

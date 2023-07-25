@@ -53,8 +53,8 @@ public class Monster : Entity
     protected override void Init_Enter()
     {
         agent.isStopped = false;
-        agent.stoppingDistance = entitySO.AttackRange * 0.5f;
-        agent.speed = entitySO.MoveSpeed;
+        agent.stoppingDistance = entityData.attackRange * 0.5f;
+        agent.speed = entityData.moveSpeed;
         
         base.Init_Enter();
     }

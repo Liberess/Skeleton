@@ -69,7 +69,7 @@ public class PlayerController : Entity
         {
             var position = targetEntity.transform.position;
             transform.position = Vector3.MoveTowards(transform.position, position,
-                    entitySO.MoveSpeed * Time.deltaTime);
+                    entityData.moveSpeed * Time.deltaTime);
 
             Vector3 dir = position - transform.position;
             if (dir != Vector3.zero)
