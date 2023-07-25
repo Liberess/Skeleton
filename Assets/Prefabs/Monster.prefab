@@ -449,7 +449,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5991700494346551984}
-  - component: {fileID: 1353775812853734337}
   m_Layer: 0
   m_Name: Spider
   m_TagString: Untagged
@@ -487,27 +486,6 @@ Transform:
   - {fileID: 223562864332662353}
   m_Father: {fileID: 3211287809700502337}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &1353775812853734337
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3143619513101878106}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: a6bb4a1e7614f0844999e5c6eb8ff1aa, type: 3}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 1
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &3272274610554809955
 GameObject:
   m_ObjectHideFlags: 0
@@ -1270,6 +1248,7 @@ GameObject:
   - component: {fileID: 2559476400276909491}
   - component: {fileID: 7635723937419820255}
   - component: {fileID: 586371165263878062}
+  - component: {fileID: 6675425486265618448}
   m_Layer: 7
   m_Name: Monster
   m_TagString: Untagged
@@ -1363,6 +1342,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   targetEntity: {fileID: 0}
+  state: 0
 --- !u!195 &586371165263878062
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1385,6 +1365,27 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!95 &6675425486265618448
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6609546405932637348}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: a6bb4a1e7614f0844999e5c6eb8ff1aa, type: 3}
+  m_Controller: {fileID: 9100000, guid: 9ba5b41d0f77da645a19f8dde7c84bd0, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &6730272182563986490
 GameObject:
   m_ObjectHideFlags: 0

@@ -11,6 +11,8 @@ public class PlayerController : Entity
     [SerializeField, Range(0.1f, 10.0f)] private float moveSpeed = 5.0f;
 
     private Vector3 moveVec;
+    
+    private static readonly int DoAttack = Animator.StringToHash("doAttack");
 
     protected override void Start()
     {
@@ -87,12 +89,8 @@ public class PlayerController : Entity
             {
                 lastAttackTime = Time.time;
 
-                //anim.SetTrigger("doAttack");
-
-                DamageMessage dmgMsg = new DamageMessage(this.gameObject, entityData.AttackPower);
-                targetEntity.ApplyDamage(dmgMsg);
-
-                fsm.ChangeState(EStates.Track);
+                if(!anim.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
+                    anim.SetTrigger(DoAttack);
             }
         }
     }

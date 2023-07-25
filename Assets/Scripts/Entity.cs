@@ -32,6 +32,7 @@ public abstract class Entity : LivingEntity
 
     protected Animator anim;
     protected Rigidbody rigid;
+    private static readonly int IsWalk = Animator.StringToHash("isWalk");
 
     protected virtual void Awake()
     {
@@ -68,12 +69,11 @@ public abstract class Entity : LivingEntity
     
     protected virtual void Idle_Enter()
     {
-        Debug.Log("Idle_Enter");
+        anim.SetBool(IsWalk, false);
     }
     
     protected virtual void Idle_Update()
     {
-        Debug.Log("Idle_Update");
         if (targetEntity == null || targetEntity && !targetEntity.gameObject.activeSelf)
         {
             Collider[] cols = Physics.OverlapSphere(transform.position, 50f, targetLayer);
@@ -101,27 +101,27 @@ public abstract class Entity : LivingEntity
     
     protected virtual void Idle_Exit()
     {
-        Debug.Log("Idle_Exit");
+
     }
 
     protected virtual void Control_Enter()
     {
-        Debug.Log("Control_Enter");
+        anim.SetBool(IsWalk, true);
     }
 
     protected virtual void Control_FixedUpdate()
     {
-        Debug.Log("Control_FixedUpdate");
+
     }
 
     protected virtual void Control_Exit()
     {
-        Debug.Log("Control_Exit");
+        anim.SetBool(IsWalk, false);
     }
 
     protected virtual void Track_Enter()
     {
-        //anim.SetBool("isWalk", true);
+        anim.SetBool(IsWalk, true);
         Debug.Log(name + " :: Track_Enter");
     }
 
@@ -139,7 +139,7 @@ public abstract class Entity : LivingEntity
 
     protected virtual void Track_Exit()
     {
-        //anim.SetBool("isWalk", false);
+        anim.SetBool(IsWalk, false);
     }
     
     protected virtual void Attack_Enter()
@@ -149,6 +149,14 @@ public abstract class Entity : LivingEntity
 
     protected virtual void Attack_Update() => AttackFlow();
     protected abstract void AttackFlow();
+    
+    protected void OnAttack1Trigger()
+    {
+        DamageMessage dmgMsg = new DamageMessage(this.gameObject, entityData.AttackPower);
+        targetEntity.ApplyDamage(dmgMsg);
+                
+        fsm.ChangeState(EStates.Track);
+    }
 
     protected virtual void Attack_Exit()
     {

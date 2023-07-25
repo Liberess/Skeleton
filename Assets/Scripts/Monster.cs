@@ -9,6 +9,8 @@ public class Monster : Entity
 {
     private NavMeshAgent agent;
     
+    private static readonly int DoAttack = Animator.StringToHash("doAttack");
+    
     protected override void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -86,13 +88,8 @@ public class Monster : Entity
                 agent.isStopped = true;
                 lastAttackTime = Time.time;
 
-                if(anim.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
-                    anim.SetTrigger("doAttack");
-
-                DamageMessage dmgMsg = new DamageMessage(this.gameObject, entityData.AttackPower);
-                targetEntity.ApplyDamage(dmgMsg);
-                
-                fsm.ChangeState(EStates.Track);
+                if(!anim.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
+                    anim.SetTrigger(DoAttack);
             }
         }
     }
