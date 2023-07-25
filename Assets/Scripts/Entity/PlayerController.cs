@@ -2,25 +2,36 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DragonMobileUI.Scripts;
 using MonsterLove.StateMachine;
 
 public class PlayerController : Entity
 {
-    [SerializeField] private FloatingJoystick joystick;
+    [SerializeField] private StaticJoystickController staticJoystick;
+    [SerializeField] private DynamicJoystickController dynamicJoystick;
 
     [SerializeField, Range(0.1f, 10.0f)] private float moveSpeed = 5.0f;
 
-    private Vector3 moveVec;
+    [SerializeField] private Vector2 moveInputVec;
+    [SerializeField] private Vector3 moveVec;
     
     private static readonly int DoAttack = Animator.StringToHash("doAttack");
 
     protected override void Start()
     {
         base.Start();
-
-        joystick.OnPointerDownAction += () => fsm.ChangeState(EStates.Control, StateTransition.Overwrite);
-
-        joystick.OnPointerUpAction += () =>
+        
+        dynamicJoystick.OnPointerDownAction += () => fsm.ChangeState(EStates.Control, StateTransition.Overwrite);
+        dynamicJoystick.OnPointerUpAction += () =>
+        {
+            if (targetEntity == null || !targetEntity.gameObject.activeSelf)
+                fsm.ChangeState(EStates.Idle);
+            else
+                fsm.ChangeState(EStates.Track);
+        };
+        
+        staticJoystick.OnPointerDownAction += () => fsm.ChangeState(EStates.Control, StateTransition.Overwrite);
+        staticJoystick.OnPointerUpAction += () =>
         {
             if (targetEntity == null || !targetEntity.gameObject.activeSelf)
                 fsm.ChangeState(EStates.Idle);
@@ -42,10 +53,7 @@ public class PlayerController : Entity
 
     protected override void Control_FixedUpdate()
     {
-        float x = joystick.Horizontal;
-        float z = joystick.Vertical;
-
-        moveVec = new Vector3(x, 0f, z) * moveSpeed * Time.deltaTime;
+        moveVec = new Vector3(moveInputVec.x, 0f, moveInputVec.y) * moveSpeed * Time.deltaTime;
         rigid.MovePosition(rigid.position + moveVec);
 
         if (moveVec.sqrMagnitude == 0)
@@ -58,6 +66,8 @@ public class PlayerController : Entity
             rigid.MoveRotation(moveQuat);
         }
     }
+
+    public void OnMoveInput(Vector2 moveInput) =>  moveInputVec = moveInput;
 
     protected override void TrackFlow()
     {
