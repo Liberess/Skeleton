@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
@@ -118,6 +119,19 @@ public class DataManager : MonoBehaviour
         byte[] bytes = System.Text.Encoding.UTF8.GetBytes(ToJsonData);
         string code = System.Convert.ToBase64String(bytes);
         File.WriteAllText(filePath, code);
+    }
+
+    public int GetCurrency(ECurrencyType type)
+    {
+        int value = 0;
+        
+        switch (type)
+        {
+            case ECurrencyType.GD: value = mGameData.gold; break;
+            case ECurrencyType.KM: value = mGameData.karma; break;
+        }
+
+        return value;
     }
 
     private void OnApplicationPause(bool pause) => SaveGameData();

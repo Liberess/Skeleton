@@ -29,6 +29,7 @@ public class GameManager : MonoBehaviour
     }
     #endregion
     
+    private UIManager uiMgr;
     private DataManager dataMgr;
 
     [SerializeField] private GameObject gameOverCanvas;
@@ -51,9 +52,7 @@ public class GameManager : MonoBehaviour
         set
         {
             dataMgr.GameData.gold = Mathf.Clamp(value, 0, dataMgr.GameData.MaxGoodsAmount);
-
-            goldTxt.text = string.Concat("<sprite=0>", 
-                dataMgr.GameData.gold > 0 ? $"{dataMgr.GameData.gold:#,###}" : "0");
+            uiMgr.InvokeCurrencyUI(ECurrencyType.GD, dataMgr.GameData.gold);
         }
     }
 
@@ -63,9 +62,7 @@ public class GameManager : MonoBehaviour
         set
         {
             dataMgr.GameData.karma = Mathf.Clamp(value, 0, dataMgr.GameData.MaxGoodsAmount);
-
-            karmaTxt.text = string.Concat("<sprite=0>", 
-                dataMgr.GameData.karma > 0 ? $"{dataMgr.GameData.karma:#,###}" : "0");
+            uiMgr.InvokeCurrencyUI(ECurrencyType.KM, dataMgr.GameData.karma);
         }
     }
 
@@ -87,6 +84,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        uiMgr = UIManager.Instance;
         dataMgr = DataManager.Instance;
 
         Gold = 50;
@@ -141,10 +139,10 @@ public class GameManager : MonoBehaviour
     private void UpdateGameUI()
     {
         stageTxt.text = dataMgr.GameData.stageStr;
-        goldTxt.text = string.Concat("<sprite=0>", 
+        /*goldTxt.text = string.Concat("<sprite=0>", 
             dataMgr.GameData.gold > 0 ? $"{dataMgr.GameData.gold:#,###}" : "0");
         karmaTxt.text = string.Concat("<sprite=0>", 
-            dataMgr.GameData.karma > 0 ? $"{dataMgr.GameData.karma:#,###}" : "0");
+            dataMgr.GameData.karma > 0 ? $"{dataMgr.GameData.karma:#,###}" : "0");*/
     }
 
     public void UpdateRemainMonsterUI(int count)

@@ -9,6 +9,12 @@ public enum EMonsterType
     Test2
 }
 
+public enum ECurrencyType
+{
+    GD = 0, //Gold
+    KM,     //Karma
+}
+
 public class Enums
 {
     
