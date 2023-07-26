@@ -58,12 +58,10 @@ public class GameManager : MonoBehaviour
             if (gold > 0)
             {
                 goldTxt.text = string.Concat("<sprite=0>", $"{dataMgr.GameData.gold:#,###}");
-                //shopKarmaTxt.text = string.Concat("<color=#ffd900>Gold</color> : ", $"{gold:#,###}");
             }
             else
             {
                 goldTxt.text = string.Concat("0");
-                //shopKarmaTxt.text = string.Concat("<color=#ffd900>Gold</color> : 0");   
             }            
         }
     }
@@ -111,8 +109,7 @@ public class GameManager : MonoBehaviour
     public void NextStage()
     {
         ++dataMgr.GameData.stageCount;
-        Debug.Log(Time.time + "NextStage");
-        
+
         string[] subStr = dataMgr.GameData.stageStr.Split('-');
         int mainStageNum = int.Parse(subStr[0]);
         int subStageNum = int.Parse(subStr[1]);
@@ -141,9 +138,9 @@ public class GameManager : MonoBehaviour
     {
         stageTxt.text = dataMgr.GameData.stageStr;
         goldTxt.text = string.Concat("<sprite=0>", 
-            dataMgr.GameData.gold >= 0 ? $"{dataMgr.GameData.gold:#,###}" : "0");
+            dataMgr.GameData.gold > 0 ? $"{dataMgr.GameData.gold:#,###}" : "0");
         karmaTxt.text = string.Concat("<sprite=0>", 
-            dataMgr.GameData.karma >= 0 ? $"{dataMgr.GameData.karma:#,###}" : "0");
+            dataMgr.GameData.karma > 0 ? $"{dataMgr.GameData.karma:#,###}" : "0");
     }
 
     public void UpdateRemainMonsterUI(int count)

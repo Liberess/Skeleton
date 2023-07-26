@@ -7,16 +7,26 @@ using MonsterLove.StateMachine;
 
 public class PlayerController : Entity
 {
+    private MonsterManager monsterMgr;
+    
     [SerializeField] private StaticJoystickController staticJoystick;
     [SerializeField] private DynamicJoystickController dynamicJoystick;
     
     private Vector2 moveInputVec;
     private Vector3 moveVec;
+
+    private float curDist = 0.0f;
+    private float closetDist = float.MaxValue;
+    private float targetDist = float.MaxValue;
+    private int closetIndex = 0;
+    private int targetIndex = 0;
     
-    private static readonly int DoAttack = Animator.StringToHash("doAttack");
+    private static readonly int IsAttack = Animator.StringToHash("isAttack");
 
     protected override void Start()
     {
+        monsterMgr = MonsterManager.Instance;
+        
         EntityData = DataManager.Instance.GameData.playerData;
         fsm.ChangeState(EStates.Init);
         
@@ -71,25 +81,55 @@ public class PlayerController : Entity
 
     protected override void TrackFlow()
     {
-        
-        
-        if (targetEntity == null)
-        {
-            fsm.ChangeState(EStates.Idle);
-        }
-        else
-        {
-            var position = targetEntity.transform.position;
-            transform.position = Vector3.MoveTowards(transform.position, position,
-                EntityData.moveSpeed * Time.deltaTime);
+        if(IsDead)
+            return;
 
-            Vector3 dir = position - transform.position;
-            if (dir.sqrMagnitude != 0)
+        if (monsterMgr.SpawnedMonsterList.Count > 0)
+        {
+            closetIndex = 0;
+            targetIndex = -1;
+            
+            for (int i = 0; i < monsterMgr.SpawnedMonsterList.Count; i++)
             {
-                Quaternion dirQuat = Quaternion.LookRotation(dir);
-                Quaternion moveQuat = Quaternion.Slerp(rigid.rotation, dirQuat, 0.3f);
-                rigid.MoveRotation(moveQuat);
+                Vector3 monsterPos = monsterMgr.SpawnedMonsterList[i].transform.position;
+                curDist = Vector3.Distance(transform.position, monsterPos);
+
+                if (Physics.Raycast(transform.position, monsterPos - transform.position,
+                        EntityData.attackRange, targetLayer))
+                {
+                    if (targetDist >= curDist)
+                    {
+                        targetIndex = i;
+                        targetDist = curDist;
+                    }
+
+                    if (closetDist >= curDist)
+                    {
+                        closetIndex = i;
+                        closetDist = curDist;
+                    }
+                }
             }
+
+            if (targetIndex == -1)
+                targetIndex = closetIndex;
+
+            targetEntity = monsterMgr.SpawnedMonsterList[targetIndex];
+
+            closetDist = float.MaxValue;
+            targetDist = float.MaxValue;
+        }
+        
+        var position = targetEntity.transform.position;
+        transform.position = Vector3.MoveTowards(transform.position, position,
+            EntityData.moveSpeed * Time.deltaTime);
+
+        Vector3 dir = position - transform.position;
+        if (dir.sqrMagnitude != 0)
+        {
+            Quaternion dirQuat = Quaternion.LookRotation(dir);
+            Quaternion moveQuat = Quaternion.Slerp(rigid.rotation, dirQuat, 0.3f);
+            rigid.MoveRotation(moveQuat);
         }
     }
 
@@ -97,6 +137,13 @@ public class PlayerController : Entity
     {
         if (!IsDead)
         {
+            if (moveInputVec.sqrMagnitude != 0)
+            {
+                anim.SetBool(IsWalk, true);
+                anim.SetBool(IsAttack, false);
+                fsm.ChangeState(EStates.Control, StateTransition.Overwrite);
+            }
+            
             if (HasTarget)
             {
                 if (IsAttackable)
@@ -104,13 +151,20 @@ public class PlayerController : Entity
                     lastAttackTime = Time.time;
 
                     if(!anim.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
-                        anim.SetTrigger(DoAttack);
+                        anim.SetBool(IsAttack, true);
                 }
             }
             else
             {
                 targetEntity = null;
+                fsm.ChangeState(EStates.Idle);
             }
         }
+    }
+
+    protected override void Attack_Exit()
+    {
+        anim.SetBool(IsAttack, false);
+        base.Attack_Exit();
     }
 }

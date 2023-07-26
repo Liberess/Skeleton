@@ -635,7 +635,7 @@ MonoBehaviour:
   m_Padding:
     m_Left: -25
     m_Right: 0
-    m_Top: 0
+    m_Top: 5
     m_Bottom: 0
   m_ChildAlignment: 3
   m_Spacing: 30
@@ -2509,7 +2509,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: <sprite=0>999,999,999
+  m_text: <sprite=0>0
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b693b210e2552d54b972b84f8c512109, type: 2}
   m_sharedMaterial: {fileID: 4926092321818225247, guid: b693b210e2552d54b972b84f8c512109,
@@ -3517,7 +3517,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: <sprite=0>999,999,999
+  m_text: <sprite=0>0
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b693b210e2552d54b972b84f8c512109, type: 2}
   m_sharedMaterial: {fileID: 4926092321818225247, guid: b693b210e2552d54b972b84f8c512109,

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
 using UnityEngine;
 using MonsterLove.StateMachine;
@@ -20,7 +21,13 @@ public abstract class Entity : LivingEntity
 
     protected StateMachine<EStates> fsm;
 
-    public EntityData EntityData { get; protected set; }
+    [SerializeField] private EntityData entityData;
+
+    public EntityData EntityData
+    {
+        get { return entityData; }
+        protected set { entityData = value; }
+    }
 
     // Attack
     [SerializeField] protected LayerMask targetLayer;
@@ -35,7 +42,8 @@ public abstract class Entity : LivingEntity
     protected Animator anim;
     protected Rigidbody rigid;
 
-    private static readonly int IsWalk = Animator.StringToHash("isWalk");
+    protected static readonly int IsWalk = Animator.StringToHash("isWalk");
+    protected static readonly int DoDie = Animator.StringToHash("doDie");
 
     protected virtual void Awake()
     {
@@ -58,7 +66,7 @@ public abstract class Entity : LivingEntity
             healthPoint = Mathf.RoundToInt(entityData.healthPoint * increaseValue),
             attackPower = Mathf.RoundToInt(entityData.attackPower * increaseValue),
             attackRange = Mathf.RoundToInt(
-                Mathf.Clamp(entityData.attackRange * increaseValue, 0.5f, entityData.maxAttackRange)),
+                Mathf.Clamp(entityData.attackRange * increaseValue, 1.0f, entityData.maxAttackRange)),
             attackPerSecond = Mathf.RoundToInt(
                 Mathf.Clamp(entityData.attackPerSecond * increaseValue, 0.1f, entityData.maxAttackPerSecond)),
             moveSpeed = Mathf.RoundToInt(
@@ -73,7 +81,7 @@ public abstract class Entity : LivingEntity
         DeathAction += () =>
         {
             fsm.ChangeState(EStates.Die);
-            anim.SetTrigger("doDie");
+            anim.SetTrigger(DoDie);
             gameObject.layer = LayerMask.NameToLayer("Ignore");
         };
 
@@ -101,16 +109,18 @@ public abstract class Entity : LivingEntity
     {
         if (targetEntity == null || targetEntity && !targetEntity.gameObject.activeSelf)
         {
-            Collider[] cols = Physics.OverlapSphere(transform.position, 50f, targetLayer);
+            Collider[] cols = Physics.OverlapSphere(transform.position, 100f, targetLayer);
             if (cols.Length > 0)
             {
+                List<GameObject> objList = new List<GameObject>();
                 foreach (var col in cols)
+                    objList.Add(col.gameObject);
+
+                GameObject nearstObj = Utility.GetNearestObjectByList(objList, transform.position);
+                if (nearstObj.TryGetComponent(out LivingEntity entity))
                 {
-                    if (col.TryGetComponent(out LivingEntity entity))
-                    {
-                        targetEntity = entity;
-                        fsm.ChangeState(EStates.Track);
-                    }
+                    targetEntity = entity;
+                    fsm.ChangeState(EStates.Track);
                 }
             }
             else
@@ -149,11 +159,14 @@ public abstract class Entity : LivingEntity
 
     protected virtual void Track_Update()
     {
-        float distance = Vector3.Distance(targetEntity.transform.position, transform.position);
-        if (distance <= EntityData.attackRange && fsm.State != EStates.Attack)
-            fsm.ChangeState(EStates.Attack);
-        else
-            TrackFlow();
+        if (targetEntity != null)
+        {
+            float distance = Vector3.Distance(targetEntity.transform.position, transform.position);
+            if (distance <= EntityData.attackRange && fsm.State != EStates.Attack)
+                fsm.ChangeState(EStates.Attack);
+            else
+                TrackFlow();
+        }
     }
 
     protected abstract void TrackFlow();
@@ -165,6 +178,7 @@ public abstract class Entity : LivingEntity
 
     protected virtual void Attack_Enter()
     {
+        
     }
 
     protected virtual void Attack_Update() => AttackFlow();
@@ -180,11 +194,11 @@ public abstract class Entity : LivingEntity
 
     protected virtual void Attack_Exit()
     {
+        
     }
 
     protected virtual void Die_Enter()
     {
-        Debug.Log(name + " :: Die_Enter");
         StopAllCoroutines();
     }
 }

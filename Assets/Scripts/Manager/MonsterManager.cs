@@ -101,7 +101,6 @@ public class MonsterManager : MonoBehaviour
 
     private IEnumerator SpawnCo()
     {
-        Debug.Log(Time.time + "SpawnCo");
         spawnCount += dataMgr.GameData.stageCount * 2;
         if (spawnCount > maxSpawnCount)
             spawnCount = maxSpawnCount;

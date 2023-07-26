@@ -9,6 +9,9 @@ public class Monster : Entity
 {
     private NavMeshAgent agent;
 
+    public EStates state;
+    private static readonly int DoAttack = Animator.StringToHash("doAttack");
+
     protected override void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -39,6 +42,7 @@ public class Monster : Entity
     private void Update()
     {
         fsm.Driver.Update?.Invoke();
+        state = fsm.State;
     }
 
     private void FixedUpdate()
@@ -51,7 +55,7 @@ public class Monster : Entity
         base.SetupEntityData(entityData, increaseValue);
 
         agent.isStopped = false;
-        agent.stoppingDistance = entityData.attackRange + 0.5f;
+        agent.stoppingDistance = entityData.attackRange * 0.5f;
         agent.speed = entityData.moveSpeed;
     }
 
@@ -90,7 +94,7 @@ public class Monster : Entity
                 lastAttackTime = Time.time;
 
                 if(!anim.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
-                    anim.SetTrigger("doAttack");
+                    anim.SetTrigger(DoAttack);
             }
         }
     }
