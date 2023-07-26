@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34d3881a3f136a245816d9a39dc1a04a, type: 3}
   m_Name: PlayerData
   m_EditorClassIdentifier: 
-  entityName: None
-  healthPoint: 10
-  attackPower: 1
-  attackRange: 1
-  attackPerSecond: 1
-  moveSpeed: 3
+  entityData:
+    entityName: Player
+    healthPoint: 100
+    attackPower: 2
+    attackRange: 1
+    attackPerSecond: 1
+    moveSpeed: 5

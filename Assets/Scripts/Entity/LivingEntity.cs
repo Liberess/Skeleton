@@ -5,7 +5,7 @@ using UnityEngine.Events;
 
 public class LivingEntity : MonoBehaviour
 {
-    [SerializeField] protected int originHp = 100;
+    protected int originHp = 100;
     [SerializeField] private int currentHp;
     public int CurrentHp
     {
@@ -46,7 +46,6 @@ public class LivingEntity : MonoBehaviour
     protected virtual void OnEnable()
     {
         IsDead = false;
-        currentHp = originHp;
     }
 
     public virtual void ApplyDamage(DamageMessage dmgMsg)
@@ -60,7 +59,8 @@ public class LivingEntity : MonoBehaviour
 
     public virtual void CureHealthPoint(int cureAmount = 0)
     {
-        if (IsDead) return;
+        if (IsDead)
+            return;
 
         CurrentHp += cureAmount;
     }

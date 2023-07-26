@@ -9,17 +9,16 @@ public class PlayerController : Entity
 {
     [SerializeField] private StaticJoystickController staticJoystick;
     [SerializeField] private DynamicJoystickController dynamicJoystick;
-
-    [SerializeField, Range(0.1f, 10.0f)] private float moveSpeed = 5.0f;
-
-    [SerializeField] private Vector2 moveInputVec;
-    [SerializeField] private Vector3 moveVec;
+    
+    private Vector2 moveInputVec;
+    private Vector3 moveVec;
     
     private static readonly int DoAttack = Animator.StringToHash("doAttack");
 
     protected override void Start()
     {
-        base.Start();
+        EntityData = DataManager.Instance.GameData.playerData;
+        fsm.ChangeState(EStates.Init);
         
         dynamicJoystick.OnPointerDownAction += () => fsm.ChangeState(EStates.Control, StateTransition.Overwrite);
         dynamicJoystick.OnPointerUpAction += () =>
@@ -38,11 +37,12 @@ public class PlayerController : Entity
             else
                 fsm.ChangeState(EStates.Track);
         };
+        
+        base.Start();
     }
 
     private void Update()
     {
-        state = fsm.State;
         fsm.Driver.Update?.Invoke();
     }
 
@@ -53,13 +53,13 @@ public class PlayerController : Entity
 
     protected override void Control_FixedUpdate()
     {
-        moveVec = new Vector3(moveInputVec.x, 0f, moveInputVec.y) * moveSpeed * Time.deltaTime;
+        if(IsDead)
+            return;
+      
+        moveVec = new Vector3(moveInputVec.x, 0f, moveInputVec.y) * EntityData.moveSpeed * Time.deltaTime;
         rigid.MovePosition(rigid.position + moveVec);
 
-        if (moveVec.sqrMagnitude == 0)
-            return;
-
-        if (moveVec != Vector3.zero)
+        if (moveVec.sqrMagnitude != 0)
         {
             Quaternion dirQuat = Quaternion.LookRotation(moveVec);
             Quaternion moveQuat = Quaternion.Slerp(rigid.rotation, dirQuat, 0.3f);
@@ -71,6 +71,8 @@ public class PlayerController : Entity
 
     protected override void TrackFlow()
     {
+        
+        
         if (targetEntity == null)
         {
             fsm.ChangeState(EStates.Idle);
@@ -79,10 +81,10 @@ public class PlayerController : Entity
         {
             var position = targetEntity.transform.position;
             transform.position = Vector3.MoveTowards(transform.position, position,
-                    entityData.moveSpeed * Time.deltaTime);
+                EntityData.moveSpeed * Time.deltaTime);
 
             Vector3 dir = position - transform.position;
-            if (dir != Vector3.zero)
+            if (dir.sqrMagnitude != 0)
             {
                 Quaternion dirQuat = Quaternion.LookRotation(dir);
                 Quaternion moveQuat = Quaternion.Slerp(rigid.rotation, dirQuat, 0.3f);
@@ -95,12 +97,19 @@ public class PlayerController : Entity
     {
         if (!IsDead)
         {
-            if (HasTarget && IsAttackable)
+            if (HasTarget)
             {
-                lastAttackTime = Time.time;
+                if (IsAttackable)
+                {
+                    lastAttackTime = Time.time;
 
-                if(!anim.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
-                    anim.SetTrigger(DoAttack);
+                    if(!anim.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
+                        anim.SetTrigger(DoAttack);
+                }
+            }
+            else
+            {
+                targetEntity = null;
             }
         }
     }

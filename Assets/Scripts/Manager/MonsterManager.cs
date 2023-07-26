@@ -7,6 +7,7 @@ public class MonsterManager : MonoBehaviour
 {
     public static MonsterManager Instance { get; private set; }
     private GameManager gameMgr;
+    private DataManager dataMgr;
     
     [SerializeField, Range(1, 100)] private int monsterInitAmount = 30;
     [SerializeField] private GameObject[] monsterPrefabs;
@@ -14,6 +15,7 @@ public class MonsterManager : MonoBehaviour
     private Queue<Monster> monsterQueue = new Queue<Monster>();
 
     private int spawnCount = 0;
+    [SerializeField, Range(0.0f, 60.0f)] private float spawnCycleTime = 5.0f;
     [SerializeField] private int maxSpawnCount = 100;
     [SerializeField] private Transform[] spawnPoints;
     private Dictionary<EMonsterType, int> spawnWeightDic = new Dictionary<EMonsterType, int>()
@@ -23,7 +25,7 @@ public class MonsterManager : MonoBehaviour
         { EMonsterType.Test2, 1}
     };
 
-    public List<Monster> SpawnedMonsterList { get; } = new List<Monster>();
+    public List<Monster> SpawnedMonsterList { get; private set; } = new List<Monster>();
 
     private void Awake()
     {
@@ -36,9 +38,10 @@ public class MonsterManager : MonoBehaviour
     private void Start()
     {
         gameMgr = GameManager.Instance;
+        dataMgr = DataManager.Instance;
+        
         Initialize(monsterInitAmount);
-        gameMgr.NextWaveAction += () => Spawn();
-        Spawn();
+        gameMgr.NextWaveAction += () => StartCoroutine(SpawnCo());
     }
     
     #region Object Pooling
@@ -53,9 +56,9 @@ public class MonsterManager : MonoBehaviour
 
     private Monster CreateNewObj(EMonsterType type, int index = 0)
     {
-        var zombiePrefab = monsterPrefabs[(int)type];
-        var newObj = Instantiate(zombiePrefab, transform.position, Quaternion.identity);
-        newObj.name = string.Concat(zombiePrefab.name, "_", index);
+        var monsterPrefab = monsterPrefabs[(int)type];
+        var newObj = Instantiate(monsterPrefab, transform.position, Quaternion.identity);
+        newObj.name = string.Concat(monsterPrefab.name, "_", index);
         newObj.gameObject.SetActive(false);
         newObj.GetComponent<NavMeshAgent>().enabled = false;
         newObj.transform.SetParent(transform);
@@ -95,45 +98,55 @@ public class MonsterManager : MonoBehaviour
         monsterQueue.Enqueue(obj);
     }
     #endregion
-    
-    private void Spawn()
+
+    private IEnumerator SpawnCo()
     {
-        spawnCount += gameMgr.Wave * 2;
+        Debug.Log(Time.time + "SpawnCo");
+        spawnCount += dataMgr.GameData.stageCount * 2;
         if (spawnCount > maxSpawnCount)
             spawnCount = maxSpawnCount;
-        gameMgr.UpdateRemainZombieUI(spawnCount);
+        gameMgr.UpdateRemainMonsterUI(spawnCount);
         
-        var picker = new Rito.WeightedRandomPicker<EMonsterType>();
+        /*var picker = new Rito.WeightedRandomPicker<EMonsterType>();
         picker.Add(EMonsterType.Spider, spawnWeightDic[EMonsterType.Spider]);
         picker.Add(EMonsterType.Test1, spawnWeightDic[EMonsterType.Test1]);
-        picker.Add(EMonsterType.Test2, spawnWeightDic[EMonsterType.Test2]);
+        picker.Add(EMonsterType.Test2, spawnWeightDic[EMonsterType.Test2]);*/
+
+        WaitForSeconds spawnDelay = new WaitForSeconds(spawnCycleTime);
 
         for (int i = 0; i < spawnCount; i++)
         {
-            var pick = picker.GetRandomPick();
-            var monster = InstantiateObj(pick);
+            yield return spawnDelay;
+            
+            //var pick = picker.GetRandomPick();
+            var monster = InstantiateObj(EMonsterType.Spider);
             var targetPos = spawnPoints[Random.Range(0, spawnPoints.Length)].position;
             var randPos = Utility.GetRandPointOnNavMesh(targetPos, 3f, NavMesh.AllAreas);
             monster.transform.position = randPos;
-            monster.GetComponent<NavMeshAgent>().enabled = true;
-            monster.SetupEntityData(monsterSOs[(int)pick].entityData);
-            monster.EntityData.attackPower = monster.EntityData.attackPower * gameMgr.Wave;
-            monster.EntityData.healthPoint = monster.EntityData.healthPoint * gameMgr.Wave;
-            monster.DeathAction += () => SpawnedMonsterList.Remove(monster);
-            monster.DeathAction += () => gameMgr.UpdateRemainZombieUI(--spawnCount);
-            monster.DeathAction += () => ++GameManager.Instance.currentkillCount;
-            
+
+            monster.SetupEntityData(monsterSOs[(int)EMonsterType.Spider].entityData, dataMgr.GameData.stageCount);
+
+            monster.DeathAction += () =>
+            {
+                SpawnedMonsterList.Remove(monster);
+                gameMgr.UpdateRemainMonsterUI(--spawnCount);
+                ++gameMgr.currentkillCount;
+                StartCoroutine(ReturnObjCo(monster, 1.0f));
+            };
+
             SpawnedMonsterList.Add(monster);
         }
 
         spawnWeightDic[EMonsterType.Spider] =
-            Mathf.Clamp(spawnWeightDic[EMonsterType.Spider] - gameMgr.Wave,
+            Mathf.Clamp(spawnWeightDic[EMonsterType.Spider] - dataMgr.GameData.stageCount,
                 0, 100);
         spawnWeightDic[EMonsterType.Test1] =
-            Mathf.Clamp(spawnWeightDic[EMonsterType.Test1] + gameMgr.Wave,
+            Mathf.Clamp(spawnWeightDic[EMonsterType.Test1] + dataMgr.GameData.stageCount,
                 0, 99);
         spawnWeightDic[EMonsterType.Test2] =
-            Mathf.Clamp(spawnWeightDic[EMonsterType.Test2] + gameMgr.Wave,
+            Mathf.Clamp(spawnWeightDic[EMonsterType.Test2] + dataMgr.GameData.stageCount,
                 0, 99);
+
+        yield return null;
     }
 }

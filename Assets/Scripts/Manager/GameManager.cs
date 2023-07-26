@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject gameOverCanvas;
     
     [SerializeField] private TextMeshProUGUI stageTxt;
+    [SerializeField] private TextMeshProUGUI goldTxt;
     [SerializeField] private TextMeshProUGUI karmaTxt;
     [SerializeField] private TextMeshProUGUI shopKarmaTxt;
     [SerializeField] private TextMeshProUGUI remainTxt;
@@ -43,11 +44,8 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private bool isPlaying = true;
     public bool IsPlaying => isPlaying;
- 
-    private int wave = 1;
-    public int Wave => wave;
 
-    private readonly int MaxGold = 999999;
+    private readonly int MaxGold = 999999999;
 
     private int gold = 50;
     public int Gold
@@ -59,13 +57,13 @@ public class GameManager : MonoBehaviour
 
             if (gold > 0)
             {
-                karmaTxt.text = string.Concat("<color=#ffd900>Gold</color> : ", $"{gold:#,###}");
-                shopKarmaTxt.text = string.Concat("<color=#ffd900>Gold</color> : ", $"{gold:#,###}");
+                goldTxt.text = string.Concat("<sprite=0>", $"{dataMgr.GameData.gold:#,###}");
+                //shopKarmaTxt.text = string.Concat("<color=#ffd900>Gold</color> : ", $"{gold:#,###}");
             }
             else
             {
-                karmaTxt.text = string.Concat("<color=#ffd900>Gold</color> : 0");
-                shopKarmaTxt.text = string.Concat("<color=#ffd900>Gold</color> : 0");   
+                goldTxt.text = string.Concat("0");
+                //shopKarmaTxt.text = string.Concat("<color=#ffd900>Gold</color> : 0");   
             }            
         }
     }
@@ -81,48 +79,76 @@ public class GameManager : MonoBehaviour
             mInstance = this;
         else if (mInstance != this)
             Destroy(gameObject);
+        
+        GameOverAction += GameOver;
+        NextWaveAction += NextStage;
     }
 
     private void Start()
     {
         dataMgr = DataManager.Instance;
 
-        ++dataMgr.GameData.waveCount;
-
         Gold = 50;
 
         startTime = DateTime.Now;
         
-        GameOverAction += GameOver;
-
         UpdateGameUI();
-        
-        NextWaveAction += () =>
-        {
-            ++wave;
-            ++dataMgr.GameData.waveCount;
-            UpdateGameUI();
-        };
-        
+    
+        StartCoroutine(InvokeNextWaveCo(1.0f));
+
         //AudioManager.Instance.PlayBGM(EBGMName.InGame);
     }
 
     public void GetGold(int value) => Gold += value;
 
-    public void OnClickNext()
+    private IEnumerator InvokeNextWaveCo(float delay = 0.0f)
     {
+        yield return new WaitForSeconds(delay);
+
         NextWaveAction?.Invoke();
+    }
+
+    public void NextStage()
+    {
+        ++dataMgr.GameData.stageCount;
+        Debug.Log(Time.time + "NextStage");
+        
+        string[] subStr = dataMgr.GameData.stageStr.Split('-');
+        int mainStageNum = int.Parse(subStr[0]);
+        int subStageNum = int.Parse(subStr[1]);
+
+        if (subStageNum < 10)
+        {
+            ++subStageNum;
+        }
+        else
+        {
+            ++mainStageNum;
+            subStageNum = 1;
+            BossStage();
+        }
+
+        dataMgr.GameData.stageStr = string.Concat(mainStageNum, '-', subStageNum);
+        stageTxt.text = dataMgr.GameData.stageStr;
+    }
+
+    private void BossStage()
+    {
+        
     }
 
     private void UpdateGameUI()
     {
-        stageTxt.text = string.Concat("Wave ", wave);
-        karmaTxt.text = string.Concat("<color=#ffd900>Gold</color> : ", gold);
+        stageTxt.text = dataMgr.GameData.stageStr;
+        goldTxt.text = string.Concat("<sprite=0>", 
+            dataMgr.GameData.gold >= 0 ? $"{dataMgr.GameData.gold:#,###}" : "0");
+        karmaTxt.text = string.Concat("<sprite=0>", 
+            dataMgr.GameData.karma >= 0 ? $"{dataMgr.GameData.karma:#,###}" : "0");
     }
 
-    public void UpdateRemainZombieUI(int count)
+    public void UpdateRemainMonsterUI(int count)
     {
-        remainTxt.text = string.Concat("Remain Zombie : ", count);
+        remainTxt.text = count.ToString();
     }
 
     private void GameOver()
@@ -132,9 +158,6 @@ public class GameManager : MonoBehaviour
 
         currentPlayTime = (float)timeDif.TotalSeconds;
 
-        if (currentPlayTime > dataMgr.GameData.bestPlayTime)
-            dataMgr.GameData.bestPlayTime = currentPlayTime;
-        
         dataMgr.GameData.totalPlayTime += currentPlayTime;
         dataMgr.GameData.karma += currentkillCount;
         

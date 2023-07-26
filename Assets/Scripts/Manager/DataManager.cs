@@ -44,6 +44,8 @@ public class DataManager : MonoBehaviour
     
     #endregion
 
+    [SerializeField] private EntitySO playerOriginData;
+
     private void Awake()
     {
         if (mInstance == null)
@@ -70,13 +72,17 @@ public class DataManager : MonoBehaviour
         mGameData.sfx = 10f;
         mGameData.bgm = 10f;
 
+        mGameData.gold = 0;
         mGameData.karma = 0;
         mGameData.killCount = 0;
         mGameData.deathCount = 0;
-        mGameData.waveCount = 0;
+        mGameData.stageCount = 0;
+        
+        mGameData.stageStr = "1-0";
 
-        mGameData.bestPlayTime = 0.0f;
         mGameData.totalPlayTime = 0.0f;
+
+        mGameData.playerData = new EntityData(playerOriginData.entityData);
         
         for (int i = 0; i < mGameData.statUpLevels.Length; i++)
             mGameData.statUpLevels[i] = 1;
@@ -92,6 +98,8 @@ public class DataManager : MonoBehaviour
             byte[] bytes = System.Convert.FromBase64String(code);
             string FromJsonData = System.Text.Encoding.UTF8.GetString(bytes);
             mGameData = JsonUtility.FromJson<GameData>(FromJsonData);
+            
+            InitGameData();
         }
         else
         {

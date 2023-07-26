@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using UnityEngine;
 using MonsterLove.StateMachine;
-using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 public abstract class Entity : LivingEntity
 {
@@ -20,8 +20,7 @@ public abstract class Entity : LivingEntity
 
     protected StateMachine<EStates> fsm;
 
-    [SerializeField] protected EntityData entityData;
-    public EntityData EntityData => entityData;
+    public EntityData EntityData { get; protected set; }
 
     // Attack
     [SerializeField] protected LayerMask targetLayer;
@@ -29,12 +28,13 @@ public abstract class Entity : LivingEntity
     protected bool HasTarget => targetEntity != null && !targetEntity.IsDead;
 
     protected float lastAttackTime = 0.0f;
-    protected bool IsAttackable => Time.time >= lastAttackTime + entityData.attackPerSecond;
+    protected bool IsAttackable => Time.time >= lastAttackTime + EntityData.attackPerSecond;
 
-    [SerializeField] protected EStates state;
+    [SerializeField] private Slider hpBar;
 
     protected Animator anim;
     protected Rigidbody rigid;
+
     private static readonly int IsWalk = Animator.StringToHash("isWalk");
 
     protected virtual void Awake()
@@ -43,31 +43,49 @@ public abstract class Entity : LivingEntity
         rigid = GetComponent<Rigidbody>();
 
         fsm = new StateMachine<EStates>(this);
-        fsm.ChangeState(EStates.Init);
     }
 
     protected override void OnEnable()
     {
         base.OnEnable();
-        fsm.ChangeState(EStates.Init);
+        EntityData = null;
     }
 
-    public void SetupEntityData([NotNull] EntityData entityData)
+    public virtual void SetupEntityData(EntityData entityData, float increaseValue = 1.0f)
     {
-        this.entityData = entityData ?? throw new ArgumentNullException($"[{nameof(entityData)}] 데이터가 존재하지 않습니다.");
+        EntityData = new EntityData(entityData)
+        {
+            healthPoint = Mathf.RoundToInt(entityData.healthPoint * increaseValue),
+            attackPower = Mathf.RoundToInt(entityData.attackPower * increaseValue),
+            attackRange = Mathf.RoundToInt(
+                Mathf.Clamp(entityData.attackRange * increaseValue, 0.5f, entityData.maxAttackRange)),
+            attackPerSecond = Mathf.RoundToInt(
+                Mathf.Clamp(entityData.attackPerSecond * increaseValue, 0.1f, entityData.maxAttackPerSecond)),
+            moveSpeed = Mathf.RoundToInt(
+                Mathf.Clamp(entityData.moveSpeed * increaseValue, 0.5f, entityData.maxMoveSpeed))
+        };
+
+        fsm.ChangeState(EStates.Init);
     }
 
     protected virtual void Start()
     {
         DeathAction += () =>
         {
-            //anim.SetTrigger("doDie");
+            fsm.ChangeState(EStates.Die);
+            anim.SetTrigger("doDie");
             gameObject.layer = LayerMask.NameToLayer("Ignore");
         };
+
+        ChangedHpValueAction += () => hpBar.value = (float)CurrentHp / EntityData.healthPoint;
     }
 
     protected virtual void Init_Enter()
     {
+        hpBar.maxValue = 1.0f;
+        CurrentHp = EntityData.healthPoint;
+        hpBar.value = (float)CurrentHp / EntityData.healthPoint;
+
         if (targetEntity == null)
             fsm.ChangeState(EStates.Idle);
         else
@@ -132,7 +150,7 @@ public abstract class Entity : LivingEntity
     protected virtual void Track_Update()
     {
         float distance = Vector3.Distance(targetEntity.transform.position, transform.position);
-        if (distance <= entityData.attackRange && fsm.State != EStates.Attack)
+        if (distance <= EntityData.attackRange && fsm.State != EStates.Attack)
             fsm.ChangeState(EStates.Attack);
         else
             TrackFlow();
@@ -154,7 +172,7 @@ public abstract class Entity : LivingEntity
 
     protected void OnAttack1Trigger()
     {
-        DamageMessage dmgMsg = new DamageMessage(this.gameObject, entityData.attackPower);
+        DamageMessage dmgMsg = new DamageMessage(this.gameObject, EntityData.attackPower);
         targetEntity.ApplyDamage(dmgMsg);
 
         fsm.ChangeState(EStates.Track);
@@ -162,12 +180,6 @@ public abstract class Entity : LivingEntity
 
     protected virtual void Attack_Exit()
     {
-    }
-
-    public override void Die()
-    {
-        fsm.ChangeState(EStates.Die);
-        base.Die();
     }
 
     protected virtual void Die_Enter()

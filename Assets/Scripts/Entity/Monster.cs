@@ -8,9 +8,7 @@ using MonsterLove.StateMachine;
 public class Monster : Entity
 {
     private NavMeshAgent agent;
-    
-    private static readonly int DoAttack = Animator.StringToHash("doAttack");
-    
+
     protected override void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -21,6 +19,8 @@ public class Monster : Entity
     protected override void OnEnable()
     {
         targetEntity = FindObjectOfType<PlayerController>();
+
+        agent.enabled = true;
         base.OnEnable();
     }
 
@@ -32,16 +32,12 @@ public class Monster : Entity
         {
             agent.isStopped = true;
             agent.enabled = false;
-            //anim.SetTrigger("doDie");
             gameObject.layer = LayerMask.NameToLayer("Ignore");
         };
-        
-        //MonsterManager.Instance.ReturnObj(this, 2.0f);
     }
 
     private void Update()
     {
-        state = fsm.State;
         fsm.Driver.Update?.Invoke();
     }
 
@@ -50,13 +46,13 @@ public class Monster : Entity
         fsm.Driver.FixedUpdate?.Invoke();
     }
 
-    protected override void Init_Enter()
+    public override void SetupEntityData(EntityData entityData, float increaseValue = 1.0f)
     {
+        base.SetupEntityData(entityData, increaseValue);
+
         agent.isStopped = false;
-        agent.stoppingDistance = entityData.attackRange * 0.5f;
+        agent.stoppingDistance = entityData.attackRange + 0.5f;
         agent.speed = entityData.moveSpeed;
-        
-        base.Init_Enter();
     }
 
     protected override void TrackFlow()
@@ -94,14 +90,8 @@ public class Monster : Entity
                 lastAttackTime = Time.time;
 
                 if(!anim.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
-                    anim.SetTrigger(DoAttack);
+                    anim.SetTrigger("doAttack");
             }
         }
-    }
-
-    protected override void Die_Enter()
-    {
-        agent.isStopped = true;
-        base.Die_Enter();
     }
 }
