@@ -46,6 +46,7 @@ public class DataManager : MonoBehaviour
     #endregion
 
     [SerializeField] private EntitySO playerOriginData;
+    [SerializeField] private SkillSO[] playerSkillDatas = new SkillSO[3];
 
     private void Awake()
     {
@@ -89,7 +90,11 @@ public class DataManager : MonoBehaviour
 
         mGameData.playerData = new EntityData(playerOriginData.entityData);
         
-        mGameData.statUpLevels = new int[]{ 1, 1, 1, 1, 1, 1} ;
+        mGameData.statUpLevels = new int[]{ 1, 1, 1, 1, 1, 1};
+        mGameData.skillUpLevels = new int[] { 1, 1, 1 };
+        
+        for (int i = 0; i < playerSkillDatas.Length; i++)
+            mGameData.skillEffectAmounts[i] = playerSkillDatas[i].originEffectAmount;
     }
 
     public void LoadGameData()
@@ -135,6 +140,22 @@ public class DataManager : MonoBehaviour
         }
 
         return value;
+    }
+
+    public SkillSO GetSkillSO(ESkillType skillType)
+    {
+        int index = (int)skillType;
+        if (index >= 0 && index < playerSkillDatas.Length)
+            return playerSkillDatas[index];
+        return null;
+    }
+
+    public float GetSkillEffectAmount(ESkillType skillType)
+    {
+        int index = (int)skillType;
+        if (index >= 0 && index < mGameData.skillEffectAmounts.Length)
+            return mGameData.skillEffectAmounts[index];
+        return -1;
     }
 
     private void OnApplicationPause(bool pause) => SaveGameData();

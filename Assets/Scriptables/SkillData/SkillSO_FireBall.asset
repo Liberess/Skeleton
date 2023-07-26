@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe426c7df60550c4fb8c895865888610, type: 3}
+  m_Name: SkillSO_FireBall
+  m_EditorClassIdentifier: 
+  skillName: "\uD30C\uC774\uC5B4 \uBCFC"
+  skillDescription: "\uB300\uC0C1\uC5D0\uAC8C \uBD88\uD0C0\uC624\uB974\uB294 \uAD6C\uB97C
+    \uB358\uC838 \uBC94\uC704 \uB0B4 \uC801\uC5D0\uAC8C {0}% \uD53C\uD574\uB97C \uAC00\uD55C\uB2E4."
+  skillType: 1
+  originEffectAmount: 50
+  coolTime: 30
+  skillIcon: {fileID: 21300000, guid: 634bb1c845345504dafd43468b53c2a7, type: 3}

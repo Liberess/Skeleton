@@ -25,6 +25,13 @@ public enum EStatusType
     MoveSpeed
 }
 
+public enum ESkillType
+{
+    PhantomBlade = 0,
+    FireBall,
+    Recovery
+}
+
 public class Enums
 {
     
