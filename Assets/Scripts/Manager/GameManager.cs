@@ -45,24 +45,27 @@ public class GameManager : MonoBehaviour
     [SerializeField] private bool isPlaying = true;
     public bool IsPlaying => isPlaying;
 
-    private readonly int MaxGold = 999999999;
-
-    private int gold = 50;
     public int Gold
     {
-        get => gold;
+        get => dataMgr.GameData.gold;
         set
         {
-            gold = Mathf.Clamp(value, 0, MaxGold);
+            dataMgr.GameData.gold = Mathf.Clamp(value, 0, dataMgr.GameData.MaxGoodsAmount);
 
-            if (gold > 0)
-            {
-                goldTxt.text = string.Concat("<sprite=0>", $"{dataMgr.GameData.gold:#,###}");
-            }
-            else
-            {
-                goldTxt.text = string.Concat("0");
-            }            
+            goldTxt.text = string.Concat("<sprite=0>", 
+                dataMgr.GameData.gold > 0 ? $"{dataMgr.GameData.gold:#,###}" : "0");
+        }
+    }
+
+    public int Karma
+    {
+        get => dataMgr.GameData.karma;
+        set
+        {
+            dataMgr.GameData.karma = Mathf.Clamp(value, 0, dataMgr.GameData.MaxGoodsAmount);
+
+            karmaTxt.text = string.Concat("<sprite=0>", 
+                dataMgr.GameData.karma > 0 ? $"{dataMgr.GameData.karma:#,###}" : "0");
         }
     }
 
@@ -98,6 +101,7 @@ public class GameManager : MonoBehaviour
     }
 
     public void GetGold(int value) => Gold += value;
+    public void GetKarma(int value) => Karma += value;
 
     private IEnumerator InvokeNextWaveCo(float delay = 0.0f)
     {

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using MonsterLove.StateMachine;
+using Random = UnityEngine.Random;
 
 public class Monster : Entity
 {
@@ -35,6 +36,9 @@ public class Monster : Entity
         {
             agent.isStopped = true;
             agent.enabled = false;
+            int min = DataManager.Instance.GameData.stageCount;
+            GameManager.Instance.GetGold(Mathf.RoundToInt(Random.Range(min, min * 2.5f)));
+            GameManager.Instance.
             gameObject.layer = LayerMask.NameToLayer("Ignore");
         };
     }

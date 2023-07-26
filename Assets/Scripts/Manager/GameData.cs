@@ -6,6 +6,7 @@ public class GameData
 {
     public int gold = 0;
     public int karma = 0;
+    public readonly int MaxGoodsAmount = 999999999;
 
     public float totalPlayTime = 0.0f;
 
