@@ -10,9 +10,11 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     #region Singleton
+
     private static GameObject mContainer;
 
     private static GameManager mInstance;
+
     public static GameManager Instance
     {
         get
@@ -27,24 +29,52 @@ public class GameManager : MonoBehaviour
             return mInstance;
         }
     }
+
     #endregion
-    
+
     private UIManager uiMgr;
     private DataManager dataMgr;
 
     [SerializeField] private GameObject gameOverCanvas;
-    
+
     [SerializeField] private TextMeshProUGUI stageTxt;
     [SerializeField] private TextMeshProUGUI goldTxt;
     [SerializeField] private TextMeshProUGUI karmaTxt;
     [SerializeField] private TextMeshProUGUI shopKarmaTxt;
     [SerializeField] private TextMeshProUGUI remainTxt;
+    [SerializeField] private Image remainFillImg;
+
+    [SerializeField] private TextMeshProUGUI lvTxt;
+    [SerializeField] private Slider expSlider;
 
     public UnityAction NextWaveAction;
     public UnityAction GameOverAction;
 
     [SerializeField] private bool isPlaying = true;
     public bool IsPlaying => isPlaying;
+
+    public float Exp
+    {
+        get => dataMgr.GameData.exp;
+        set
+        {
+            dataMgr.GameData.exp = Mathf.Clamp(value, 0.0f, 100.0f);
+
+            if (dataMgr.GameData.exp >= dataMgr.GameData.needsExp)
+            {
+                ++dataMgr.GameData.level;
+                dataMgr.GameData.exp = Mathf.Clamp(dataMgr.GameData.exp - dataMgr.GameData.needsExp, 0.0f,
+                    dataMgr.GameData.needsExp);
+
+                lvTxt.text = dataMgr.GameData.level.ToString();
+
+                // 맨 뒤의 계수는 10만 테이블당 1을 뜻함
+                dataMgr.GameData.needsExp = Mathf.Pow(((dataMgr.GameData.level - 1) * 50 / 49), 2.5f) * 10;
+            }
+
+            expSlider.value = dataMgr.GameData.exp / dataMgr.GameData.needsExp;
+        }
+    }
 
     public int Gold
     {
@@ -77,7 +107,7 @@ public class GameManager : MonoBehaviour
             mInstance = this;
         else if (mInstance != this)
             Destroy(gameObject);
-        
+
         GameOverAction += GameOver;
         NextWaveAction += NextStage;
     }
@@ -87,21 +117,24 @@ public class GameManager : MonoBehaviour
         uiMgr = UIManager.Instance;
         dataMgr = DataManager.Instance;
 
-        Gold = 50;
+        Gold = 999999;
+        Karma = 999999;
+
+        expSlider.maxValue = 1.0f;
 
         startTime = DateTime.Now;
-        
+
         UpdateGameUI();
-    
+
         StartCoroutine(InvokeNextWaveCo(1.0f));
 
         //AudioManager.Instance.PlayBGM(EBGMName.InGame);
     }
 
-    public void GetGold(int value) => Gold += value;
-    public void GetKarma(int value) => Karma += value;
+    public void SetGold(int value) => Gold += value;
+    public void SetKarma(int value) => Karma += value;
 
-    private IEnumerator InvokeNextWaveCo(float delay = 0.0f)
+    public IEnumerator InvokeNextWaveCo(float delay = 0.0f)
     {
         yield return new WaitForSeconds(delay);
 
@@ -129,25 +162,24 @@ public class GameManager : MonoBehaviour
 
         dataMgr.GameData.stageStr = string.Concat(mainStageNum, '-', subStageNum);
         stageTxt.text = dataMgr.GameData.stageStr;
+        remainFillImg.fillAmount = 1.0f;
     }
 
     private void BossStage()
     {
-        
     }
 
     private void UpdateGameUI()
     {
         stageTxt.text = dataMgr.GameData.stageStr;
-        /*goldTxt.text = string.Concat("<sprite=0>", 
-            dataMgr.GameData.gold > 0 ? $"{dataMgr.GameData.gold:#,###}" : "0");
-        karmaTxt.text = string.Concat("<sprite=0>", 
-            dataMgr.GameData.karma > 0 ? $"{dataMgr.GameData.karma:#,###}" : "0");*/
+        lvTxt.text = dataMgr.GameData.level.ToString();
+        expSlider.value = dataMgr.GameData.exp / dataMgr.GameData.needsExp;
     }
 
     public void UpdateRemainMonsterUI(int count)
     {
         remainTxt.text = count.ToString();
+        remainFillImg.fillAmount = ((float)count / MonsterManager.Instance.StageSpawnCount);
     }
 
     private void GameOver()
@@ -159,7 +191,7 @@ public class GameManager : MonoBehaviour
 
         dataMgr.GameData.totalPlayTime += currentPlayTime;
         dataMgr.GameData.karma += currentkillCount;
-        
+
         ++dataMgr.GameData.deathCount;
         dataMgr.GameData.killCount += currentkillCount;
 

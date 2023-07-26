@@ -70,14 +70,18 @@ public class DataManager : MonoBehaviour
 
     public void InitGameData()
     {
-        mGameData.sfx = 10f;
-        mGameData.bgm = 10f;
-
+        mGameData.level = 1;
+        mGameData.exp = 0.0f;
+        mGameData.needsExp = 5.0f;
+        
         mGameData.gold = 0;
         mGameData.karma = 0;
         mGameData.killCount = 0;
         mGameData.deathCount = 0;
         mGameData.stageCount = 0;
+        
+        mGameData.sfx = 50f;
+        mGameData.bgm = 50f;
         
         mGameData.stageStr = "1-0";
 
@@ -85,8 +89,7 @@ public class DataManager : MonoBehaviour
 
         mGameData.playerData = new EntityData(playerOriginData.entityData);
         
-        for (int i = 0; i < mGameData.statUpLevels.Length; i++)
-            mGameData.statUpLevels[i] = 1;
+        mGameData.statUpLevels = new int[]{ 1, 1, 1, 1, 1, 1} ;
     }
 
     public void LoadGameData()

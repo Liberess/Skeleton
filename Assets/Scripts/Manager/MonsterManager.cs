@@ -15,6 +15,8 @@ public class MonsterManager : MonoBehaviour
     private Queue<Monster> monsterQueue = new Queue<Monster>();
 
     private int spawnCount = 0;
+    public int StageSpawnCount { get; private set; }
+    
     [SerializeField, Range(0.0f, 60.0f)] private float spawnCycleTime = 5.0f;
     [SerializeField] private int maxSpawnCount = 100;
     [SerializeField] private Transform[] spawnPoints;
@@ -102,6 +104,7 @@ public class MonsterManager : MonoBehaviour
     private IEnumerator SpawnCo()
     {
         spawnCount += dataMgr.GameData.stageCount * 2;
+        StageSpawnCount = spawnCount;
         if (spawnCount > maxSpawnCount)
             spawnCount = maxSpawnCount;
         gameMgr.UpdateRemainMonsterUI(spawnCount);
@@ -129,8 +132,11 @@ public class MonsterManager : MonoBehaviour
             {
                 SpawnedMonsterList.Remove(monster);
                 gameMgr.UpdateRemainMonsterUI(--spawnCount);
-                ++gameMgr.currentkillCount;
+                ++dataMgr.GameData.killCount;
                 StartCoroutine(ReturnObjCo(monster, 1.0f));
+
+                if (SpawnedMonsterList.Count == 0)
+                    gameMgr.StartCoroutine(gameMgr.InvokeNextWaveCo(spawnCycleTime));
             };
 
             SpawnedMonsterList.Add(monster);

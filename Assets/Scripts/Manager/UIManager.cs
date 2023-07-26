@@ -10,6 +10,7 @@ public class UIManager : MonoBehaviour
     private DataManager dataMgr;
     
     public List<Action<int>> UpdateCurrencyUIActionList = new List<Action<int>>();
+    public List<Action<string>> UpdateStatusUIActionList = new List<Action<string>>();
     
     private void Awake()
     {
@@ -21,6 +22,10 @@ public class UIManager : MonoBehaviour
         UpdateCurrencyUIActionList.Clear();
         for (int i = 0; i < Enum.GetValues(typeof(ECurrencyType)).Length; i++)
             UpdateCurrencyUIActionList.Add(null);
+        
+        UpdateStatusUIActionList.Clear();
+        for (int i = 0; i < Enum.GetValues(typeof(EStatusType)).Length; i++)
+            UpdateStatusUIActionList.Add(null);
     }
 
     private void Start()
@@ -38,5 +43,35 @@ public class UIManager : MonoBehaviour
     public void InvokeCurrencyUI(ECurrencyType type, int amount)
     {
         UpdateCurrencyUIActionList[(int)type]?.Invoke(amount);
+    }
+
+    public void InvokeStatusUI(EStatusType type, float value)
+    {
+        string formatStr = "";
+        
+        switch (type)
+        {
+            case EStatusType.AttackPower:
+                formatStr = value.ToString();
+                break;
+            case EStatusType.HealthPoint:
+                formatStr = value.ToString();
+                break;
+            case EStatusType.AttackRange:
+                formatStr = string.Concat(value, "/m");
+                break;
+            case EStatusType.AttackPerSecond:
+                formatStr = string.Concat(value.ToString("F2"), "/s");
+                break;
+            case EStatusType.DPS:
+                formatStr = value.ToString("F2");
+                break;
+            case EStatusType.MoveSpeed:
+                formatStr = value.ToString("F2");
+                break;
+            default: throw new ArgumentOutOfRangeException();
+        }
+        
+        UpdateStatusUIActionList[(int)type]?.Invoke(formatStr);
     }
 }

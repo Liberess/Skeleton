@@ -15,6 +15,16 @@ public enum ECurrencyType
     KM,     //Karma
 }
 
+public enum EStatusType
+{
+    AttackPower = 0,
+    HealthPoint,
+    AttackRange,
+    AttackPerSecond,
+    DPS,
+    MoveSpeed
+}
+
 public class Enums
 {
     

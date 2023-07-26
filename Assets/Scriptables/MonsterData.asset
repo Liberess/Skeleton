@@ -17,8 +17,8 @@ MonoBehaviour:
     healthPoint: 10
     attackPower: 1
     attackRange: 1
-    maxAttackRange: 1
+    maxAttackRange: 5
     attackPerSecond: 1
-    maxAttackPerSecond: 1
+    maxAttackPerSecond: 5
     moveSpeed: 3
-    maxMoveSpeed: 0
+    maxMoveSpeed: 5

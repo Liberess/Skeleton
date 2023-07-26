@@ -88,11 +88,17 @@ public abstract class Entity : LivingEntity
         ChangedHpValueAction += () => hpBar.value = (float)CurrentHp / EntityData.healthPoint;
     }
 
-    protected virtual void Init_Enter()
+    public void UpdateHpUI()
     {
         hpBar.maxValue = 1.0f;
-        CurrentHp = EntityData.healthPoint;
         hpBar.value = (float)CurrentHp / EntityData.healthPoint;
+    }
+
+    protected virtual void Init_Enter()
+    {
+        CurrentHp = EntityData.healthPoint;
+        
+        UpdateHpUI();
 
         if (targetEntity == null)
             fsm.ChangeState(EStates.Idle);

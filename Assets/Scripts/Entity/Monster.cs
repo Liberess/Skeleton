@@ -37,8 +37,8 @@ public class Monster : Entity
             agent.isStopped = true;
             agent.enabled = false;
             int min = DataManager.Instance.GameData.stageCount;
-            GameManager.Instance.GetGold(Mathf.RoundToInt(Random.Range(min, min * 2.5f)));
-            GameManager.Instance.
+            GameManager.Instance.SetGold(Mathf.RoundToInt(Random.Range(min, min * 2.5f)));
+            GameManager.Instance.Exp += Random.Range(min, min * 2.5f);
             gameObject.layer = LayerMask.NameToLayer("Ignore");
         };
     }

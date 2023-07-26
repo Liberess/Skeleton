@@ -4,6 +4,9 @@ using System.Collections.Generic;
 [System.Serializable]
 public class GameData
 {
+    public int level = 1;
+    public float exp = 0.0f;
+    public float needsExp = 5.0f;
     public int gold = 0;
     public int karma = 0;
     public readonly int MaxGoodsAmount = 999999999;
@@ -22,5 +25,6 @@ public class GameData
     public EntityData playerData;
 
     // 스텟 관련 정보 (업글)
-    public int[] statUpLevels = new int[3];
+    public int[] statUpLevels = new int[6];
+    public readonly int MaxStatLevel = 999;
 }
