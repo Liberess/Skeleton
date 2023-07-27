@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using NaughtyAttributes;
 using UnityEngine;
 
@@ -9,8 +7,8 @@ public class SkillSO : ScriptableObject
     public string skillName = "None";
     [ResizableTextArea] public string skillDescription = "None";
     public ESkillType skillType;
-    public float originEffectAmount = 0.0f;
-    public float coolTime;
+    public float skillEffectAmount = 0.0f;
+    public float skillCoolTime;
     
     [ShowAssetPreview] public Sprite skillIcon;
     [ShowAssetPreview] public GameObject skillPrefab;

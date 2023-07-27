@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using NaughtyAttributes;
 using UnityEngine;
 
 public class DataManager : MonoBehaviour
@@ -45,8 +46,10 @@ public class DataManager : MonoBehaviour
     
     #endregion
 
+    [Header("# Player Data Settings"), Space(5)]
     [SerializeField] private EntitySO playerOriginData;
     [SerializeField] private SkillSO[] playerSkillDatas = new SkillSO[3];
+    public SkillSO[] PlayerSkillDatas => playerSkillDatas;
 
     private void Awake()
     {
@@ -90,11 +93,11 @@ public class DataManager : MonoBehaviour
 
         mGameData.playerData = new EntityData(playerOriginData.entityData);
         
-        mGameData.statUpLevels = new int[]{ 1, 1, 1, 1, 1, 1};
+        mGameData.statUpLevels = new int[] { 1, 1, 1, 1, 1, 1};
         mGameData.skillUpLevels = new int[] { 1, 1, 1 };
-        
-        for (int i = 0; i < playerSkillDatas.Length; i++)
-            mGameData.skillEffectAmounts[i] = playerSkillDatas[i].originEffectAmount;
+
+        for (int i = 0; i < PlayerSkillDatas.Length; i++)
+            mGameData.skillEffectAmounts[i] = PlayerSkillDatas[i].skillEffectAmount;
     }
 
     public void LoadGameData()
@@ -145,8 +148,15 @@ public class DataManager : MonoBehaviour
     public SkillSO GetSkillSO(ESkillType skillType)
     {
         int index = (int)skillType;
-        if (index >= 0 && index < playerSkillDatas.Length)
-            return playerSkillDatas[index];
+        if (index >= 0 && index < PlayerSkillDatas.Length)
+            return PlayerSkillDatas[index];
+        return null;
+    }
+    
+    public SkillSO GetSkillSO(int skillIndex)
+    {
+        if (skillIndex >= 0 && skillIndex < PlayerSkillDatas.Length)
+            return PlayerSkillDatas[skillIndex];
         return null;
     }
 

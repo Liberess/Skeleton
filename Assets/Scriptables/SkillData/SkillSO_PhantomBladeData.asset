@@ -16,6 +16,7 @@ MonoBehaviour:
   skillDescription: "\uB300\uC0C1\uC5D0\uAC8C \uC6D0\uD63C\uC774 \uBAA8\uC778 \uAC80\uAE30\uB97C
     \uB0A0\uB824 {0}% \uD53C\uD574\uB97C \uAC00\uD55C\uB2E4."
   skillType: 0
-  originEffectAmount: 150
-  coolTime: 10
-  skillIcon: {fileID: 21300000, guid: 50367d27c473ad2459a814bda1ef3ddb, type: 3}
+  skillEffectAmount: 150
+  skillCoolTime: 10
+  skillIcon: {fileID: 21300000, guid: e8ba00f6eaa968644bf2a2f9fca61c0e, type: 3}
+  skillPrefab: {fileID: 0}

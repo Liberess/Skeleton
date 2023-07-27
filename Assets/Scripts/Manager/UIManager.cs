@@ -3,11 +3,24 @@ using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using TMPro;
+using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance { get; private set; }
     private DataManager dataMgr;
+
+    [Header("# Skill UI Settings"), Space(5)]
+    [SerializeField] private Button[] skillBtns;
+    [SerializeField] private Image[] skillCoolImgs;
+    private TextMeshProUGUI[] skillCoolTimeTxts = new TextMeshProUGUI[3];
+    
+    private bool[] isCoolSkills = { false, false, false };
+
+    private float[] skillCoolTimes = { 0.0f, 0.0f, 0.0f };
+    private float[] curSkillCoolTimes = { 0.0f, 0.0f, 0.0f };
     
     public List<Action<int>> UpdateCurrencyUIActionList = new List<Action<int>>();
     public List<Action<string>> UpdateStatusUIActionList = new List<Action<string>>();
@@ -31,6 +44,14 @@ public class UIManager : MonoBehaviour
     private void Start()
     {
         dataMgr = DataManager.Instance;
+
+        for (int i = 0; i < dataMgr.PlayerSkillDatas.Length; i++)
+        {
+            skillCoolTimes[i] = dataMgr.PlayerSkillDatas[i].skillCoolTime;
+            skillCoolTimeTxts[i] = skillCoolImgs[i].GetComponentInChildren<TextMeshProUGUI>();
+            skillCoolImgs[i].gameObject.SetActive(false);
+            skillBtns[i].transform.GetChild(0).GetComponent<Image>().sprite = dataMgr.PlayerSkillDatas[i].skillIcon;
+        }
     }
 
     public async UniTaskVoid UpdateCurrencyUI(float delay)
@@ -73,5 +94,34 @@ public class UIManager : MonoBehaviour
         }
         
         UpdateStatusUIActionList[(int)type]?.Invoke(formatStr);
+    }
+
+    public void SetCoolSkill(int skillIndex)
+    {
+        skillCoolImgs[skillIndex].gameObject.SetActive(true);
+        curSkillCoolTimes[skillIndex] = skillCoolTimes[skillIndex];
+        isCoolSkills[skillIndex] = true;
+        StartCoroutine(ProgressCoolSkillCo(skillIndex));
+    }
+
+    private IEnumerator ProgressCoolSkillCo(int skillIndex)
+    {
+        do
+        {
+            yield return null;
+            
+            curSkillCoolTimes[skillIndex] -= Time.deltaTime;
+
+            if (curSkillCoolTimes[skillIndex] <= 0.0f)
+            {
+                curSkillCoolTimes[skillIndex] = 0.0f;
+                isCoolSkills[skillIndex] = false;
+                skillCoolImgs[skillIndex].gameObject.SetActive(false);
+            }
+
+            skillCoolTimeTxts[skillIndex].text = Mathf.RoundToInt(curSkillCoolTimes[skillIndex]).ToString();
+            skillCoolImgs[skillIndex].fillAmount = curSkillCoolTimes[skillIndex] / skillCoolTimes[skillIndex];
+
+        } while (isCoolSkills[skillIndex]);
     }
 }

@@ -45,12 +45,36 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mGameData:
+    level: 1
+    exp: 0
+    needsExp: 5
+    gold: 0
     karma: 0
     totalPlayTime: 0
-    bestPlayTime: 0
     killCount: 0
     deathCount: 0
-    waveCount: 0
+    stageCount: 0
+    stageStr: 1-0
     bgm: 50
     sfx: 50
-    statUpLevels: 000000000000000000000000
+    playerData:
+      entityName: 
+      healthPoint: 0
+      attackPower: 0
+      attackRange: 0
+      maxAttackRange: 0
+      attackPerSecond: 0
+      maxAttackPerSecond: 0
+      moveSpeed: 0
+      maxMoveSpeed: 0
+    statUpLevels: 0000000000000000000000000000000000000000
+    skillUpLevels: 000000000000000000000000
+    skillEffectAmounts:
+    - 0
+    - 0
+    - 0
+  playerOriginData: {fileID: 11400000, guid: 9fff56c861d382a409d6096c3220385a, type: 2}
+  playerSkillDatas:
+  - {fileID: 11400000, guid: bd94857624f79f14c98346be377596f0, type: 2}
+  - {fileID: 11400000, guid: 9a1b871b24a2bdb4fa33a777ac40b235, type: 2}
+  - {fileID: 11400000, guid: 1b1cc525e3ab94347a8b52f88ae33f45, type: 2}
