@@ -16,11 +16,14 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Button[] skillBtns;
     [SerializeField] private Image[] skillCoolImgs;
     private TextMeshProUGUI[] skillCoolTimeTxts = new TextMeshProUGUI[3];
+    [SerializeField] private Toggle autoUseSkillTog;
     
     private bool[] isCoolSkills = { false, false, false };
 
     private float[] skillCoolTimes = { 0.0f, 0.0f, 0.0f };
     private float[] curSkillCoolTimes = { 0.0f, 0.0f, 0.0f };
+
+    private bool isAutoUseSkill = false;
     
     public List<Action<int>> UpdateCurrencyUIActionList = new List<Action<int>>();
     public List<Action<string>> UpdateStatusUIActionList = new List<Action<string>>();
@@ -52,6 +55,8 @@ public class UIManager : MonoBehaviour
             skillCoolImgs[i].gameObject.SetActive(false);
             skillBtns[i].transform.GetChild(0).GetComponent<Image>().sprite = dataMgr.PlayerSkillDatas[i].skillIcon;
         }
+        
+        autoUseSkillTog.onValueChanged.AddListener(SetAutoUseSkillToggle);
     }
 
     public async UniTaskVoid UpdateCurrencyUI(float delay)
@@ -123,5 +128,19 @@ public class UIManager : MonoBehaviour
             skillCoolImgs[skillIndex].fillAmount = curSkillCoolTimes[skillIndex] / skillCoolTimes[skillIndex];
 
         } while (isCoolSkills[skillIndex]);
+
+        if (isAutoUseSkill)
+            SetCoolSkill(skillIndex);
+    }
+
+    public void SetAutoUseSkillToggle(bool isActive)
+    {
+        isAutoUseSkill = isActive;
+
+        for (int i = 0; i < isCoolSkills.Length; i++)
+        {
+            if(!isCoolSkills[i])
+                SetCoolSkill(i);
+        }
     }
 }
