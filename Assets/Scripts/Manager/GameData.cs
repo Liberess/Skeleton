@@ -27,7 +27,7 @@ public class GameData
     // 스텟 관련 정보 (업글)
     public int[] statUpLevels = new int[6];
     public int[] skillUpLevels = new int[3];
-    public float[] skillEffectAmounts = new float[3];
+    public int[] skillEffectAmounts = new int[3];
     public readonly int MaxStatLevel = 999;
     public readonly int MaxSkillLevel = 99;
 }

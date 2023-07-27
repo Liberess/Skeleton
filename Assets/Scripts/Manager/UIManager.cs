@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using TMPro;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
@@ -24,6 +23,8 @@ public class UIManager : MonoBehaviour
     private float[] curSkillCoolTimes = { 0.0f, 0.0f, 0.0f };
 
     private bool isAutoUseSkill = false;
+
+    private PlayerController playerCtrl;
     
     public List<Action<int>> UpdateCurrencyUIActionList = new List<Action<int>>();
     public List<Action<string>> UpdateStatusUIActionList = new List<Action<string>>();
@@ -47,6 +48,8 @@ public class UIManager : MonoBehaviour
     private void Start()
     {
         dataMgr = DataManager.Instance;
+
+        playerCtrl = FindObjectOfType<PlayerController>();
 
         for (int i = 0; i < dataMgr.PlayerSkillDatas.Length; i++)
         {
@@ -103,9 +106,16 @@ public class UIManager : MonoBehaviour
 
     public void SetCoolSkill(int skillIndex)
     {
+        if (skillIndex < 2 && playerCtrl.TargetEntity == null)
+            return;
+        
+        if(skillIndex == 0 && !Utility.IsExistObjectInCamera(playerCtrl.TargetEntity.transform))
+            return;
+            
         skillCoolImgs[skillIndex].gameObject.SetActive(true);
         curSkillCoolTimes[skillIndex] = skillCoolTimes[skillIndex];
         isCoolSkills[skillIndex] = true;
+        playerCtrl.UseSkill((ESkillType)skillIndex);
         StartCoroutine(ProgressCoolSkillCo(skillIndex));
     }
 

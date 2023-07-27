@@ -22,7 +22,7 @@ public class Monster : Entity
 
     protected override void OnEnable()
     {
-        targetEntity = FindObjectOfType<PlayerController>();
+        TargetEntity = FindObjectOfType<PlayerController>();
 
         agent.enabled = true;
         base.OnEnable();
@@ -66,7 +66,7 @@ public class Monster : Entity
     protected override void TrackFlow()
     {
         if (!agent.pathPending)
-            agent.SetDestination(targetEntity.transform.position);
+            agent.SetDestination(TargetEntity.transform.position);
     }
 
     protected override void Track_Enter()

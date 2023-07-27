@@ -1251,7 +1251,7 @@ GameObject:
   - component: {fileID: 6675425486265618448}
   m_Layer: 7
   m_Name: Spider
-  m_TagString: Untagged
+  m_TagString: Monster
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1335,7 +1335,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fbb48d9d012fe74e927aacca12bc2de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  originHp: 100
   currentHp: 0
   minTimeBetDamaged: 0.1
   entityData:
@@ -1343,13 +1342,16 @@ MonoBehaviour:
     healthPoint: 10
     attackPower: 1
     attackRange: 1
+    maxAttackRange: 0
     attackPerSecond: 1
+    maxAttackPerSecond: 0
     moveSpeed: 3
+    maxMoveSpeed: 0
+  hpBar: {fileID: 3386549985830526918}
   targetLayer:
     serializedVersion: 2
     m_Bits: 64
-  targetEntity: {fileID: 0}
-  hpBar: {fileID: 3386549985830526918}
+  state: 0
 --- !u!195 &586371165263878062
 NavMeshAgent:
   m_ObjectHideFlags: 0

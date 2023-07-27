@@ -20,5 +20,5 @@ MonoBehaviour:
     maxAttackRange: 5
     attackPerSecond: 1
     maxAttackPerSecond: 30
-    moveSpeed: 5
+    moveSpeed: 3
     maxMoveSpeed: 15

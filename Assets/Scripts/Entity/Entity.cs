@@ -1,11 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using JetBrains.Annotations;
 using UnityEngine;
-using MonsterLove.StateMachine;
 using UnityEngine.UI;
+using MonsterLove.StateMachine;
+using NaughtyAttributes;
 
 public abstract class Entity : LivingEntity
 {
@@ -21,6 +20,7 @@ public abstract class Entity : LivingEntity
 
     protected StateMachine<EStates> fsm;
 
+    [Foldout("# Status Settings")]
     [SerializeField] private EntityData entityData;
 
     public EntityData EntityData
@@ -29,16 +29,25 @@ public abstract class Entity : LivingEntity
         protected set { entityData = value; }
     }
 
+    [Foldout("# Status Settings")]
+    [SerializeField] private Slider hpBar;
+    
     // Attack
+    [Foldout("# Attack Settings")]
     [SerializeField] protected LayerMask targetLayer;
-    [SerializeField] protected LivingEntity targetEntity;
-    protected bool HasTarget => targetEntity != null && !targetEntity.IsDead;
+
+    public LivingEntity TargetEntity { get; protected set; } = null;
+    
+    protected bool HasTarget => TargetEntity != null && !TargetEntity.IsDead;
 
     protected float lastAttackTime = 0.0f;
-    protected bool IsAttackable => Time.time >= lastAttackTime + EntityData.attackPerSecond;
 
-    [SerializeField] private Slider hpBar;
+    protected bool IsAttackable =>
+        Time.time >= lastAttackTime + EntityData.attackPerSecond && IsAttached;
 
+    public bool IsAttached =>
+        TargetEntity != null && Vector3.Distance(TargetEntity.transform.position, transform.position) <= entityData.attackRange;
+    
     protected Animator anim;
     protected Rigidbody rigid;
 
@@ -100,7 +109,7 @@ public abstract class Entity : LivingEntity
         
         UpdateHpUI();
 
-        if (targetEntity == null)
+        if (TargetEntity == null)
             fsm.ChangeState(EStates.Idle);
         else
             fsm.ChangeState(EStates.Track);
@@ -113,7 +122,7 @@ public abstract class Entity : LivingEntity
 
     protected virtual void Idle_Update()
     {
-        if (targetEntity == null || targetEntity && !targetEntity.gameObject.activeSelf)
+        if (TargetEntity == null || TargetEntity && !TargetEntity.gameObject.activeSelf)
         {
             Collider[] cols = Physics.OverlapSphere(transform.position, 100f, targetLayer);
             if (cols.Length > 0)
@@ -125,13 +134,13 @@ public abstract class Entity : LivingEntity
                 GameObject nearstObj = Utility.GetNearestObjectByList(objList, transform.position);
                 if (nearstObj.TryGetComponent(out LivingEntity entity))
                 {
-                    targetEntity = entity;
+                    TargetEntity = entity;
                     fsm.ChangeState(EStates.Track);
                 }
             }
             else
             {
-                targetEntity = null;
+                TargetEntity = null;
             }
         }
         else
@@ -165,9 +174,9 @@ public abstract class Entity : LivingEntity
 
     protected virtual void Track_Update()
     {
-        if (targetEntity != null)
+        if (TargetEntity != null)
         {
-            float distance = Vector3.Distance(targetEntity.transform.position, transform.position);
+            float distance = Vector3.Distance(TargetEntity.transform.position, transform.position);
             if (distance <= EntityData.attackRange && fsm.State != EStates.Attack)
                 fsm.ChangeState(EStates.Attack);
             else
@@ -192,10 +201,25 @@ public abstract class Entity : LivingEntity
 
     protected void OnAttack1Trigger()
     {
-        DamageMessage dmgMsg = new DamageMessage(this.gameObject, EntityData.attackPower);
-        targetEntity.ApplyDamage(dmgMsg);
-
+        AttackTargetEntity();
         fsm.ChangeState(EStates.Track);
+    }
+
+    protected void AttackTargetEntity(int damage = 0)
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, TargetEntity.transform.position - transform.position, out hit,
+                EntityData.attackRange, targetLayer))
+        {
+            if (hit.collider.gameObject != TargetEntity.gameObject)
+            {
+                if (hit.collider.TryGetComponent(out LivingEntity otherEntity))
+                    TargetEntity = otherEntity;
+            }
+
+            DamageMessage dmgMsg = new DamageMessage(this.gameObject, damage > 0 ? damage : EntityData.attackPower, hit.point);
+            TargetEntity.ApplyDamage(dmgMsg);
+        }
     }
 
     protected virtual void Attack_Exit()

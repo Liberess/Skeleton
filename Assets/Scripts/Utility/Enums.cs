@@ -32,6 +32,13 @@ public enum ESkillType
     Recovery
 }
 
+public enum EEffectType
+{
+    FireBall = 0,
+    Explosion,
+    Blood
+}
+
 public class Enums
 {
     

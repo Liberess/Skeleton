@@ -70,7 +70,7 @@ public class SkillUpgradeSlot : MonoBehaviour
         float increaseAmount = GetSkillIncreaseAmount(skillData.skillType, effectAmount);
 
         DataManager.Instance.GameData.skillEffectAmounts[(int)skillData.skillType] =
-            Mathf.Clamp(increaseAmount, 0.0f, float.MaxValue);
+            Mathf.RoundToInt(Mathf.Clamp(increaseAmount, 0, int.MaxValue));
 
         DataManager.Instance.GameData.skillUpLevels[(int)skillData.skillType]++;
 

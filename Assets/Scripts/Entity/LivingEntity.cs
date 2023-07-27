@@ -2,11 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using NaughtyAttributes;
 
 public class LivingEntity : MonoBehaviour
 {
     protected int originHp = 100;
-    [SerializeField] private int currentHp;
+    [Space(5), Foldout("# LivingEntity")]
+    [SerializeField, ProgressBar("Health", "originHp", EColor.Red)] private int currentHp;
     public int CurrentHp
     {
         get => currentHp;
@@ -24,6 +26,7 @@ public class LivingEntity : MonoBehaviour
         }
     }
 
+    [Foldout("# LivingEntity")]
     [SerializeField] protected float minTimeBetDamaged = 0.1f;
     private float lastDamagedTime;
 
@@ -57,7 +60,7 @@ public class LivingEntity : MonoBehaviour
         CurrentHp -= dmgMsg.damageAmount;
     }
 
-    public virtual void CureHealthPoint(int cureAmount = 0)
+    public virtual void RecoveryHealthPoint(int cureAmount = 0)
     {
         if (IsDead)
             return;

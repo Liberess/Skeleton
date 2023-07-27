@@ -3,8 +3,8 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using NaughtyAttributes;
 using UnityEngine;
+using NaughtyAttributes;
 
 public class DataManager : MonoBehaviour
 {
@@ -29,6 +29,7 @@ public class DataManager : MonoBehaviour
         }
     }
 
+    [BoxGroup("# GameData")]
     [SerializeField] private GameData mGameData;
     public GameData GameData
     {
@@ -46,8 +47,9 @@ public class DataManager : MonoBehaviour
     
     #endregion
 
-    [Header("# Player Data Settings"), Space(5)]
+    [BoxGroup("# PlayerData")]
     [SerializeField] private EntitySO playerOriginData;
+    [BoxGroup("# PlayerData")]
     [SerializeField] private SkillSO[] playerSkillDatas = new SkillSO[3];
     public SkillSO[] PlayerSkillDatas => playerSkillDatas;
 
@@ -97,7 +99,7 @@ public class DataManager : MonoBehaviour
         mGameData.skillUpLevels = new int[] { 1, 1, 1 };
 
         for (int i = 0; i < PlayerSkillDatas.Length; i++)
-            mGameData.skillEffectAmounts[i] = PlayerSkillDatas[i].skillEffectAmount;
+            mGameData.skillEffectAmounts[i] = PlayerSkillDatas[i].skillImpactAmount;
     }
 
     public void LoadGameData()
