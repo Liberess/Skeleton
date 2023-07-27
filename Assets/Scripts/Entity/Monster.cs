@@ -88,7 +88,7 @@ public class Monster : Entity
     {
         if (!IsDead)
         {
-            if (HasTarget && IsAttackable)
+            if (HasTarget && IsAttackable && IsAttached)
             {
                 agent.isStopped = true;
                 agent.velocity = Vector3.zero;

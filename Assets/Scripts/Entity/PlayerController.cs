@@ -10,6 +10,8 @@ public class PlayerController : Entity
 {
     private MonsterManager monsterMgr;
 
+    public EStates state;
+
     [Foldout("# Joystick Settings"), SerializeField]
     private StaticJoystickController staticJoystick;
 
@@ -25,9 +27,8 @@ public class PlayerController : Entity
     private int closetIndex = 0;
     private int targetIndex = 0;
 
-    private bool isUseSkill = false;
-
     private static readonly int IsAttack = Animator.StringToHash("isAttack");
+    private static readonly int DoSkill = Animator.StringToHash("doSkill");
 
     protected override void Start()
     {
@@ -43,12 +44,13 @@ public class PlayerController : Entity
 
     private void JoystickEventBinding()
     {
-        dynamicJoystick.OnPointerDownAction += ()
-            =>
+        //dynamicJoystick.OnPointerDownAction += () => fsm.ChangeState(EStates.Control, StateTransition.Overwrite);
+        dynamicJoystick.OnPointerDownAction += () =>
         {
-            if(!isUseSkill)
+            if(fsm.State != EStates.Skill)
                 fsm.ChangeState(EStates.Control, StateTransition.Overwrite);
         };
+        
         dynamicJoystick.OnPointerUpAction += () =>
         {
             if (TargetEntity == null || !TargetEntity.gameObject.activeSelf)
@@ -57,11 +59,13 @@ public class PlayerController : Entity
                 fsm.ChangeState(EStates.Track);
         };
 
+        //staticJoystick.OnPointerDownAction += () => fsm.ChangeState(EStates.Control, StateTransition.Overwrite);
         staticJoystick.OnPointerDownAction += () =>
         {
-            if(!isUseSkill)
+            if(fsm.State != EStates.Skill)
                 fsm.ChangeState(EStates.Control, StateTransition.Overwrite);
         };
+        
         staticJoystick.OnPointerUpAction += () =>
         {
             if (TargetEntity == null || !TargetEntity.gameObject.activeSelf)
@@ -74,6 +78,7 @@ public class PlayerController : Entity
     private void Update()
     {
         fsm.Driver.Update?.Invoke();
+        state = fsm.State;
     }
 
     private void FixedUpdate()
@@ -171,8 +176,15 @@ public class PlayerController : Entity
 
             if (HasTarget)
             {
-                if (IsAttackable && !isUseSkill)
+                if (IsAttackable)
                 {
+                    if (!IsAttached)
+                    {
+                        Debug.Log("공격하려는데 멀어서 다시 track로");
+                        fsm.ChangeState(EStates.Track);
+                        return;
+                    }
+                    
                     lastAttackTime = Time.time;
 
                     RotateToTarget();
@@ -183,6 +195,7 @@ public class PlayerController : Entity
             }
             else
             {
+                Debug.Log("not hasTarget");
                 TargetEntity = null;
                 fsm.ChangeState(EStates.Idle);
             }
@@ -195,31 +208,44 @@ public class PlayerController : Entity
         base.Attack_Exit();
     }
 
+    protected override void Skill_Enter()
+    {
+        
+    }
+
+    protected override void Skill_Exit()
+    {
+        
+    }
+
     public void UseSkill(ESkillType skillType)
     {
         Debug.Log("UseSkill :: " + skillType);
+        
+        fsm.ChangeState(EStates.Skill, StateTransition.Overwrite);
 
-        int amount = EntityData.attackPower * (100 + DataManager.Instance.GameData.skillEffectAmounts[(int)skillType]) / 100;
+        int amount = DataManager.Instance.GameData.skillEffectAmounts[(int)skillType];
+        int damageAmount = EntityData.attackPower * (100 + amount) / 100;
         switch (skillType)
         {
             case ESkillType.PhantomBlade:
-                isUseSkill = true;
                 if (IsAttached)
                 {
                     Debug.Log("Already Attached Attack, Add Blade Eft");
-                    anim.SetTrigger("doSkill");
-                    AttackTargetEntity(amount);
+                    anim.SetTrigger(DoSkill);
+                    AttackTargetEntity(damageAmount);
                 }
                 else
                 {
-                    StartCoroutine(DashCo(amount));
+                    StartCoroutine(DashCo(damageAmount));
                 }
                 break;
             
             case ESkillType.FireBall:
-                isUseSkill = true;
+                anim.SetTrigger(DoSkill);
+                
                 SkillSO skillSo = DataManager.Instance.GetSkillSO(skillType);
-                DamageMessage dmgMsg = new DamageMessage(this.gameObject, amount);
+                DamageMessage dmgMsg = new DamageMessage(this.gameObject, damageAmount);
                 
                 Vector3 fireBallSpawnOffset = Vector3.up;
                 
@@ -238,9 +264,15 @@ public class PlayerController : Entity
                 break;
             
             case ESkillType.Recovery:
-                RecoveryHealthPoint(Mathf.RoundToInt(amount));
+                fsm.ChangeState(EStates.Attack);
+                RecoveryHealthPoint(amount);
                 break;
         }
+    }
+
+    public void OnDisableUseSkill()
+    {
+        fsm.ChangeState(EStates.Attack);
     }
 
     private IEnumerator DashCo(int amount)
@@ -261,6 +293,7 @@ public class PlayerController : Entity
             }
         }
         
+        anim.SetTrigger(DoSkill);
         AttackTargetEntity(amount);
     }
 }

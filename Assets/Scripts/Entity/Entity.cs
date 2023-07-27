@@ -15,6 +15,7 @@ public abstract class Entity : LivingEntity
         Control,
         Track,
         Attack,
+        Skill,
         Die
     }
 
@@ -36,14 +37,19 @@ public abstract class Entity : LivingEntity
     [Foldout("# Attack Settings")]
     [SerializeField] protected LayerMask targetLayer;
 
-    public LivingEntity TargetEntity { get; protected set; } = null;
-    
+    [SerializeField] private LivingEntity targetEntity;
+    public LivingEntity TargetEntity
+    {
+        get { return targetEntity; }
+        protected set { targetEntity = value; }
+    }
+
     protected bool HasTarget => TargetEntity != null && !TargetEntity.IsDead;
 
     protected float lastAttackTime = 0.0f;
 
     protected bool IsAttackable =>
-        Time.time >= lastAttackTime + EntityData.attackPerSecond && IsAttached;
+        Time.time >= lastAttackTime + EntityData.attackPerSecond;
 
     public bool IsAttached =>
         TargetEntity != null && Vector3.Distance(TargetEntity.transform.position, transform.position) <= entityData.attackRange;
@@ -74,13 +80,13 @@ public abstract class Entity : LivingEntity
         {
             healthPoint = Mathf.RoundToInt(entityData.healthPoint * increaseValue),
             attackPower = Mathf.RoundToInt(entityData.attackPower * increaseValue),
-            attackRange = Mathf.RoundToInt(
-                Mathf.Clamp(entityData.attackRange * increaseValue, 1.0f, entityData.maxAttackRange)),
             attackPerSecond = Mathf.RoundToInt(
                 Mathf.Clamp(entityData.attackPerSecond * increaseValue, 0.1f, entityData.maxAttackPerSecond)),
             moveSpeed = Mathf.RoundToInt(
                 Mathf.Clamp(entityData.moveSpeed * increaseValue, 0.5f, entityData.maxMoveSpeed))
         };
+
+        originHp = this.entityData.healthPoint;
 
         fsm.ChangeState(EStates.Init);
     }
@@ -99,13 +105,16 @@ public abstract class Entity : LivingEntity
 
     public void UpdateHpUI()
     {
+        originHp = EntityData.healthPoint;
+        
         hpBar.maxValue = 1.0f;
         hpBar.value = (float)CurrentHp / EntityData.healthPoint;
     }
 
     protected virtual void Init_Enter()
     {
-        CurrentHp = EntityData.healthPoint;
+        originHp = EntityData.healthPoint;
+        CurrentHp = originHp;
         
         UpdateHpUI();
 
@@ -193,7 +202,8 @@ public abstract class Entity : LivingEntity
 
     protected virtual void Attack_Enter()
     {
-        
+        if(!HasTarget)
+            fsm.ChangeState(EStates.Idle);
     }
 
     protected virtual void Attack_Update() => AttackFlow();
@@ -223,6 +233,16 @@ public abstract class Entity : LivingEntity
     }
 
     protected virtual void Attack_Exit()
+    {
+        
+    }
+
+    protected virtual void Skill_Enter()
+    {
+        
+    }
+
+    protected virtual void Skill_Exit()
     {
         
     }
