@@ -45,6 +45,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mGameData:
+    playerData:
+      entityName: 
+      healthPoint: 0
+      attackPower: 0
+      attackRange: 0
+      maxAttackRange: 0
+      attackPerSecond: 0
+      maxAttackPerSecond: 0
+      moveSpeed: 0
+      maxMoveSpeed: 0
     level: 1
     exp: 0
     needsExp: 5
@@ -57,24 +67,37 @@ MonoBehaviour:
     stageStr: 1-0
     bgm: 50
     sfx: 50
-    playerData:
-      entityName: 
-      healthPoint: 0
-      attackPower: 0
-      attackRange: 0
-      maxAttackRange: 0
-      attackPerSecond: 0
-      maxAttackPerSecond: 0
-      moveSpeed: 0
-      maxMoveSpeed: 0
     statUpLevels: 0000000000000000000000000000000000000000
     skillUpLevels: 000000000000000000000000
-    skillEffectAmounts:
-    - 0
-    - 0
-    - 0
+    skillEffectAmounts: 000000000000000000000000
+    weaponDataList:
+    - equipName: 
+      equipDescription: 
+      equipType: 0
+      isEquipUnlock: 0
+      equipLv: 0
+      maxEquipLv: 0
+      impactAmount: 0
+      equipBuyCost: 0
+      equipUpCost: 0
+      equipIcon: {fileID: 0}
+    armorDataList:
+    - equipName: 
+      equipDescription: 
+      equipType: 1
+      isEquipUnlock: 0
+      equipLv: 0
+      maxEquipLv: 0
+      impactAmount: 0
+      equipBuyCost: 0
+      equipUpCost: 0
+      equipIcon: {fileID: 0}
   playerOriginData: {fileID: 11400000, guid: 9fff56c861d382a409d6096c3220385a, type: 2}
   playerSkillDatas:
   - {fileID: 11400000, guid: bd94857624f79f14c98346be377596f0, type: 2}
   - {fileID: 11400000, guid: 9a1b871b24a2bdb4fa33a777ac40b235, type: 2}
   - {fileID: 11400000, guid: 1b1cc525e3ab94347a8b52f88ae33f45, type: 2}
+  weaponOriginDataList:
+  - {fileID: 11400000, guid: ddfe88aaec357044ca3ce6f6378cf8d0, type: 2}
+  armorOriginDataList:
+  - {fileID: 11400000, guid: 1a54d6d1fa66b3d4da46cb0e8f256850, type: 2}

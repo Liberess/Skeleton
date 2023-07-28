@@ -12,7 +12,7 @@ public enum EMonsterType
 public enum ECurrencyType
 {
     GD = 0, //Gold
-    KM,     //Karma
+    KM, //Karma
 }
 
 public enum EStatusType
@@ -37,6 +37,12 @@ public enum EEffectType
     FireBall = 0,
     Explosion,
     Blood
+}
+
+public enum EEquipType
+{
+    Weapon = 0,
+    Armor
 }
 
 public class Enums
