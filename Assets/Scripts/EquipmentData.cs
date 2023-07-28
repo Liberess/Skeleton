@@ -5,24 +5,23 @@ using NaughtyAttributes;
 public class EquipmentData
 {
     public string equipName;
-    [ResizableTextArea]
-    public string equipDescription;
+    [ReadOnly, SerializeField] private int equipID;
+    public int EquipID => equipID;
+    [ResizableTextArea] public string equipDescription;
     public EEquipType equipType;
     public bool isEquipUnlock = false;
-    [MinValue(1)]
-    public int equipLv;
-    [MinValue(10), MaxValue(99)]
-    public int maxEquipLv;
+    [MinValue(1)] public int equipLv;
+    [MinValue(10), MaxValue(99)] public int maxEquipLv;
     public int impactAmount;
     public int equipBuyCost;
     public int equipUpCost;
 
-    [EnableIf("isProjectileSkill")]
-    public Sprite equipIcon;
+    [ShowAssetPreview] public Sprite equipIcon;
 
     public EquipmentData(EquipmentData data)
     {
         equipName = data.equipName;
+        equipID = data.equipID;
         equipDescription = data.equipDescription;
         equipType = data.equipType;
         isEquipUnlock = data.isEquipUnlock;
@@ -37,6 +36,7 @@ public class EquipmentData
     public EquipmentData(EquipmentDataSO dataSO)
     {
         equipName = dataSO.EquipmentData.equipName;
+        equipID = dataSO.EquipmentData.equipID;
         equipDescription = dataSO.EquipmentData.equipDescription;
         equipType = dataSO.EquipmentData.equipType;
         isEquipUnlock = dataSO.EquipmentData.isEquipUnlock;
@@ -47,4 +47,6 @@ public class EquipmentData
         equipUpCost = dataSO.EquipmentData.equipUpCost;
         equipIcon = dataSO.EquipmentData.equipIcon;
     }
+
+    public void SetEquipID(int value) => equipID = value;
 }

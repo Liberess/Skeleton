@@ -13,13 +13,14 @@ MonoBehaviour:
   m_Name: Armor_00
   m_EditorClassIdentifier: 
   equipmentData:
-    equipName: 
-    equipDescription: 
+    equipName: "\uBC29\uC5B4\uAD6C 0"
+    equipID: 0
+    equipDescription: "\uC544\uBB34\uD2BC \uBC29\uC5B4\uAD6C\uC784\n\n{0} +{1}"
     equipType: 1
     isEquipUnlock: 0
-    equipLv: 0
-    maxEquipLv: 0
-    impactAmount: 0
-    equipBuyCost: 0
-    equipUpCost: 0
-    equipIcon: {fileID: 0}
+    equipLv: 1
+    maxEquipLv: 99
+    impactAmount: 5
+    equipBuyCost: 50
+    equipUpCost: 50
+    equipIcon: {fileID: 21300000, guid: aed31dc09d6cf9043b18c2e70126e838, type: 3}

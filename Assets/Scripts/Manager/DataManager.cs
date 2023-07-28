@@ -95,26 +95,30 @@ public class DataManager : MonoBehaviour
             "Assets/Scriptables/ArmorData"
         };
         
-        var guids = AssetDatabase.FindAssets("t:ScriptableObject", assetPaths);
+        var guids = AssetDatabase.FindAssets("t:EquipmentDataSO", assetPaths);
         foreach (var guid in guids)
         {
             string path = AssetDatabase.GUIDToAssetPath(guid);
-            Object obj = AssetDatabase.LoadAssetAtPath(path, typeof(Object));
-
-            if (obj is EquipmentDataSO equipmentDataSo)
+            EquipmentDataSO data = AssetDatabase.LoadAssetAtPath<EquipmentDataSO>(path);
+            
+            if (data != null)
             {
-                if (equipmentDataSo.EquipmentData.equipType == EEquipType.Weapon)
-                {
-                    weaponOriginDataList.Add(equipmentDataSo);
-                    mGameData.weaponDataList.Add(new EquipmentData(equipmentDataSo));
-                }
-                else
-                {
-                    armorOriginDataList.Add(equipmentDataSo);
-                    mGameData.armorDataList.Add(new EquipmentData(equipmentDataSo));
-                }
+                data.EquipmentData.SetEquipID(ParseEquipID(data.name));
+                (data.EquipmentData.equipType == EEquipType.Weapon ? weaponOriginDataList : armorOriginDataList).Add(data);
             }
         }
+    }
+    
+    private int ParseEquipID(string equipName)
+    {
+        int indexOfUnderscore = equipName.LastIndexOf('_');
+        if (indexOfUnderscore >= 0 && indexOfUnderscore < equipName.Length - 1)
+        {
+            string equipIDString = equipName.Substring(indexOfUnderscore + 1).Trim();
+            if (int.TryParse(equipIDString, out int equipID))
+                return equipID;
+        }
+        return -1;
     }
 
     public void InitGameData()
@@ -143,6 +147,9 @@ public class DataManager : MonoBehaviour
 
         for (int i = 0; i < PlayerSkillDatas.Length; i++)
             mGameData.skillEffectAmounts[i] = PlayerSkillDatas[i].skillImpactAmount;
+        
+        mGameData.weaponDataList.Clear();
+        mGameData.armorDataList.Clear();
         
         UpdateEquipmentOriginDatabase();
     }
@@ -213,6 +220,29 @@ public class DataManager : MonoBehaviour
         if (index >= 0 && index < mGameData.skillEffectAmounts.Length)
             return mGameData.skillEffectAmounts[index];
         return -1;
+    }
+
+    public void AcquireEquipment(EEquipType equipType, int equipID)
+    {
+        EquipmentDataSO data = null;
+        List<EquipmentData> targetList = null;
+
+        if (equipType == EEquipType.Weapon)
+        {
+            data = weaponOriginDataList.Find(e => e.EquipmentData.EquipID == equipID);
+            targetList = mGameData.weaponDataList;
+        }
+        else
+        {
+            data = armorOriginDataList.Find(e => e.EquipmentData.EquipID == equipID);
+            targetList = mGameData.armorDataList;
+        }
+
+        if (data != null)
+        {
+            data.EquipmentData.isEquipUnlock = true;
+            targetList.Add(new EquipmentData(data));
+        }
     }
 
     private void OnApplicationPause(bool pause) => SaveGameData();

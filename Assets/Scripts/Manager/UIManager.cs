@@ -3,19 +3,22 @@ using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using TMPro;
 using UnityEngine.UI;
+using TMPro;
+using NaughtyAttributes;
 
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance { get; private set; }
     private DataManager dataMgr;
 
-    [Header("# Skill UI Settings"), Space(5)]
-    [SerializeField] private Button[] skillBtns;
-    [SerializeField] private Image[] skillCoolImgs;
+    [HorizontalLine(color: EColor.Red), BoxGroup("# Skill UI Settings"), SerializeField]
+    private Button[] skillBtns;
+    [BoxGroup("# Skill UI Settings"), SerializeField]
+    private Image[] skillCoolImgs;
     private TextMeshProUGUI[] skillCoolTimeTxts = new TextMeshProUGUI[3];
-    [SerializeField] private Toggle autoUseSkillTog;
+    [BoxGroup("# Skill UI Settings"), SerializeField]
+    private Toggle autoUseSkillTog;
     
     private bool[] isCoolSkills = { false, false, false };
 
@@ -23,6 +26,17 @@ public class UIManager : MonoBehaviour
     private float[] curSkillCoolTimes = { 0.0f, 0.0f, 0.0f };
 
     private bool isAutoUseSkill = false;
+
+    [HorizontalLine(color: EColor.Orange), BoxGroup("# Equipment UI Settings"), SerializeField]
+    private GameObject equipWeaponGrid;
+    //private GameObject equipSlotPrefab;
+    
+    [HorizontalLine(color: EColor.Yellow), BoxGroup("# Shop UI Settings"), SerializeField]
+    private GameObject shopWeaponGrid;
+    [BoxGroup("# Shop UI Settings"), SerializeField]
+    private GameObject shopArmorGrid;
+    [BoxGroup("# Shop UI Settings"), SerializeField]
+    private GameObject shopEquipSlotPrefab;
 
     private PlayerController playerCtrl;
     
@@ -60,6 +74,8 @@ public class UIManager : MonoBehaviour
         }
         
         autoUseSkillTog.onValueChanged.AddListener(SetAutoUseSkillToggle);
+        
+        StartCoroutine(SetupShopUICo());
     }
 
     public async UniTaskVoid UpdateCurrencyUI(float delay)
@@ -103,6 +119,8 @@ public class UIManager : MonoBehaviour
         
         UpdateStatusUIActionList[(int)type]?.Invoke(formatStr);
     }
+
+    #region Skill
 
     public void SetCoolSkill(int skillIndex)
     {
@@ -153,4 +171,35 @@ public class UIManager : MonoBehaviour
                 SetCoolSkill(i);
         }
     }
+
+    #endregion
+
+    #region Shop
+
+    private IEnumerator SetupShopUICo()
+    {
+        yield return new WaitForEndOfFrame();
+        
+        foreach (var weaponData in DataManager.Instance.WeaponOriginDataList)
+        {
+            var weaponSlot = Instantiate(shopEquipSlotPrefab).GetComponent<EquipmentSlot>();
+            weaponSlot.transform.SetParent(shopWeaponGrid.transform, false);
+            weaponSlot.transform.localScale = weaponSlot.transform.parent.localScale;
+            weaponSlot.transform.localPosition = Vector3.zero;
+            weaponSlot.SetupSlot(weaponData);
+        }
+        
+        foreach (var armorData in DataManager.Instance.ArmorOriginDataList)
+        {
+            var armorSlot = Instantiate(shopEquipSlotPrefab).GetComponent<EquipmentSlot>();
+            armorSlot.transform.SetParent(shopArmorGrid.transform, false);
+            armorSlot.transform.localScale = armorSlot.transform.parent.localScale;
+            armorSlot.transform.localPosition = Vector3.zero;
+            armorSlot.SetupSlot(armorData);
+        }
+
+        yield return null;
+    }
+
+    #endregion
 }
