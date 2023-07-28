@@ -922,7 +922,7 @@ GameObject:
   - component: {fileID: 161949284}
   - component: {fileID: 161949283}
   m_Layer: 5
-  m_Name: ShopPanel
+  m_Name: EquipmentPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1300,7 +1300,7 @@ PrefabInstance:
     - target: {fileID: 3021994958218476297, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3021994958218476297, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
@@ -1310,7 +1310,7 @@ PrefabInstance:
     - target: {fileID: 3021994958218476297, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3021994958218476297, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
@@ -1360,12 +1360,12 @@ PrefabInstance:
     - target: {fileID: 3021994958218476297, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 710
       objectReference: {fileID: 0}
     - target: {fileID: 3021994958218476297, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -77.5
       objectReference: {fileID: 0}
     - target: {fileID: 3021994958218476297, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
@@ -1386,6 +1386,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: ShopBtn
+      objectReference: {fileID: 0}
+    - target: {fileID: 7565989508328358924, guid: a8bcdfe3c785e7745b42d6c4057e043e,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7958927923334401038, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
@@ -1878,7 +1883,6 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1398012732}
   - {fileID: 61089516}
   - {fileID: 352221239}
   - {fileID: 990118554}
@@ -1995,7 +1999,7 @@ PrefabInstance:
     - target: {fileID: 3021994958218476297, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 120
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3021994958218476297, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
@@ -3850,7 +3854,7 @@ PrefabInstance:
     - target: {fileID: 7565989508328358924, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
       propertyPath: m_Name
-      value: ShopArmorBtn
+      value: EquipArmorBtn
       objectReference: {fileID: 0}
     - target: {fileID: 9115399464732016599, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
@@ -4498,6 +4502,21 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: 91bd013ffd726bd4c8ac9d8a584f0b31,
         type: 3}
+    - target: {fileID: 1079782325036613898, guid: a8bcdfe3c785e7745b42d6c4057e043e,
+        type: 3}
+      propertyPath: target
+      value: 
+      objectReference: {fileID: 177752561}
+    - target: {fileID: 1079782325036613898, guid: a8bcdfe3c785e7745b42d6c4057e043e,
+        type: 3}
+      propertyPath: onPlay.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 161949281}
+    - target: {fileID: 1079782325036613898, guid: a8bcdfe3c785e7745b42d6c4057e043e,
+        type: 3}
+      propertyPath: onPlay.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 161949283}
     - target: {fileID: 3021994958218476297, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
       propertyPath: m_Pivot.x
@@ -4531,7 +4550,7 @@ PrefabInstance:
     - target: {fileID: 3021994958218476297, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 120
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3021994958218476297, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
@@ -4670,7 +4689,7 @@ PrefabInstance:
     - target: {fileID: 3021994958218476297, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 120
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3021994958218476297, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
@@ -5152,7 +5171,7 @@ PrefabInstance:
     - target: {fileID: 7565989508328358924, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
       propertyPath: m_Name
-      value: ShopWeaponBtn
+      value: EquipWeaponBtn
       objectReference: {fileID: 0}
     - target: {fileID: 7958927923334401038, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
@@ -7125,6 +7144,7 @@ RectTransform:
   - {fileID: 798216782}
   - {fileID: 788895714}
   - {fileID: 177752561}
+  - {fileID: 1398012732}
   m_Father: {fileID: 1063006920}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -7499,7 +7519,7 @@ GameObject:
   - component: {fileID: 1182130303}
   - component: {fileID: 1182130302}
   m_Layer: 5
-  m_Name: ShopArmorGrid
+  m_Name: EquipArmorGrid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8749,7 +8769,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 406281216}
+    m_TransformParent: {fileID: 1083848659}
     m_Modifications:
     - target: {fileID: 802666179295257828, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
@@ -8770,22 +8790,22 @@ PrefabInstance:
     - target: {fileID: 3021994958218476297, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
       propertyPath: m_AnchorMax.x
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3021994958218476297, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3021994958218476297, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
       propertyPath: m_AnchorMin.x
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3021994958218476297, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3021994958218476297, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
@@ -8795,7 +8815,7 @@ PrefabInstance:
     - target: {fileID: 3021994958218476297, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 100
+      value: 120
       objectReference: {fileID: 0}
     - target: {fileID: 3021994958218476297, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
@@ -8835,12 +8855,12 @@ PrefabInstance:
     - target: {fileID: 3021994958218476297, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -19
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3021994958218476297, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -19
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3021994958218476297, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
@@ -11049,7 +11069,7 @@ GameObject:
   - component: {fileID: 1673615777}
   - component: {fileID: 1673615776}
   m_Layer: 5
-  m_Name: ShopWeaponGrid
+  m_Name: EquipWeaponGrid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13204,12 +13224,27 @@ PrefabInstance:
       objectReference: {fileID: 710585321}
     - target: {fileID: 5142881022288409890, guid: 61bab2e94b9a08d4daac8ae67869a911,
         type: 3}
+      propertyPath: equipArmorBtn
+      value: 
+      objectReference: {fileID: 710585321}
+    - target: {fileID: 5142881022288409890, guid: 61bab2e94b9a08d4daac8ae67869a911,
+        type: 3}
       propertyPath: shopArmorGrid
       value: 
       objectReference: {fileID: 1182130297}
     - target: {fileID: 5142881022288409890, guid: 61bab2e94b9a08d4daac8ae67869a911,
         type: 3}
       propertyPath: shopWeaponBtn
+      value: 
+      objectReference: {fileID: 816638209}
+    - target: {fileID: 5142881022288409890, guid: 61bab2e94b9a08d4daac8ae67869a911,
+        type: 3}
+      propertyPath: equipArmorGrid
+      value: 
+      objectReference: {fileID: 1182130297}
+    - target: {fileID: 5142881022288409890, guid: 61bab2e94b9a08d4daac8ae67869a911,
+        type: 3}
+      propertyPath: equipWeaponBtn
       value: 
       objectReference: {fileID: 816638209}
     - target: {fileID: 5142881022288409890, guid: 61bab2e94b9a08d4daac8ae67869a911,
@@ -13228,6 +13263,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 5942874292687548536, guid: f529d313172bdc84c93923898d0c04a3,
         type: 3}
+    - target: {fileID: 5142881022288409890, guid: 61bab2e94b9a08d4daac8ae67869a911,
+        type: 3}
+      propertyPath: equipWeaponGrid
+      value: 
+      objectReference: {fileID: 1673615770}
     - target: {fileID: 5142881022288409890, guid: 61bab2e94b9a08d4daac8ae67869a911,
         type: 3}
       propertyPath: shopEquipSlotPrefab

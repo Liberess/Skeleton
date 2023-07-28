@@ -9,12 +9,14 @@ public class EquipmentData
     public int EquipID => equipID;
     [ResizableTextArea] public string equipDescription;
     public EEquipType equipType;
-    public bool isEquipUnlock = false;
+    public bool isEquip;
+    public bool isEquipUnlock;
     [MinValue(1)] public int equipLv;
     [MinValue(10), MaxValue(99)] public int maxEquipLv;
     public int impactAmount;
     public int equipBuyCost;
-    public int equipUpCost;
+    [ReadOnly] public int equipUpCost;
+    public int originEquipUpCost;
 
     [ShowAssetPreview] public Sprite equipIcon;
 
@@ -24,12 +26,14 @@ public class EquipmentData
         equipID = data.equipID;
         equipDescription = data.equipDescription;
         equipType = data.equipType;
+        isEquip = data.isEquip;
         isEquipUnlock = data.isEquipUnlock;
         equipLv = data.equipLv;
         maxEquipLv = data.maxEquipLv;
         impactAmount = data.impactAmount;
         equipBuyCost = data.equipBuyCost;
-        equipUpCost = data.equipUpCost;
+        equipUpCost = data.originEquipUpCost;
+        originEquipUpCost = data.originEquipUpCost;
         equipIcon = data.equipIcon;
     }
     
@@ -39,12 +43,14 @@ public class EquipmentData
         equipID = dataSO.EquipmentData.equipID;
         equipDescription = dataSO.EquipmentData.equipDescription;
         equipType = dataSO.EquipmentData.equipType;
+        isEquip = dataSO.EquipmentData.isEquip;
         isEquipUnlock = dataSO.EquipmentData.isEquipUnlock;
         equipLv = dataSO.EquipmentData.equipLv;
         maxEquipLv = dataSO.EquipmentData.maxEquipLv;
         impactAmount = dataSO.EquipmentData.impactAmount;
         equipBuyCost = dataSO.EquipmentData.equipBuyCost;
-        equipUpCost = dataSO.EquipmentData.equipUpCost;
+        equipUpCost = dataSO.EquipmentData.originEquipUpCost;
+        originEquipUpCost = dataSO.EquipmentData.originEquipUpCost;
         equipIcon = dataSO.EquipmentData.equipIcon;
     }
 

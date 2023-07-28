@@ -37,4 +37,8 @@ public class GameData
     [Header("## Equipment Datas"), Space(5)]
     [ReadOnly] public List<EquipmentData> weaponDataList;
     [ReadOnly] public List<EquipmentData> armorDataList;
+    [ReadOnly] public EquipmentData curEquipWeapon;
+    [ReadOnly] public EquipmentData curEquipArmor;
+    [ReadOnly] public int curEquipWeaponID;
+    [ReadOnly] public int curEquipArmorID;
 }

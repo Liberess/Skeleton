@@ -247,7 +247,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: -10}
+  m_AnchoredPosition: {x: 0, y: -25}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &5134717497732908421
@@ -420,7 +420,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ef7e31f9f993334c83fe5162a25a473, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skillData: {fileID: 11400000, guid: bd94857624f79f14c98346be377596f0, type: 2}
+  skillType: 0
   skillLvTxt: {fileID: 371788186271047141}
   skillNameTxt: {fileID: 7767673751282940510}
   skillDescriptionTxt: {fileID: 1301564749927518833}

@@ -29,23 +29,21 @@ public class UIManager : MonoBehaviour
 
     [HorizontalLine(color: EColor.Orange), BoxGroup("# Equipment UI Settings"), SerializeField]
     private GameObject equipWeaponGrid;
-    //private GameObject equipSlotPrefab;
+    [BoxGroup("# Equipment UI Settings"), SerializeField]
+    private GameObject equipArmorGrid;
+    [BoxGroup("# Equipment UI Settings"), SerializeField]
+    private GameObject equipSlotPrefab;
+    [BoxGroup("# Equipment UI Settings"), SerializeField]
+    private Button equipWeaponBtn;
+    [BoxGroup("# Equipment UI Settings"), SerializeField]
+    private Button equipArmorBtn;
     
-    [HorizontalLine(color: EColor.Yellow), BoxGroup("# Shop UI Settings"), SerializeField]
-    private GameObject shopWeaponGrid;
-    [BoxGroup("# Shop UI Settings"), SerializeField]
-    private GameObject shopArmorGrid;
-    [BoxGroup("# Shop UI Settings"), SerializeField]
-    private GameObject shopEquipSlotPrefab;
-    [BoxGroup("# Shop UI Settings"), SerializeField]
-    private Button shopWeaponBtn;
-    [BoxGroup("# Shop UI Settings"), SerializeField]
-    private Button shopArmorBtn;
-
     private PlayerController playerCtrl;
     
     public List<Action<int>> UpdateCurrencyUIActionList = new List<Action<int>>();
     public List<Action<string>> UpdateStatusUIActionList = new List<Action<string>>();
+    public Action UpdateWeaponUIAction;
+    public Action UpdateArmorUIAction;
     
     private void Awake()
     {
@@ -79,7 +77,7 @@ public class UIManager : MonoBehaviour
         
         autoUseSkillTog.onValueChanged.AddListener(SetAutoUseSkillToggle);
         
-        StartCoroutine(SetupShopUICo());
+        StartCoroutine(SetupEquipmentUICo());
     }
 
     public async UniTaskVoid UpdateCurrencyUI(float delay)
@@ -178,16 +176,17 @@ public class UIManager : MonoBehaviour
 
     #endregion
 
-    #region Shop
+    #region Equipment
 
-    private IEnumerator SetupShopUICo()
+    private IEnumerator SetupEquipmentUICo()
     {
         yield return new WaitForEndOfFrame();
         
         foreach (var weaponData in DataManager.Instance.WeaponOriginDataList)
         {
-            var weaponSlot = Instantiate(shopEquipSlotPrefab).GetComponent<EquipmentSlot>();
-            weaponSlot.transform.SetParent(shopWeaponGrid.transform, false);
+            var weaponSlot = Instantiate(equipSlotPrefab).GetComponent<EquipmentSlot>();
+            weaponSlot.transform.SetParent(equipWeaponGrid.transform, false);
+            weaponSlot.transform.SetAsLastSibling();
             weaponSlot.transform.localScale = weaponSlot.transform.parent.localScale;
             weaponSlot.transform.localPosition = Vector3.zero;
             weaponSlot.SetupSlot(weaponData);
@@ -195,23 +194,24 @@ public class UIManager : MonoBehaviour
         
         foreach (var armorData in DataManager.Instance.ArmorOriginDataList)
         {
-            var armorSlot = Instantiate(shopEquipSlotPrefab).GetComponent<EquipmentSlot>();
-            armorSlot.transform.SetParent(shopArmorGrid.transform, false);
+            var armorSlot = Instantiate(equipSlotPrefab).GetComponent<EquipmentSlot>();
+            armorSlot.transform.SetParent(equipArmorGrid.transform, false);
+            armorSlot.transform.SetAsLastSibling();
             armorSlot.transform.localScale = armorSlot.transform.parent.localScale;
             armorSlot.transform.localPosition = Vector3.zero;
             armorSlot.SetupSlot(armorData);
         }
         
-        shopWeaponBtn.onClick.AddListener(() =>
+        equipWeaponBtn.onClick.AddListener(() =>
         {
-            shopWeaponBtn.image.color = Color.yellow;
-            shopArmorBtn.image.color = Color.white;
+            equipWeaponBtn.image.color = Color.yellow;
+            equipArmorBtn.image.color = Color.white;
         });
         
-        shopArmorBtn.onClick.AddListener(() =>
+        equipArmorBtn.onClick.AddListener(() =>
         {
-            shopArmorBtn.image.color = Color.yellow;
-            shopWeaponBtn.image.color = Color.white;
+            equipArmorBtn.image.color = Color.yellow;
+            equipWeaponBtn.image.color = Color.white;
         });
 
         yield return null;

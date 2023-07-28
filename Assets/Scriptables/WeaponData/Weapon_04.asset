@@ -17,10 +17,12 @@ MonoBehaviour:
     equipID: 4
     equipDescription: "\uC544\uBB34\uD2BC \uBB34\uAE30\uC784\n\n{0} +{1}"
     equipType: 0
+    isEquip: 0
     isEquipUnlock: 0
     equipLv: 1
     maxEquipLv: 99
-    impactAmount: 1
-    equipBuyCost: 50
-    equipUpCost: 50
+    impactAmount: 100
+    equipBuyCost: 200000
+    equipUpCost: 200000
+    originEquipUpCost: 50000
     equipIcon: {fileID: 21300000, guid: bec8f959272e6f6489baf3cc65a0bb35, type: 3}

@@ -11,9 +11,11 @@ public class DataManager : MonoBehaviour
     private readonly string GameDataFileName = "/GameData.json";
 
     #region Singleton
+
     private static GameObject mContainer;
 
     private static DataManager mInstance;
+
     public static DataManager Instance
     {
         get
@@ -31,6 +33,7 @@ public class DataManager : MonoBehaviour
 
     [HorizontalLine(color: EColor.Orange), BoxGroup("# GameData"), SerializeField]
     private GameData mGameData;
+
     public GameData GameData
     {
         get
@@ -44,22 +47,25 @@ public class DataManager : MonoBehaviour
             return mGameData;
         }
     }
-    
+
     #endregion
 
     [HorizontalLine(color: EColor.Blue), BoxGroup("# PlayerData"), SerializeField]
     private EntitySO playerOriginData;
-    
+
     [BoxGroup("# PlayerData"), SerializeField]
     private SkillSO[] playerSkillDatas = new SkillSO[3];
+
     public SkillSO[] PlayerSkillDatas => playerSkillDatas;
 
     [HorizontalLine(color: EColor.Green), BoxGroup("# EquipmentData"), SerializeField]
     private List<EquipmentDataSO> weaponOriginDataList;
+
     public List<EquipmentDataSO> WeaponOriginDataList => weaponOriginDataList;
-    
+
     [BoxGroup("# EquipmentData"), SerializeField]
     private List<EquipmentDataSO> armorOriginDataList;
+
     public List<EquipmentDataSO> ArmorOriginDataList => armorOriginDataList;
 
     private void Awake()
@@ -86,29 +92,39 @@ public class DataManager : MonoBehaviour
     [ContextMenu("Update Equipment Origin Database")]
     private void UpdateEquipmentOriginDatabase()
     {
-        weaponOriginDataList.Clear();
-        armorOriginDataList.Clear();
-
         string[] assetPaths =
         {
             "Assets/Scriptables/WeaponData",
             "Assets/Scriptables/ArmorData"
         };
-        
+
         var guids = AssetDatabase.FindAssets("t:EquipmentDataSO", assetPaths);
         foreach (var guid in guids)
         {
             string path = AssetDatabase.GUIDToAssetPath(guid);
             EquipmentDataSO data = AssetDatabase.LoadAssetAtPath<EquipmentDataSO>(path);
-            
+
             if (data != null)
             {
                 data.EquipmentData.SetEquipID(ParseEquipID(data.name));
-                (data.EquipmentData.equipType == EEquipType.Weapon ? weaponOriginDataList : armorOriginDataList).Add(data);
+
+                List<EquipmentDataSO> dataList = data.EquipmentData.equipType == EEquipType.Weapon
+                    ? weaponOriginDataList
+                    : armorOriginDataList;
+                
+                if (!dataList.Contains(data))
+                {
+                    dataList.Add(data);
+                    
+                    if (data.EquipmentData.equipType == EEquipType.Weapon)
+                        mGameData.weaponDataList.Add(new EquipmentData(data));
+                    else
+                        mGameData.armorDataList.Add(new EquipmentData(data));
+                }
             }
         }
     }
-    
+
     private int ParseEquipID(string equipName)
     {
         int indexOfUnderscore = equipName.LastIndexOf('_');
@@ -118,6 +134,7 @@ public class DataManager : MonoBehaviour
             if (int.TryParse(equipIDString, out int equipID))
                 return equipID;
         }
+
         return -1;
     }
 
@@ -126,30 +143,39 @@ public class DataManager : MonoBehaviour
         mGameData.level = 1;
         mGameData.exp = 0.0f;
         mGameData.needsExp = 5.0f;
-        
+
         mGameData.gold = 0;
         mGameData.karma = 0;
         mGameData.killCount = 0;
         mGameData.deathCount = 0;
         mGameData.stageCount = 0;
-        
+
         mGameData.sfx = 50f;
         mGameData.bgm = 50f;
-        
+
         mGameData.stageStr = "1-0";
 
         mGameData.totalPlayTime = 0.0f;
 
         mGameData.playerData = new EntityData(playerOriginData.entityData);
-        
-        mGameData.statUpLevels = new int[] { 1, 1, 1, 1, 1, 1};
+
+        mGameData.statUpLevels = new int[] { 1, 1, 1, 1, 1, 1 };
         mGameData.skillUpLevels = new int[] { 1, 1, 1 };
 
         for (int i = 0; i < PlayerSkillDatas.Length; i++)
             mGameData.skillEffectAmounts[i] = PlayerSkillDatas[i].skillImpactAmount;
-        
+
+        weaponOriginDataList.Clear();
+        armorOriginDataList.Clear();
+
         mGameData.weaponDataList.Clear();
         mGameData.armorDataList.Clear();
+
+        mGameData.curEquipWeapon = null;
+        mGameData.curEquipArmor = null;
+
+        mGameData.curEquipWeaponID = -1;
+        mGameData.curEquipArmorID = -1;
         
         UpdateEquipmentOriginDatabase();
     }
@@ -164,7 +190,7 @@ public class DataManager : MonoBehaviour
             byte[] bytes = System.Convert.FromBase64String(code);
             string FromJsonData = System.Text.Encoding.UTF8.GetString(bytes);
             mGameData = JsonUtility.FromJson<GameData>(FromJsonData);
-            
+
             InitGameData();
         }
         else
@@ -189,11 +215,15 @@ public class DataManager : MonoBehaviour
     public int GetCurrency(ECurrencyType type)
     {
         int value = 0;
-        
+
         switch (type)
         {
-            case ECurrencyType.GD: value = mGameData.gold; break;
-            case ECurrencyType.KM: value = mGameData.karma; break;
+            case ECurrencyType.GD:
+                value = mGameData.gold;
+                break;
+            case ECurrencyType.KM:
+                value = mGameData.karma;
+                break;
         }
 
         return value;
@@ -206,7 +236,7 @@ public class DataManager : MonoBehaviour
             return PlayerSkillDatas[index];
         return null;
     }
-    
+
     public SkillSO GetSkillSO(int skillIndex)
     {
         if (skillIndex >= 0 && skillIndex < PlayerSkillDatas.Length)
@@ -222,29 +252,67 @@ public class DataManager : MonoBehaviour
         return -1;
     }
 
+    public EquipmentData GetEquipmentData(EEquipType equipType, int equipID)
+    {
+        Debug.Log("GetEquipmentData");
+        EquipmentData data = null;
+        if (equipType == EEquipType.Weapon)
+            data = mGameData.weaponDataList.Find(e => e.EquipID == equipID);
+        else
+            data = mGameData.armorDataList.Find(e => e.EquipID == equipID);
+
+        return data;
+    }
+
     public void AcquireEquipment(EEquipType equipType, int equipID)
     {
-        EquipmentDataSO data = null;
-        List<EquipmentData> targetList = null;
+        var dataList = equipType == EEquipType.Weapon ? mGameData.weaponDataList : mGameData.armorDataList;
 
-        if (equipType == EEquipType.Weapon)
+        EquipmentData data = null;
+        data = dataList.Find(e => e.EquipID == equipID);
+        
+        if (data != null && !data.isEquipUnlock)
         {
-            data = weaponOriginDataList.Find(e => e.EquipmentData.EquipID == equipID);
-            targetList = mGameData.weaponDataList;
-        }
-        else
-        {
-            data = armorOriginDataList.Find(e => e.EquipmentData.EquipID == equipID);
-            targetList = mGameData.armorDataList;
-        }
+            data.isEquip = true;
+            data.isEquipUnlock = true;
 
-        if (data != null)
-        {
-            data.EquipmentData.isEquipUnlock = true;
-            targetList.Add(new EquipmentData(data));
+            if (equipType == EEquipType.Weapon)
+            {
+                if (mGameData.curEquipWeaponID >= 0)
+                    DisarmEquipment(EEquipType.Weapon);
+
+                mGameData.curEquipWeapon = data;
+                mGameData.curEquipWeaponID = data.EquipID;
+            }
+            else
+            {
+                if (mGameData.curEquipArmorID >= 0)
+                    DisarmEquipment(EEquipType.Armor);
+                
+                mGameData.curEquipArmor = data;
+                mGameData.curEquipArmorID = data.EquipID;
+            }
         }
     }
 
+    public void DisarmEquipment(EEquipType equipType)
+    {
+        if (equipType == EEquipType.Weapon)
+        {
+            mGameData.curEquipWeapon.isEquip = false;
+            UIManager.Instance.UpdateWeaponUIAction?.Invoke();
+            mGameData.curEquipWeaponID = -1;
+        }
+        else
+        {
+            mGameData.curEquipArmor.isEquip = false;
+            UIManager.Instance.UpdateArmorUIAction?.Invoke();
+            mGameData.curEquipArmorID = -1;
+        }
+
+        mGameData.curEquipWeapon = null;
+    }
+    
     private void OnApplicationPause(bool pause) => SaveGameData();
     private void OnApplicationQuit() => SaveGameData();
 }
