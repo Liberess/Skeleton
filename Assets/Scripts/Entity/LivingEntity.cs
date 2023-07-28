@@ -6,7 +6,8 @@ using NaughtyAttributes;
 
 public class LivingEntity : MonoBehaviour
 {
-    protected int originHp = 100;
+    public int originHp { get; protected set; } = 100;
+    
     [Space(5), Foldout("# LivingEntity")]
     [SerializeField, ProgressBar("Health", "originHp", EColor.Red)] private int currentHp;
     public int CurrentHp

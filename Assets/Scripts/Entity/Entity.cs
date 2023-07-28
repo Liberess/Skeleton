@@ -53,7 +53,7 @@ public abstract class Entity : LivingEntity
 
     public bool IsAttached =>
         TargetEntity != null && Vector3.Distance(TargetEntity.transform.position, transform.position) <= entityData.attackRange;
-    
+
     protected Animator anim;
     protected Rigidbody rigid;
 
@@ -100,20 +100,20 @@ public abstract class Entity : LivingEntity
             gameObject.layer = LayerMask.NameToLayer("Ignore");
         };
 
-        ChangedHpValueAction += () => hpBar.value = (float)CurrentHp / EntityData.healthPoint;
+        ChangedHpValueAction += () => hpBar.value = (float)CurrentHp / originHp;
     }
 
     public void UpdateHpUI()
     {
-        originHp = EntityData.healthPoint;
+        originHp = EntityData.healthPoint + EntityData.increaseHealthPoint;
         
         hpBar.maxValue = 1.0f;
-        hpBar.value = (float)CurrentHp / EntityData.healthPoint;
+        hpBar.value = (float)CurrentHp / originHp;
     }
 
     protected virtual void Init_Enter()
     {
-        originHp = EntityData.healthPoint;
+        originHp = EntityData.healthPoint + EntityData.increaseHealthPoint;
         CurrentHp = originHp;
         
         UpdateHpUI();
@@ -209,7 +209,7 @@ public abstract class Entity : LivingEntity
     protected virtual void Attack_Update() => AttackFlow();
     protected abstract void AttackFlow();
 
-    protected void OnAttack1Trigger()
+    protected virtual void OnAttack1Trigger()
     {
         AttackTargetEntity();
         fsm.ChangeState(EStates.Track);

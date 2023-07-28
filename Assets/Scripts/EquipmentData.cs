@@ -13,7 +13,8 @@ public class EquipmentData
     public bool isEquipUnlock;
     [MinValue(1)] public int equipLv;
     [MinValue(10), MaxValue(99)] public int maxEquipLv;
-    public int impactAmount;
+    [ReadOnly] public int impactAmount;
+    public int originImpactAmount;
     public int equipBuyCost;
     [ReadOnly] public int equipUpCost;
     public int originEquipUpCost;
@@ -30,7 +31,8 @@ public class EquipmentData
         isEquipUnlock = data.isEquipUnlock;
         equipLv = data.equipLv;
         maxEquipLv = data.maxEquipLv;
-        impactAmount = data.impactAmount;
+        impactAmount = data.originImpactAmount;
+        originImpactAmount = data.originImpactAmount;
         equipBuyCost = data.equipBuyCost;
         equipUpCost = data.originEquipUpCost;
         originEquipUpCost = data.originEquipUpCost;
@@ -47,7 +49,8 @@ public class EquipmentData
         isEquipUnlock = dataSO.EquipmentData.isEquipUnlock;
         equipLv = dataSO.EquipmentData.equipLv;
         maxEquipLv = dataSO.EquipmentData.maxEquipLv;
-        impactAmount = dataSO.EquipmentData.impactAmount;
+        impactAmount = dataSO.EquipmentData.originImpactAmount;
+        originImpactAmount = dataSO.EquipmentData.originImpactAmount;
         equipBuyCost = dataSO.EquipmentData.equipBuyCost;
         equipUpCost = dataSO.EquipmentData.originEquipUpCost;
         originEquipUpCost = dataSO.EquipmentData.originEquipUpCost;

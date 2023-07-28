@@ -202,6 +202,12 @@ public class PlayerController : Entity
         }
     }
 
+    protected override void OnAttack1Trigger()
+    {
+        AttackTargetEntity(EntityData.attackPower + EntityData.increaseAttackPower);
+        fsm.ChangeState(EStates.Track);
+    }
+
     protected override void Attack_Exit()
     {
         anim.SetBool(IsAttack, false);
@@ -220,12 +226,10 @@ public class PlayerController : Entity
 
     public void UseSkill(ESkillType skillType)
     {
-        Debug.Log("UseSkill :: " + skillType);
-        
         fsm.ChangeState(EStates.Skill, StateTransition.Overwrite);
-
+        
         int amount = DataManager.Instance.GameData.skillEffectAmounts[(int)skillType];
-        int damageAmount = EntityData.attackPower * (100 + amount) / 100;
+        int damageAmount = (EntityData.attackPower + EntityData.increaseAttackPower) * (100 + amount) / 100;
         switch (skillType)
         {
             case ESkillType.PhantomBlade:

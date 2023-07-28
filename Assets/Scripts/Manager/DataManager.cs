@@ -68,6 +68,8 @@ public class DataManager : MonoBehaviour
 
     public List<EquipmentDataSO> ArmorOriginDataList => armorOriginDataList;
 
+    private PlayerController playerCtrl;
+
     private void Awake()
     {
         if (mInstance == null)
@@ -87,6 +89,8 @@ public class DataManager : MonoBehaviour
     private void Start()
     {
         SaveGameData();
+
+        playerCtrl = FindObjectOfType<PlayerController>();
     }
 
     [ContextMenu("Update Equipment Origin Database")]
@@ -111,11 +115,11 @@ public class DataManager : MonoBehaviour
                 List<EquipmentDataSO> dataList = data.EquipmentData.equipType == EEquipType.Weapon
                     ? weaponOriginDataList
                     : armorOriginDataList;
-                
+
                 if (!dataList.Contains(data))
                 {
                     dataList.Add(data);
-                    
+
                     if (data.EquipmentData.equipType == EEquipType.Weapon)
                         mGameData.weaponDataList.Add(new EquipmentData(data));
                     else
@@ -176,7 +180,7 @@ public class DataManager : MonoBehaviour
 
         mGameData.curEquipWeaponID = -1;
         mGameData.curEquipArmorID = -1;
-        
+
         UpdateEquipmentOriginDatabase();
     }
 
@@ -254,7 +258,6 @@ public class DataManager : MonoBehaviour
 
     public EquipmentData GetEquipmentData(EEquipType equipType, int equipID)
     {
-        Debug.Log("GetEquipmentData");
         EquipmentData data = null;
         if (equipType == EEquipType.Weapon)
             data = mGameData.weaponDataList.Find(e => e.EquipID == equipID);
@@ -267,13 +270,10 @@ public class DataManager : MonoBehaviour
     public void AcquireEquipment(EEquipType equipType, int equipID)
     {
         var dataList = equipType == EEquipType.Weapon ? mGameData.weaponDataList : mGameData.armorDataList;
+        EquipmentData data = dataList.Find(e => e.EquipID == equipID);
 
-        EquipmentData data = null;
-        data = dataList.Find(e => e.EquipID == equipID);
-        
         if (data != null && !data.isEquipUnlock)
         {
-            data.isEquip = true;
             data.isEquipUnlock = true;
 
             if (equipType == EEquipType.Weapon)
@@ -281,16 +281,27 @@ public class DataManager : MonoBehaviour
                 if (mGameData.curEquipWeaponID >= 0)
                     DisarmEquipment(EEquipType.Weapon);
 
+                data.isEquip = true;
                 mGameData.curEquipWeapon = data;
                 mGameData.curEquipWeaponID = data.EquipID;
+                mGameData.playerData.increaseAttackPower = data.impactAmount;
             }
             else
             {
+                // 현재 장착 중인 장비가 있다면
                 if (mGameData.curEquipArmorID >= 0)
-                    DisarmEquipment(EEquipType.Armor);
+                {
+                    // 현재의 최대 체력에서 기존의 장비의 효과를 빼고, 구매한 장비의 효과를 더한 값이
+                    // 현재의 체력보다 낮다면, 의도치 않은 결과를 야기하므로 판단한다.
+                    if (IsChangeableArmor(data.impactAmount))
+                        DisarmEquipment(EEquipType.Armor);
+                }
                 
+                data.isEquip = true;
                 mGameData.curEquipArmor = data;
                 mGameData.curEquipArmorID = data.EquipID;
+                mGameData.playerData.increaseHealthPoint = mGameData.curEquipArmor.impactAmount;
+                playerCtrl.UpdateHpUI();
             }
         }
     }
@@ -302,17 +313,32 @@ public class DataManager : MonoBehaviour
             mGameData.curEquipWeapon.isEquip = false;
             UIManager.Instance.UpdateWeaponUIAction?.Invoke();
             mGameData.curEquipWeaponID = -1;
+            mGameData.curEquipWeapon = null;
         }
         else
         {
             mGameData.curEquipArmor.isEquip = false;
             UIManager.Instance.UpdateArmorUIAction?.Invoke();
             mGameData.curEquipArmorID = -1;
+            mGameData.playerData.increaseHealthPoint = mGameData.curEquipArmor.impactAmount;
+            playerCtrl.UpdateHpUI();
+            mGameData.curEquipArmor = null;
         }
-
-        mGameData.curEquipWeapon = null;
     }
-    
+
+    /// <summary>
+    /// 현재의 최대 체력에서 기존의 장비의 효과를 빼고, 구매한 장비의 효과를 더한 값이
+    /// 현재의 체력보다 낮은지 계산하여 이를 반환한다.
+    /// </summary>
+    public bool IsChangeableArmor(int nextAmount)
+    {
+        int preAmount = mGameData.curEquipArmor?.impactAmount ?? 0;
+        int tempHp = playerCtrl.originHp - preAmount + nextAmount;
+        if (tempHp > playerCtrl.CurrentHp)
+            return true;
+        return false;
+    }
+
     private void OnApplicationPause(bool pause) => SaveGameData();
     private void OnApplicationQuit() => SaveGameData();
 }

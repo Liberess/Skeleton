@@ -208,6 +208,8 @@ public class UIManager : MonoBehaviour
             equipArmorBtn.image.color = Color.white;
         });
         
+        equipWeaponBtn.image.color = Color.yellow;
+        
         equipArmorBtn.onClick.AddListener(() =>
         {
             equipArmorBtn.image.color = Color.yellow;
@@ -216,6 +218,8 @@ public class UIManager : MonoBehaviour
 
         yield return null;
     }
+
+    public void UpdatePlayerHpUI() => playerCtrl.UpdateHpUI();
 
     #endregion
 }

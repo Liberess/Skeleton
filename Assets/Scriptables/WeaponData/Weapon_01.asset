@@ -22,7 +22,7 @@ MonoBehaviour:
     equipLv: 1
     maxEquipLv: 99
     impactAmount: 5
-    equipBuyCost: 500
+    equipBuyCost: 1000
     equipUpCost: 500
     originEquipUpCost: 100
     equipIcon: {fileID: 21300000, guid: 30c3473b99a93ab48a29a89a1b7cced2, type: 3}
