@@ -38,6 +38,7 @@ public class Monster : Entity
             agent.enabled = false;
             int min = DataManager.Instance.GameData.stageCount;
             GameManager.Instance.SetGold(Mathf.RoundToInt(Random.Range(min, min * 2.5f)));
+            GameManager.Instance.SetKarma(Mathf.RoundToInt(Random.Range(min, min * 2.5f)));
             GameManager.Instance.Exp += Random.Range(min, min * 2.5f);
             gameObject.layer = LayerMask.NameToLayer("Ignore");
         };

@@ -300,4 +300,10 @@ public class PlayerController : Entity
         anim.SetTrigger(DoSkill);
         AttackTargetEntity(amount);
     }
+
+    public void ControlJoystick(EJoystickType type, bool active)
+    {
+        dynamicJoystick.gameObject.SetActive(type == EJoystickType.Dynamic && active);
+        staticJoystick.transform.parent.gameObject.SetActive(type == EJoystickType.Static && active);
+    }
 }

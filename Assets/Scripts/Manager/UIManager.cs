@@ -37,6 +37,11 @@ public class UIManager : MonoBehaviour
     private Button equipWeaponBtn;
     [BoxGroup("# Equipment UI Settings"), SerializeField]
     private Button equipArmorBtn;
+
+    [HorizontalLine(color: EColor.Yellow), BoxGroup("# Joystick UI Settings"), SerializeField]
+    private Toggle dynamicJoystickTog;
+    [BoxGroup("# Joystick UI Settings"), SerializeField]
+    private Toggle staticJoystickTog;
     
     private PlayerController playerCtrl;
     
@@ -76,7 +81,21 @@ public class UIManager : MonoBehaviour
         }
         
         autoUseSkillTog.onValueChanged.AddListener(SetAutoUseSkillToggle);
-        
+
+        dynamicJoystickTog.onValueChanged.AddListener((active) =>
+        {
+            dynamicJoystickTog.isOn = active;
+            staticJoystickTog.isOn = !active;
+            playerCtrl.ControlJoystick(EJoystickType.Dynamic, active);
+        });
+
+        staticJoystickTog.onValueChanged.AddListener((active) =>
+        {
+            dynamicJoystickTog.isOn = !active;
+            staticJoystickTog.isOn = active;
+            playerCtrl.ControlJoystick(EJoystickType.Static, active);
+        });
+
         StartCoroutine(SetupEquipmentUICo());
     }
 
@@ -175,7 +194,7 @@ public class UIManager : MonoBehaviour
     }
 
     #endregion
-
+    
     #region Equipment
 
     private IEnumerator SetupEquipmentUICo()

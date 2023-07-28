@@ -45,7 +45,12 @@ public enum EEquipType
     Armor
 }
 
+public enum EJoystickType
+{
+    Dynamic = 0,
+    Static
+}
+
 public class Enums
 {
-    
 }

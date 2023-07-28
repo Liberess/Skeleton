@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
@@ -38,11 +37,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject gameOverCanvas;
 
     [SerializeField] private TextMeshProUGUI stageTxt;
-    [SerializeField] private TextMeshProUGUI goldTxt;
-    [SerializeField] private TextMeshProUGUI karmaTxt;
-    [SerializeField] private TextMeshProUGUI shopKarmaTxt;
     [SerializeField] private TextMeshProUGUI remainTxt;
     [SerializeField] private Image remainFillImg;
+    [SerializeField] private Slider remainBar;
 
     [SerializeField] private TextMeshProUGUI lvTxt;
     [SerializeField] private Slider expSlider;
@@ -96,7 +93,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public int currentkillCount = 0;
+    public int curkillCount = 0;
     public float currentPlayTime = 0;
 
     private DateTime startTime;
@@ -121,6 +118,7 @@ public class GameManager : MonoBehaviour
         Karma = 999999;
 
         expSlider.maxValue = 1.0f;
+        remainBar.maxValue = 1.0f;
 
         startTime = DateTime.Now;
 
@@ -143,8 +141,6 @@ public class GameManager : MonoBehaviour
 
     public void NextStage()
     {
-        ++dataMgr.GameData.stageCount;
-
         string[] subStr = dataMgr.GameData.stageStr.Split('-');
         int mainStageNum = int.Parse(subStr[0]);
         int subStageNum = int.Parse(subStr[1]);
@@ -159,6 +155,13 @@ public class GameManager : MonoBehaviour
             subStageNum = 1;
             BossStage();
         }
+        
+        ++dataMgr.GameData.stageCount;
+        
+        dataMgr.GameData.karma += mainStageNum;
+        
+        dataMgr.GameData.killCount += curkillCount;
+        curkillCount = 0;
 
         dataMgr.GameData.stageStr = string.Concat(mainStageNum, '-', subStageNum);
         stageTxt.text = dataMgr.GameData.stageStr;
@@ -167,6 +170,7 @@ public class GameManager : MonoBehaviour
 
     private void BossStage()
     {
+        
     }
 
     private void UpdateGameUI()
@@ -180,6 +184,7 @@ public class GameManager : MonoBehaviour
     {
         remainTxt.text = count.ToString();
         remainFillImg.fillAmount = ((float)count / MonsterManager.Instance.StageSpawnCount);
+        remainBar.value = (float)curkillCount / MonsterManager.Instance.StageSpawnCount;
     }
 
     private void GameOver()
@@ -190,10 +195,8 @@ public class GameManager : MonoBehaviour
         currentPlayTime = (float)timeDif.TotalSeconds;
 
         dataMgr.GameData.totalPlayTime += currentPlayTime;
-        dataMgr.GameData.karma += currentkillCount;
 
         ++dataMgr.GameData.deathCount;
-        dataMgr.GameData.killCount += currentkillCount;
 
         gameOverCanvas.SetActive(true);
     }

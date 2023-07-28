@@ -14,7 +14,7 @@ public class MonsterManager : MonoBehaviour
     [SerializeField] private EntitySO[] monsterSOs;
     private Queue<Monster> monsterQueue = new Queue<Monster>();
 
-    private int spawnCount = 0;
+    private int curSpawnCount = 0;
     public int StageSpawnCount { get; private set; }
     
     [SerializeField, Range(0.0f, 60.0f)] private float spawnCycleTime = 5.0f;
@@ -103,11 +103,11 @@ public class MonsterManager : MonoBehaviour
 
     private IEnumerator SpawnCo()
     {
-        spawnCount += dataMgr.GameData.stageCount * 2;
-        StageSpawnCount = spawnCount;
-        if (spawnCount > maxSpawnCount)
-            spawnCount = maxSpawnCount;
-        gameMgr.UpdateRemainMonsterUI(spawnCount);
+        curSpawnCount += dataMgr.GameData.stageCount * 2;
+        StageSpawnCount = curSpawnCount;
+        if (curSpawnCount > maxSpawnCount)
+            curSpawnCount = maxSpawnCount;
+        gameMgr.UpdateRemainMonsterUI(curSpawnCount);
         
         /*var picker = new Rito.WeightedRandomPicker<EMonsterType>();
         picker.Add(EMonsterType.Spider, spawnWeightDic[EMonsterType.Spider]);
@@ -116,7 +116,7 @@ public class MonsterManager : MonoBehaviour
 
         WaitForSeconds spawnDelay = new WaitForSeconds(spawnCycleTime);
 
-        for (int i = 0; i < spawnCount; i++)
+        for (int i = 0; i < curSpawnCount; i++)
         {
             yield return spawnDelay;
             
@@ -131,8 +131,8 @@ public class MonsterManager : MonoBehaviour
             monster.DeathAction += () =>
             {
                 SpawnedMonsterList.Remove(monster);
-                gameMgr.UpdateRemainMonsterUI(--spawnCount);
-                ++dataMgr.GameData.killCount;
+                ++gameMgr.curkillCount;
+                gameMgr.UpdateRemainMonsterUI(--curSpawnCount);
                 StartCoroutine(ReturnObjCo(monster, 1.0f));
 
                 if (SpawnedMonsterList.Count == 0)
