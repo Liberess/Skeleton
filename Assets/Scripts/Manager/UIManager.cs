@@ -37,6 +37,10 @@ public class UIManager : MonoBehaviour
     private GameObject shopArmorGrid;
     [BoxGroup("# Shop UI Settings"), SerializeField]
     private GameObject shopEquipSlotPrefab;
+    [BoxGroup("# Shop UI Settings"), SerializeField]
+    private Button shopWeaponBtn;
+    [BoxGroup("# Shop UI Settings"), SerializeField]
+    private Button shopArmorBtn;
 
     private PlayerController playerCtrl;
     
@@ -197,6 +201,18 @@ public class UIManager : MonoBehaviour
             armorSlot.transform.localPosition = Vector3.zero;
             armorSlot.SetupSlot(armorData);
         }
+        
+        shopWeaponBtn.onClick.AddListener(() =>
+        {
+            shopWeaponBtn.image.color = Color.yellow;
+            shopArmorBtn.image.color = Color.white;
+        });
+        
+        shopArmorBtn.onClick.AddListener(() =>
+        {
+            shopArmorBtn.image.color = Color.yellow;
+            shopWeaponBtn.image.color = Color.white;
+        });
 
         yield return null;
     }
