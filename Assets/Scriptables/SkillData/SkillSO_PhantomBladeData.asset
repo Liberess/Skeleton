@@ -17,7 +17,7 @@ MonoBehaviour:
     \uB0A0\uB824 {0}% \uD53C\uD574\uB97C \uAC00\uD55C\uB2E4."
   skillType: 0
   skillImpactAmount: 150
-  skillCoolTime: 2
+  skillCoolTime: 10
   skillIcon: {fileID: 21300000, guid: e8ba00f6eaa968644bf2a2f9fca61c0e, type: 3}
   skillPrefab: {fileID: 0}
   isRangeSkill: 0

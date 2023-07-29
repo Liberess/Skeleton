@@ -12,10 +12,10 @@ public class PlayerController : Entity
 
     public EStates state;
 
-    [Foldout("# Joystick Settings"), SerializeField]
+    [HorizontalLine(color: EColor.Red), BoxGroup("# Joystick Settings"), SerializeField]
     private StaticJoystickController staticJoystick;
 
-    [Foldout("# Joystick Settings"), SerializeField]
+    [BoxGroup("# Joystick Settings"), SerializeField]
     private DynamicJoystickController dynamicJoystick;
 
     private Vector2 moveInputVec;
@@ -26,7 +26,7 @@ public class PlayerController : Entity
     private float targetDist = float.MaxValue;
     private int closetIndex = 0;
     private int targetIndex = 0;
-
+    
     private static readonly int IsAttack = Animator.StringToHash("isAttack");
     private static readonly int DoSkill = Animator.StringToHash("doSkill");
 
@@ -176,6 +176,8 @@ public class PlayerController : Entity
 
             if (HasTarget)
             {
+                RotateToTarget();
+                
                 if (IsAttackable)
                 {
                     if (!IsAttached)
@@ -186,8 +188,6 @@ public class PlayerController : Entity
                     }
                     
                     lastAttackTime = Time.time;
-
-                    RotateToTarget();
 
                     if (!anim.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
                         anim.SetBool(IsAttack, true);

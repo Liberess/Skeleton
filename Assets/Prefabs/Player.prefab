@@ -3708,8 +3708,8 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9079043516687972367}
   serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
+  m_Mass: 10
+  m_Drag: 0.1
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
@@ -3725,7 +3725,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 80
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!114 &4757025001912524504
 MonoBehaviour:
@@ -3743,6 +3743,7 @@ MonoBehaviour:
   minTimeBetDamaged: 0.1
   entityData:
     entityName: None
+    entityType: 0
     healthPoint: 10
     attackPower: 1
     attackRange: 1
@@ -3751,10 +3752,49 @@ MonoBehaviour:
     maxAttackPerSecond: 0
     moveSpeed: 3
     maxMoveSpeed: 0
+    increaseHealthPoint: 0
+    increaseAttackPower: 0
   hpBar: {fileID: 6007842641370364362}
   targetLayer:
     serializedVersion: 2
     m_Bits: 128
+  targetEntity: {fileID: 0}
+  equipMeshRendererList:
+  - {fileID: 6855590287040860596}
+  - {fileID: 3496271513061319873}
+  - {fileID: 6713198854886077284}
+  - {fileID: 5634450215037938309}
+  - {fileID: 2388981573718875590}
+  - {fileID: 814607624493409258}
+  - {fileID: 6479869981706481652}
+  - {fileID: 3111026585710121249}
+  - {fileID: 2329798388670052830}
+  - {fileID: 5594407565657441183}
+  - {fileID: 1850513514185095672}
+  - {fileID: 2452295900207539587}
+  - {fileID: 1262224955172315220}
+  - {fileID: 2634004643224758618}
+  - {fileID: 1053667675529948373}
+  - {fileID: 1900397623561624884}
+  - {fileID: 4561126967172324351}
+  - {fileID: 2904356836408201604}
+  - {fileID: 8796727355583586006}
+  - {fileID: 3014304500196723874}
+  - {fileID: 6587941323191264799}
+  - {fileID: 5786889513444453366}
+  - {fileID: 9127089107950126161}
+  - {fileID: 3921743171861760272}
+  - {fileID: 7236855824090375711}
+  - {fileID: 8060463513813572804}
+  - {fileID: 6874727158032802612}
+  - {fileID: 5347844887401809420}
+  - {fileID: 8800526791336338122}
+  bodyMeshRenderer: {fileID: 8174116937716708044}
+  defaultMats:
+  - {fileID: 2100000, guid: d02744dad54d0bd4f90592b971bf8061, type: 2}
+  - {fileID: 2100000, guid: 308d645dec22cf0469f719fde25c810f, type: 2}
+  impactMat: {fileID: 2100000, guid: 98047bc143d890442967b24dc86969bb, type: 2}
+  state: 0
   staticJoystick: {fileID: 0}
   dynamicJoystick: {fileID: 0}
 --- !u!95 &5479746971968791880
@@ -3790,6 +3830,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Canvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 2783471546250853028, guid: 6119e8fd56818e34183001c319c4cc22,
+        type: 3}
+      propertyPath: m_Value
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6232066448570999428, guid: 6119e8fd56818e34183001c319c4cc22,
         type: 3}

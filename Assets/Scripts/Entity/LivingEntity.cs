@@ -8,8 +8,8 @@ public class LivingEntity : MonoBehaviour
 {
     public int originHp { get; protected set; } = 100;
     
-    [Space(5), Foldout("# LivingEntity")]
-    [SerializeField, ProgressBar("Health", "originHp", EColor.Red)] private int currentHp;
+    [HorizontalLine(color: EColor.Red), BoxGroup("# LivingEntity"), SerializeField, ProgressBar("Health", "originHp", EColor.Red)]
+    private int currentHp;
     public int CurrentHp
     {
         get => currentHp;
@@ -27,8 +27,8 @@ public class LivingEntity : MonoBehaviour
         }
     }
 
-    [Foldout("# LivingEntity")]
-    [SerializeField] protected float minTimeBetDamaged = 0.1f;
+    [BoxGroup("# LivingEntity"), SerializeField]
+    protected float minTimeBetDamaged = 0.1f;
     private float lastDamagedTime;
 
     protected bool IsDamageable

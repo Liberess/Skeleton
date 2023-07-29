@@ -4905,7 +4905,7 @@ Transform:
   m_GameObject: {fileID: 771369568}
   serializedVersion: 2
   m_LocalRotation: {x: 0.2588191, y: -0, z: -0, w: 0.9659258}
-  m_LocalPosition: {x: 2.95, y: 6.080001, z: -5.2702527}
+  m_LocalPosition: {x: 0, y: 6.000001, z: -8.660254}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -7704,7 +7704,7 @@ Transform:
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
   m_LocalRotation: {x: 0.2588191, y: -0, z: -0, w: 0.9659258}
-  m_LocalPosition: {x: 2.95, y: 6.080001, z: -5.2702527}
+  m_LocalPosition: {x: 0, y: 6.000001, z: -8.660254}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -16476,17 +16476,17 @@ PrefabInstance:
     - target: {fileID: 3494348224419069063, guid: d3c6e22253b96844fbdbf24b5bce267c,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2.95
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3494348224419069063, guid: d3c6e22253b96844fbdbf24b5bce267c,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.08
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3494348224419069063, guid: d3c6e22253b96844fbdbf24b5bce267c,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 3.39
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3494348224419069063, guid: d3c6e22253b96844fbdbf24b5bce267c,
         type: 3}
@@ -16533,36 +16533,6 @@ PrefabInstance:
       propertyPath: dynamicJoystick
       value: 
       objectReference: {fileID: 1445613773}
-    - target: {fileID: 4757025001912524504, guid: d3c6e22253b96844fbdbf24b5bce267c,
-        type: 3}
-      propertyPath: targetLayer.m_Bits
-      value: 128
-      objectReference: {fileID: 0}
-    - target: {fileID: 4848690066812556759, guid: d3c6e22253b96844fbdbf24b5bce267c,
-        type: 3}
-      propertyPath: m_Drag
-      value: 0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4848690066812556759, guid: d3c6e22253b96844fbdbf24b5bce267c,
-        type: 3}
-      propertyPath: m_Mass
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 4848690066812556759, guid: d3c6e22253b96844fbdbf24b5bce267c,
-        type: 3}
-      propertyPath: m_Constraints
-      value: 112
-      objectReference: {fileID: 0}
-    - target: {fileID: 6007842641370364362, guid: d3c6e22253b96844fbdbf24b5bce267c,
-        type: 3}
-      propertyPath: m_Value
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6007842641370364362, guid: d3c6e22253b96844fbdbf24b5bce267c,
-        type: 3}
-      propertyPath: m_MaxValue
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 9079043516687972367, guid: d3c6e22253b96844fbdbf24b5bce267c,
         type: 3}
       propertyPath: m_Name

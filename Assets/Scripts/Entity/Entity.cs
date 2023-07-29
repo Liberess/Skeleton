@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using MonsterLove.StateMachine;
 using NaughtyAttributes;
+using UnityEngine.Serialization;
 
 public abstract class Entity : LivingEntity
 {
@@ -21,7 +22,7 @@ public abstract class Entity : LivingEntity
 
     protected StateMachine<EStates> fsm;
 
-    [Foldout("# Status Settings")]
+    [HorizontalLine(color: EColor.Red), BoxGroup("# Status Settings")]
     [SerializeField] private EntityData entityData;
 
     public EntityData EntityData
@@ -30,14 +31,15 @@ public abstract class Entity : LivingEntity
         protected set { entityData = value; }
     }
 
-    [Foldout("# Status Settings")]
-    [SerializeField] private Slider hpBar;
+    [HorizontalLine(color: EColor.Orange), BoxGroup("# Status Settings"), SerializeField]
+    private Slider hpBar;
     
     // Attack
-    [Foldout("# Attack Settings")]
-    [SerializeField] protected LayerMask targetLayer;
+    [HorizontalLine(color: EColor.Yellow), BoxGroup("# Attack Settings"), SerializeField]
+    protected LayerMask targetLayer;
 
-    [SerializeField] private LivingEntity targetEntity;
+    [BoxGroup("# Attack Settings"), SerializeField]
+    private LivingEntity targetEntity;
     public LivingEntity TargetEntity
     {
         get { return targetEntity; }
@@ -53,7 +55,18 @@ public abstract class Entity : LivingEntity
 
     public bool IsAttached =>
         TargetEntity != null && Vector3.Distance(TargetEntity.transform.position, transform.position) <= entityData.attackRange;
+    
+    [HorizontalLine(color: EColor.Green), BoxGroup("# Material Settings"), SerializeField]
+    protected List<MeshRenderer> equipMeshRendererList = new List<MeshRenderer>();
 
+    [BoxGroup("# Material Settings"), SerializeField]
+    protected SkinnedMeshRenderer bodyMeshRenderer;
+    [FormerlySerializedAs("mats")] [BoxGroup("# Material Settings"), SerializeField]
+    protected Material[] defaultMats;
+
+    [BoxGroup("# Material Settings"), SerializeField]
+    protected Material impactMat;
+    
     protected Animator anim;
     protected Rigidbody rigid;
 
@@ -254,6 +267,60 @@ public abstract class Entity : LivingEntity
 
     protected virtual void Die_Enter()
     {
+        SwapMaterial(EMaterialType.Default);
         StopAllCoroutines();
+    }
+
+    public override void ApplyDamage(DamageMessage dmgMsg)
+    {
+        StartCoroutine(ImpactMaterialCo());
+        base.ApplyDamage(dmgMsg);
+    }
+
+    [ContextMenu("Set Equip Materials")]
+    protected void SetEquipMaterial()
+    {
+        equipMeshRendererList.Clear();
+        var meshRenders = GetComponentsInChildren<MeshRenderer>();
+        foreach (var meshRen in meshRenders)
+            equipMeshRendererList.Add(meshRen);
+
+        bodyMeshRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
+    }
+
+    public IEnumerator ImpactMaterialCo()
+    {
+        SwapMaterial(EMaterialType.Flash);
+
+        yield return new WaitForSeconds(0.2f);
+        
+        SwapMaterial(EMaterialType.Default);
+    }
+
+    public void SwapMaterial(EMaterialType matType)
+    {
+        if (matType == EMaterialType.Default)
+        {
+            if (equipMeshRendererList.Count > 0)
+            {
+                foreach (var meshRen in equipMeshRendererList)
+                    meshRen.sharedMaterial = defaultMats[0];
+                bodyMeshRenderer.sharedMaterial = defaultMats[1];
+            }
+            else
+            {
+                bodyMeshRenderer.sharedMaterial = defaultMats[0];
+            }
+        }
+        else
+        {
+            if (equipMeshRendererList.Count > 0)
+            {
+                foreach (var meshRen in equipMeshRendererList)
+                    meshRen.sharedMaterial = impactMat;
+            }
+    
+            bodyMeshRenderer.sharedMaterial = impactMat;
+        }
     }
 }

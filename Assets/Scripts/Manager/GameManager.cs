@@ -33,6 +33,7 @@ public class GameManager : MonoBehaviour
 
     private UIManager uiMgr;
     private DataManager dataMgr;
+    private PlayerController playerCtrl;
 
     [SerializeField] private GameObject gameOverCanvas;
 
@@ -115,6 +116,8 @@ public class GameManager : MonoBehaviour
     {
         uiMgr = UIManager.Instance;
         dataMgr = DataManager.Instance;
+
+        playerCtrl = FindObjectOfType<PlayerController>();
 
         Gold = 999999;
         Karma = 999999;
@@ -201,5 +204,6 @@ public class GameManager : MonoBehaviour
         ++dataMgr.GameData.deathCount;
 
         gameOverCanvas.SetActive(true);
+        playerCtrl.transform.position = Vector3.zero;
     }
 }

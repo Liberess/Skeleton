@@ -1339,6 +1339,7 @@ MonoBehaviour:
   minTimeBetDamaged: 0.1
   entityData:
     entityName: None
+    entityType: 0
     healthPoint: 10
     attackPower: 1
     attackRange: 1
@@ -1347,10 +1348,18 @@ MonoBehaviour:
     maxAttackPerSecond: 0
     moveSpeed: 3
     maxMoveSpeed: 0
+    increaseHealthPoint: 0
+    increaseAttackPower: 0
   hpBar: {fileID: 3386549985830526918}
   targetLayer:
     serializedVersion: 2
     m_Bits: 64
+  targetEntity: {fileID: 0}
+  equipMeshRendererList: []
+  bodyMeshRenderer: {fileID: 371570870792073348}
+  defaultMats:
+  - {fileID: 2100000, guid: 1623c78ab45a352498de44af42f26632, type: 2}
+  impactMat: {fileID: 2100000, guid: 98047bc143d890442967b24dc86969bb, type: 2}
   state: 0
 --- !u!195 &586371165263878062
 NavMeshAgent:

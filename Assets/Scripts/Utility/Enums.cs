@@ -57,6 +57,12 @@ public enum EEntityType
     Monster
 }
 
+public enum EMaterialType
+{
+    Default = 0,
+    Flash
+}
+
 public class Enums
 {
 }
