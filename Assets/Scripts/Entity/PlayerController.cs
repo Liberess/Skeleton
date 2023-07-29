@@ -102,12 +102,26 @@ public class PlayerController : Entity
     }
 
     public void OnMoveInput(Vector2 moveInput) => moveInputVec = moveInput;
-
-    protected override void TrackFlow()
+    
+    protected override void Idle_Update()
     {
-        if (IsDead)
-            return;
+        // 플레이어의 경우에는 복수의 target이 존재하기에,
+        // 매번 가장 가까운 target을 확인해야 한다.
+        if (FindNearestMonster())
+        {
+            if(IsAttackable && IsAttached)
+                fsm.ChangeState(EStates.Attack);
+            else
+                fsm.ChangeState(EStates.Track);
+        }
+    }
 
+    /// <summary>
+    /// 가장 가까이에 있는 target을 찾는다.
+    /// </summary>
+    /// <returns>타겟이 있는지 없는지</returns>
+    private bool FindNearestMonster()
+    {
         if (monsterMgr.SpawnedMonsterList.Count > 0)
         {
             closetIndex = 0;
@@ -142,13 +156,30 @@ public class PlayerController : Entity
 
             closetDist = float.MaxValue;
             targetDist = float.MaxValue;
+
+            return true;
         }
+        
+        return false;
+    }
 
-        var targetPosition = TargetEntity.transform.position;
-        transform.position = Vector3.MoveTowards(transform.position, targetPosition,
-            EntityData.moveSpeed * Time.deltaTime);
+    protected override void TrackFlow()
+    {
+        if (IsDead)
+            return;
 
-        RotateToTarget();
+        if (FindNearestMonster())
+        {
+            var targetPosition = TargetEntity.transform.position;
+            transform.position = Vector3.MoveTowards(transform.position, targetPosition,
+                EntityData.moveSpeed * Time.deltaTime);
+            
+            RotateToTarget();
+        }
+        else
+        {
+            fsm.ChangeState(EStates.Idle);
+        }
     }
 
     protected override void Attack_Update()
@@ -171,20 +202,16 @@ public class PlayerController : Entity
                 {
                     if (!IsAttached)
                     {
-                        Debug.Log("공격하려는데 멀어서 다시 track로");
                         fsm.ChangeState(EStates.Track);
                         return;
                     }
                     
                     lastAttackTime = Time.time;
-
-                    if (!anim.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
-                        anim.SetBool(IsAttack, true);
+                    anim.SetBool(IsAttack, true);
                 }
             }
             else
             {
-                Debug.Log("not hasTarget");
                 TargetEntity = null;
                 fsm.ChangeState(EStates.Idle);
             }
@@ -225,7 +252,6 @@ public class PlayerController : Entity
                 AudioManager.Instance.PlaySFX(ESFXName.Blade);
                 if (IsAttached)
                 {
-                    Debug.Log("Already Attached Attack, Add Blade Eft");
                     anim.SetTrigger(DoSkill);
                     AttackTargetEntity(damageAmount);
                 }

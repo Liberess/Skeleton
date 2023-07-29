@@ -150,37 +150,21 @@ public abstract class Entity : LivingEntity
 
     protected virtual void Idle_Enter()
     {
-        if(entityData.entityType == EEntityType.Player)
-            Debug.Log("Idle_Enter");
         anim.SetBool(IsWalk, false);
     }
 
+    /// <summary>
+    /// idle 상태에서는 target이 존재하는지 확인한다.
+    /// 만약 target이 있으면 거리에 따라 attack을 하거나 track한다.
+    /// </summary>
     protected virtual void Idle_Update()
     {
-        if (TargetEntity == null || TargetEntity && !TargetEntity.gameObject.activeSelf)
+        if (HasTarget)
         {
-            Collider[] cols = Physics.OverlapSphere(transform.position, 100f, targetLayer);
-            if (cols.Length > 0)
-            {
-                List<GameObject> objList = new List<GameObject>();
-                foreach (var col in cols)
-                    objList.Add(col.gameObject);
-
-                GameObject nearstObj = Utility.GetNearestObjectByList(objList, transform.position);
-                if (nearstObj.TryGetComponent(out LivingEntity entity))
-                {
-                    TargetEntity = entity;
-                    fsm.ChangeState(EStates.Track);
-                }
-            }
+            if(IsAttackable && IsAttached)
+                fsm.ChangeState(EStates.Attack);
             else
-            {
-                TargetEntity = null;
-            }
-        }
-        else
-        {
-            fsm.ChangeState(EStates.Track);
+                fsm.ChangeState(EStates.Track);
         }
     }
 
@@ -217,14 +201,16 @@ public abstract class Entity : LivingEntity
 
     protected virtual void Track_Enter()
     {
-        if(entityData.entityType == EEntityType.Player)
-            Debug.Log("Track_Enter");
         anim.SetBool(IsWalk, true);
     }
 
+    /// <summary>
+    /// 만약 targetEntity가 있고 살아있다면
+    /// 공격 범위에 들어왔을때 attack 상태로 전환하고, 범위 밖이라면 추적한다.
+    /// </summary>
     protected virtual void Track_Update()
     {
-        if (TargetEntity != null)
+        if (targetEntity != null && !targetEntity.IsDead)
         {
             float distance = Vector3.Distance(TargetEntity.transform.position, transform.position);
             if (distance <= EntityData.attackRange && fsm.State != EStates.Attack)
@@ -238,8 +224,6 @@ public abstract class Entity : LivingEntity
 
     protected virtual void Track_Exit()
     {
-        if(entityData.entityType == EEntityType.Player)
-            Debug.Log("Track_Exit");
         rigid.velocity = Vector3.zero;
         anim.SetBool(IsWalk, false);
     }
@@ -267,9 +251,7 @@ public abstract class Entity : LivingEntity
                     }
                     
                     lastAttackTime = Time.time;
-
-                    if (!anim.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
-                        anim.SetBool(IsAttack, true);
+                    anim.SetBool(IsAttack, true);
                 }
             }
             else
