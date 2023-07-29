@@ -4,6 +4,7 @@ using UnityEngine;
 public class EntityData
 {
     public string entityName = "None";
+    public EEntityType entityType;
 
     public int healthPoint = 10;
 

@@ -229,6 +229,11 @@ public abstract class Entity : LivingEntity
 
             DamageMessage dmgMsg = new DamageMessage(this.gameObject, damage > 0 ? damage : EntityData.attackPower, hit.point);
             TargetEntity.ApplyDamage(dmgMsg);
+
+            if(entityData.entityType == EEntityType.Player)
+                AudioManager.Instance.PlaySFX(ESFXName.PlayerAttack);
+            if(entityData.entityType == EEntityType.Monster)
+                AudioManager.Instance.PlaySFX(ESFXName.MonsterAttack);
         }
     }
 

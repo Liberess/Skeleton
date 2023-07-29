@@ -59,6 +59,8 @@ public class GameManager : MonoBehaviour
 
             if (dataMgr.GameData.exp >= dataMgr.GameData.needsExp)
             {
+                AudioManager.Instance.PlaySFX(ESFXName.LevelUp);
+                
                 ++dataMgr.GameData.level;
                 dataMgr.GameData.exp = Mathf.Clamp(dataMgr.GameData.exp - dataMgr.GameData.needsExp, 0.0f,
                     dataMgr.GameData.needsExp);

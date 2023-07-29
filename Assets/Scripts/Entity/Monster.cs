@@ -103,4 +103,16 @@ public class Monster : Entity
             }
         }
     }
+
+    public override void ApplyDamage(DamageMessage dmgMsg)
+    {
+        AudioManager.Instance.PlaySFX(ESFXName.MonsterHit);
+        base.ApplyDamage(dmgMsg);
+    }
+
+    protected override void Die_Enter()
+    {
+        AudioManager.Instance.PlaySFX(ESFXName.MonsterDie);
+        base.Die_Enter();
+    }
 }

@@ -233,6 +233,7 @@ public class PlayerController : Entity
         switch (skillType)
         {
             case ESkillType.PhantomBlade:
+                AudioManager.Instance.PlaySFX(ESFXName.Blade);
                 if (IsAttached)
                 {
                     Debug.Log("Already Attached Attack, Add Blade Eft");
@@ -247,7 +248,7 @@ public class PlayerController : Entity
             
             case ESkillType.FireBall:
                 anim.SetTrigger(DoSkill);
-                
+                AudioManager.Instance.PlaySFX(ESFXName.FireBall);
                 SkillSO skillSo = DataManager.Instance.GetSkillSO(skillType);
                 DamageMessage dmgMsg = new DamageMessage(this.gameObject, damageAmount);
                 
@@ -268,6 +269,7 @@ public class PlayerController : Entity
                 break;
             
             case ESkillType.Recovery:
+                AudioManager.Instance.PlaySFX(ESFXName.Recovery);
                 fsm.ChangeState(EStates.Attack);
                 RecoveryHealthPoint(amount);
                 break;
@@ -299,6 +301,18 @@ public class PlayerController : Entity
         
         anim.SetTrigger(DoSkill);
         AttackTargetEntity(amount);
+    }
+
+    public override void ApplyDamage(DamageMessage dmgMsg)
+    {
+        AudioManager.Instance.PlaySFX(ESFXName.PlayerHit);
+        base.ApplyDamage(dmgMsg);
+    }
+
+    protected override void Die_Enter()
+    {
+        AudioManager.Instance.PlaySFX(ESFXName.PlayerDie);
+        base.Die_Enter();
     }
 
     public void ControlJoystick(EJoystickType type, bool active)

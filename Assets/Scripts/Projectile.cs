@@ -50,6 +50,8 @@ public class Projectile : MonoBehaviour
             Collider[] cols = Physics.OverlapSphere(transform.position, impactRange, targetLayer.value);
             if (cols.Length > 0)
             {
+                AudioManager.Instance.PlaySFX(ESFXName.Explosion);
+                
                 var explosion = EffectManager.Instance.InstantiateObj(EEffectType.Explosion);
                 explosion.transform.position = transform.position;
                 EffectManager.Instance.ReturnObj(EEffectType.Explosion, explosion, 2.0f);

@@ -51,6 +51,12 @@ public enum EJoystickType
     Static
 }
 
+public enum EEntityType
+{
+    Player = 0,
+    Monster
+}
+
 public class Enums
 {
 }

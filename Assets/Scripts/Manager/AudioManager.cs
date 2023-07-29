@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Audio;
-using System;
 using NaughtyAttributes;
 using TMPro;
 
@@ -11,31 +13,36 @@ using TMPro;
 public struct Sound
 {
     public string name;
+    public int id;
     public AudioClip clip;
 
-    public Sound(string _name, AudioClip _clip)
+    public Sound(string _name, int _id, AudioClip _clip)
     {
         name = _name;
+        id = _id;
         clip = _clip;
     }
 }
 
 public enum EBGMName
 {
-    Main,
     InGame
 }
 
 public enum ESFXName
 {
-    GunFire,
-    Explosion,
+    Click,
     PlayerHit,
+    PlayerAttack,
     PlayerDie,
-    ZombieHit,
-    ZombieDie,
-    UIClick,
-    Reload
+    Blade,
+    FireBall,
+    Explosion,
+    Recovery,
+    LevelUp,
+    MonsterHit,
+    MonsterAttack,
+    MonsterDie,
 }
 
 public class AudioManager : MonoBehaviour
@@ -50,9 +57,9 @@ public class AudioManager : MonoBehaviour
     private Slider sfxSlider;
 
     [HorizontalLine(color: EColor.Orange), BoxGroup("# Setting Audio Clip"), SerializeField]
-    private List<Sound> bgm = new List<Sound>();
+    private List<Sound> bgmList = new List<Sound>();
     [BoxGroup("# Setting Audio Clip"), SerializeField]
-    private List<Sound> sfx = new List<Sound>();
+    private List<Sound> sfxList = new List<Sound>();
     
     [HorizontalLine(color: EColor.Yellow), BoxGroup("# Setting Audio Player"), SerializeField]
     private AudioSource bgmPlayer = null;
@@ -118,29 +125,38 @@ public class AudioManager : MonoBehaviour
     [ContextMenu("Update Audio Clip Resource")]
     private void UpdateAudioClip()
     {
-        UpdateBGMResource();
-        UpdateSFXResource();
+        bgmList.Clear();
+        sfxList.Clear();
+        
+        string[] assetPaths =
+        {
+            "Assets/Audios/BGM",
+            "Assets/Audios/SFX"
+        };
+
+        var guids = AssetDatabase.FindAssets("t:AudioClip", assetPaths);
+        foreach (var guid in guids)
+        {
+            string path = AssetDatabase.GUIDToAssetPath(guid);
+            AudioClip data = AssetDatabase.LoadAssetAtPath<AudioClip>(path);
+
+            if (data != null)
+            {
+                int indexOfUnderscore = data.name.LastIndexOf('_');
+                if (indexOfUnderscore >= 0 && indexOfUnderscore < data.name.Length - 1)
+                {
+                    string nameStr = data.name.Substring(indexOfUnderscore + 1).Trim();
+                    string idStr = Regex.Replace(data.name, @"\D", "");
+                    List<Sound> targetList = data.name.Contains("BGM") ? bgmList : sfxList;
+                    targetList.Add(new Sound(nameStr, int.Parse(idStr), data));
+                }
+            }
+        }
+
+        bgmList = bgmList.OrderBy(obj => obj.id).ToList();
+        sfxList = sfxList.OrderBy(obj => obj.id).ToList();
     }
-
-    private void UpdateBGMResource()
-    {
-        bgm.Clear();
-
-        AudioClip[] srcs = Resources.LoadAll<AudioClip>("Audio/BGM");
-
-        foreach (var src in srcs)
-            bgm.Add(new Sound(src.name.Substring(6), src));
-    }
-
-    private void UpdateSFXResource()
-    {
-        sfx.Clear();
-
-        AudioClip[] srcs = Resources.LoadAll<AudioClip>("Audio/SFX");
-
-        foreach (var src in srcs)
-            sfx.Add(new Sound(src.name.Substring(6), src));
-    }
+        
     #endregion
 
     #region Audio Save
@@ -173,11 +189,11 @@ public class AudioManager : MonoBehaviour
         if (bgmPlayer.clip != null && bgmPlayer.clip.name == bgmName)
             return;
 
-        for (int i = 0; i < bgm.Count; i++)
+        for (int i = 0; i < bgmList.Count; i++)
         {
-            if (bgmName.Equals(bgm[i].name))
+            if (bgmName.Equals(bgmList[i].name))
             {
-                bgmPlayer.clip = bgm[i].clip;
+                bgmPlayer.clip = bgmList[i].clip;
                 bgmPlayer.Play();
             }
         }
@@ -189,21 +205,21 @@ public class AudioManager : MonoBehaviour
     {
         string sfxName = _name.ToString();
 
-        for (int i = 0; i < sfx.Count; i++)
+        for (int i = 0; i < sfxList.Count; i++)
         {
-            if (sfxName.Equals(sfx[i].name))
+            if (sfxName.Equals(sfxList[i].name))
             {
                 for (int x = 0; x < sfxPlayerList.Count; x++)
                 {
                     if (!sfxPlayerList[x].isPlaying)
                     {
-                        sfxPlayerList[x].clip = sfx[i].clip;
+                        sfxPlayerList[x].clip = sfxList[i].clip;
                         sfxPlayerList[x].Play();
                         return;
                     }
                     else
                     {
-                        if (sfxPlayerList[x].clip == sfx[i].clip)
+                        if (sfxPlayerList[x].clip == sfxList[i].clip)
                             return;
                     }
                 }
@@ -216,13 +232,13 @@ public class AudioManager : MonoBehaviour
     {
         var sfxName = _name.ToString();
 
-        for (int i = 0; i < sfx.Count; i++)
+        for (int i = 0; i < sfxList.Count; i++)
         {
-            if (sfxName.Equals(sfx[i].name))
+            if (sfxName.Equals(sfxList[i].name))
             {
                 for (int x = 0; x < sfxPlayerList.Count; x++)
                 {
-                    if (sfxPlayerList[x].isPlaying && sfxPlayerList[x].clip == sfx[i].clip)
+                    if (sfxPlayerList[x].isPlaying && sfxPlayerList[x].clip == sfxList[i].clip)
                     {
                         sfxPlayerList[x].Stop();
                         sfxPlayerList[x].clip = null;
@@ -234,6 +250,6 @@ public class AudioManager : MonoBehaviour
     }
     #endregion
 
-    public AudioClip GetBGMClip(EBGMName bgmName) => bgm[(int)bgmName].clip;
-    public AudioClip GetSFXClip(ESFXName sfxName) => bgm[(int)sfxName].clip;
+    public AudioClip GetBGMClip(EBGMName bgmName) => bgmList[(int)bgmName].clip;
+    public AudioClip GetSFXClip(ESFXName sfxName) => bgmList[(int)sfxName].clip;
 }
