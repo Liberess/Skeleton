@@ -12,20 +12,30 @@ public class UIManager : MonoBehaviour
     public static UIManager Instance { get; private set; }
     private DataManager dataMgr;
 
-    [HorizontalLine(color: EColor.Red), BoxGroup("# Skill UI Settings"), SerializeField]
+    [HorizontalLine(color: EColor.Red), BoxGroup("# Skill Settings"), SerializeField]
     private Button[] skillBtns;
-    [BoxGroup("# Skill UI Settings"), SerializeField]
+    [BoxGroup("# Skill Settings"), SerializeField]
     private Image[] skillCoolImgs;
     private TextMeshProUGUI[] skillCoolTimeTxts = new TextMeshProUGUI[3];
-    [BoxGroup("# Skill UI Settings"), SerializeField]
+    [BoxGroup("# Skill Settings"), SerializeField]
     private Toggle autoUseSkillTog;
     
+    //수정
+    [BoxGroup("# Skill Settings"), SerializeField]
     private bool[] isCoolSkills = { false, false, false };
 
+    [BoxGroup("# Skill Settings"), SerializeField]
     private float[] skillCoolTimes = { 0.0f, 0.0f, 0.0f };
+    
+    [BoxGroup("# Skill Settings"), SerializeField]
     private float[] curSkillCoolTimes = { 0.0f, 0.0f, 0.0f };
 
+    [BoxGroup("# Skill Settings"), SerializeField]
     private bool isAutoUseSkill = false;
+    
+    [BoxGroup("# Skill Settings"), SerializeField]
+    private bool isBlockUseSkill = false;
+    //수정
 
     [HorizontalLine(color: EColor.Orange), BoxGroup("# Equipment UI Settings"), SerializeField]
     private GameObject equipWeaponGrid;
@@ -147,30 +157,43 @@ public class UIManager : MonoBehaviour
     {
         isAutoUseSkill = isActive;
 
-        for (int i = 0; i < isCoolSkills.Length; i++)
-        {
-            if(!isCoolSkills[i])
-                SetCoolSkill(i);
-        }
+        if (isActive)
+            StartCoroutine(AutoSkillCo());
+        else
+            StopCoroutine(AutoSkillCo());
     }
 
     private IEnumerator AutoSkillCo()
     {
         while (isAutoUseSkill)
         {
-            
+            yield return null;
+
+            for (int i = 0; i < isCoolSkills.Length; i++)
+            {
+                //현재 쿨타임이 돌지 않는다면, 사용 가능하다는 뜻이다.
+                if (!isCoolSkills[i])
+                    SetCoolSkill(i);
+            }
         }
+        
         yield return null;
     }
     
     public void SetCoolSkill(int skillIndex)
     {
+        // 동시에 스킬을 사용하지 못하게 막는다.
+        if (isBlockUseSkill)
+            return;
+        
         if (skillIndex < 2 && playerCtrl.TargetEntity == null)
             return;
         
         if(skillIndex == 0 && !Utility.IsExistObjectInCamera(playerCtrl.TargetEntity.transform))
             return;
-            
+
+        isBlockUseSkill = true;
+        Invoke(nameof(DisableBlockUseSkill), 0.5f);
         skillCoolImgs[skillIndex].gameObject.SetActive(true);
         curSkillCoolTimes[skillIndex] = skillCoolTimes[skillIndex];
         isCoolSkills[skillIndex] = true;
@@ -178,6 +201,11 @@ public class UIManager : MonoBehaviour
         StartCoroutine(ProgressCoolSkillCo(skillIndex));
     }
 
+    private void DisableBlockUseSkill() => isBlockUseSkill = false;
+
+    /// <summary>
+    /// skillIndex의 스킬이 사용되면 쿨타임을 계산하고 이미지를 갱신한다.
+    /// </summary>
     private IEnumerator ProgressCoolSkillCo(int skillIndex)
     {
         do
@@ -197,9 +225,6 @@ public class UIManager : MonoBehaviour
             skillCoolImgs[skillIndex].fillAmount = curSkillCoolTimes[skillIndex] / skillCoolTimes[skillIndex];
 
         } while (isCoolSkills[skillIndex]);
-
-        if (isAutoUseSkill)
-            SetCoolSkill(skillIndex);
     }
 
     #endregion
