@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entityData:
     entityName: Player
-    healthPoint: 100
+    entityType: 0
+    healthPoint: 10
     attackPower: 2
     attackRange: 1
     maxAttackRange: 5
@@ -22,3 +23,5 @@ MonoBehaviour:
     maxAttackPerSecond: 30
     moveSpeed: 3
     maxMoveSpeed: 15
+    increaseHealthPoint: 0
+    increaseAttackPower: 0

@@ -9,6 +9,8 @@ using UnityEngine.Serialization;
 
 public abstract class Entity : LivingEntity
 {
+    protected GameManager gameMgr;
+    
     public enum EStates
     {
         Init,
@@ -85,11 +87,13 @@ public abstract class Entity : LivingEntity
     protected override void OnEnable()
     {
         base.OnEnable();
-        EntityData = null;
+        fsm.ChangeState(EStates.Init);
     }
 
     protected virtual void Start()
     {
+        gameMgr = GameManager.Instance;
+        
         DeathAction += () =>
         {
             fsm.ChangeState(EStates.Die);
@@ -102,7 +106,7 @@ public abstract class Entity : LivingEntity
 
     public void UpdateHpUI()
     {
-        originHp = EntityData.healthPoint + EntityData.increaseHealthPoint;
+        originHp = entityData.healthPoint + entityData.increaseHealthPoint;
         
         hpBar.maxValue = 1.0f;
         hpBar.value = (float)CurrentHp / originHp;
@@ -110,9 +114,14 @@ public abstract class Entity : LivingEntity
 
     protected virtual void Init_Enter()
     {
+        anim.ResetTrigger(DoDie);
+        anim.SetBool(IsWalk, false);
+        anim.SetBool(IsAttack, false);
+        gameObject.layer = LayerMask.NameToLayer(entityData.entityType.ToString());
+        
         hpBar.gameObject.SetActive(true);
         
-        originHp = EntityData.healthPoint + EntityData.increaseHealthPoint;
+        originHp = entityData.healthPoint + entityData.increaseHealthPoint;
         CurrentHp = originHp;
         
         UpdateHpUI();
@@ -134,6 +143,9 @@ public abstract class Entity : LivingEntity
     /// </summary>
     protected virtual void Idle_Update()
     {
+        if (!gameMgr.IsPlaying)
+            return;
+        
         if (HasTarget)
         {
             if(IsAttackable && IsAttached)
@@ -199,29 +211,29 @@ public abstract class Entity : LivingEntity
 
     protected virtual void Attack_Update()
     {
-        if (!IsDead)
+        if(IsDead || !gameMgr.IsPlaying)
+            return;
+        
+        if (HasTarget)
         {
-            if (HasTarget)
-            {
-                RotateToTarget();
+            RotateToTarget();
                 
-                if (IsAttackable)
-                {
-                    if (!IsAttached)
-                    {
-                        fsm.ChangeState(EStates.Track);
-                        return;
-                    }
-                    
-                    lastAttackTime = Time.time;
-                    anim.SetBool(IsAttack, true);
-                }
-            }
-            else
+            if (IsAttackable)
             {
-                TargetEntity = null;
-                fsm.ChangeState(EStates.Idle);
+                if (!IsAttached)
+                {
+                    fsm.ChangeState(EStates.Track);
+                    return;
+                }
+                    
+                lastAttackTime = Time.time;
+                anim.SetBool(IsAttack, true);
             }
+        }
+        else
+        {
+            TargetEntity = null;
+            fsm.ChangeState(EStates.Idle);
         }
     }
     
@@ -250,7 +262,7 @@ public abstract class Entity : LivingEntity
     {
         RaycastHit hit;
         if (Physics.Raycast(transform.position, TargetEntity.transform.position - transform.position, out hit,
-                EntityData.attackRange, targetLayer))
+                entityData.attackRange, targetLayer))
         {
             if (hit.collider.gameObject != TargetEntity.gameObject)
             {
@@ -258,7 +270,7 @@ public abstract class Entity : LivingEntity
                     TargetEntity = otherEntity;
             }
 
-            DamageMessage dmgMsg = new DamageMessage(this.gameObject, damage > 0 ? damage : EntityData.attackPower, hit.point);
+            DamageMessage dmgMsg = new DamageMessage(this.gameObject, damage > 0 ? damage : entityData.attackPower, hit.point);
             TargetEntity.ApplyDamage(dmgMsg);
 
             if(entityData.entityType == EEntityType.Player)

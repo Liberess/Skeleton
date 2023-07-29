@@ -68,6 +68,9 @@ public class Monster : Entity
 
     protected override void Track_Update()
     {
+        if (IsDead || !gameMgr.IsPlaying)
+            return;
+        
         if (HasTarget)
         {
             if (IsAttackable && IsAttached)
@@ -88,32 +91,32 @@ public class Monster : Entity
 
     protected override void Attack_Update()
     {
-        if (!IsDead)
+        if (IsDead || !gameMgr.IsPlaying)
+            return;
+        
+        if (HasTarget)
         {
-            if (HasTarget)
-            {
-                RotateToTarget();
+            RotateToTarget();
                 
-                if (IsAttackable)
-                {
-                    if (!IsAttached)
-                    {
-                        fsm.ChangeState(EStates.Track);
-                        return;
-                    }
-
-                    lastAttackTime = Time.time;
-                    anim.SetBool(IsAttack, true);
-                    
-                    rigid.velocity = Vector3.zero;
-                    rigid.angularVelocity = Vector3.zero;
-                }
-            }
-            else
+            if (IsAttackable)
             {
-                TargetEntity = null;
-                fsm.ChangeState(EStates.Idle);
+                if (!IsAttached)
+                {
+                    fsm.ChangeState(EStates.Track);
+                    return;
+                }
+
+                lastAttackTime = Time.time;
+                anim.SetBool(IsAttack, true);
+                    
+                rigid.velocity = Vector3.zero;
+                rigid.angularVelocity = Vector3.zero;
             }
+        }
+        else
+        {
+            TargetEntity = null;
+            fsm.ChangeState(EStates.Idle);
         }
     }
 

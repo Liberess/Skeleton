@@ -73,6 +73,8 @@ public class AudioManager : MonoBehaviour
             Instance = this;
         else
             Destroy(this);
+        
+        UpdateAudioClip();
     }
 
     private void Start()
@@ -92,7 +94,6 @@ public class AudioManager : MonoBehaviour
         masterMixer.SetFloat("SFX", sfxSlider.value / 100f);
 
         //UpdateAudioPlayer();
-        UpdateAudioClip();
     }
 
     #region UpdateAudioPlayer

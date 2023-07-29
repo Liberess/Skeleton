@@ -35,6 +35,7 @@ public class GameManager : MonoBehaviour
     private DataManager dataMgr;
     private PlayerController playerCtrl;
 
+    [SerializeField] private GameObject gameCanvas;
     [SerializeField] private GameObject gameOverCanvas;
 
     [SerializeField] private TextMeshProUGUI stageTxt;
@@ -119,9 +120,6 @@ public class GameManager : MonoBehaviour
 
         playerCtrl = FindObjectOfType<PlayerController>();
 
-        Gold = 999999;
-        Karma = 999999;
-
         expSlider.maxValue = 1.0f;
         remainBar.maxValue = 1.0f;
 
@@ -131,7 +129,7 @@ public class GameManager : MonoBehaviour
 
         StartCoroutine(InvokeNextWaveCo(1.0f));
 
-        //AudioManager.Instance.PlayBGM(EBGMName.InGame);
+        AudioManager.Instance.PlayBGM(EBGMName.InGame);
     }
 
     public void SetGold(int value) => Gold += value;
@@ -139,6 +137,8 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator InvokeNextWaveCo(float delay = 0.0f)
     {
+        curkillCount = 0;
+        
         yield return new WaitForSeconds(delay);
 
         NextWaveAction?.Invoke();
@@ -164,9 +164,6 @@ public class GameManager : MonoBehaviour
         ++dataMgr.GameData.stageCount;
         
         dataMgr.GameData.karma += mainStageNum;
-        
-        dataMgr.GameData.killCount += curkillCount;
-        curkillCount = 0;
 
         dataMgr.GameData.stageStr = string.Concat(mainStageNum, '-', subStageNum);
         stageTxt.text = dataMgr.GameData.stageStr;
@@ -194,16 +191,56 @@ public class GameManager : MonoBehaviour
 
     private void GameOver()
     {
+        isPlaying = false;
+        
         DateTime endTime = DateTime.Now;
         TimeSpan timeDif = endTime - startTime;
-
         currentPlayTime = (float)timeDif.TotalSeconds;
-
         dataMgr.GameData.totalPlayTime += currentPlayTime;
 
         ++dataMgr.GameData.deathCount;
 
+        gameCanvas.SetActive(false);
         gameOverCanvas.SetActive(true);
-        playerCtrl.transform.position = Vector3.zero;
+        
+        AudioManager.Instance.StopBGM();
+    }
+
+    public void RetryGame()
+    {
+        //scenema
+        
+        isPlaying = true;
+        
+        curkillCount = 0;
+        remainFillImg.fillAmount = 1.0f;
+
+        UpdateGameUI();
+        UpdateRemainMonsterUI(0);
+
+        playerCtrl.gameObject.SetActive(false);
+        playerCtrl.gameObject.SetActive(true);
+  
+        MonsterManager.Instance.Spawn();
+        
+        gameCanvas.SetActive(true);
+        gameOverCanvas.SetActive(false);
+        
+        AudioManager.Instance.PlayBGM(EBGMName.InGame);
+    }
+    
+    public void QuitGame()
+    {
+        if (isPlaying)
+        {
+            isPlaying = false;
+        
+            DateTime endTime = DateTime.Now;
+            TimeSpan timeDif = endTime - startTime;
+            currentPlayTime = (float)timeDif.TotalSeconds;
+            dataMgr.GameData.totalPlayTime += currentPlayTime;
+        }
+        
+        Application.Quit();
     }
 }

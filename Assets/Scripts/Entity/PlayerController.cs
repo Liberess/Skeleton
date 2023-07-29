@@ -102,7 +102,7 @@ public class PlayerController : Entity
 
     protected override void Control_FixedUpdate()
     {
-        if (IsDead)
+        if (IsDead || !gameMgr.IsPlaying)
             return;
 
         moveVec = new Vector3(moveInputVec.x, 0f, moveInputVec.y) * EntityData.moveSpeed * Time.deltaTime;
@@ -352,6 +352,7 @@ public class PlayerController : Entity
     protected override void Die_Enter()
     {
         AudioManager.Instance.PlaySFX(ESFXName.PlayerDie);
+        GameManager.Instance.GameOverAction?.Invoke();
         base.Die_Enter();
     }
 

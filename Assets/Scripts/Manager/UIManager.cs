@@ -6,11 +6,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using NaughtyAttributes;
+using DG.Tweening;
 
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance { get; private set; }
     private DataManager dataMgr;
+    private GameManager gameMgr;
 
     [HorizontalLine(color: EColor.Red), BoxGroup("# Skill Settings"), SerializeField]
     private Button[] skillBtns;
@@ -43,6 +45,11 @@ public class UIManager : MonoBehaviour
     [BoxGroup("# Joystick UI Settings"), SerializeField]
     private Toggle staticJoystickTog;
     
+    [HorizontalLine(color: EColor.Green), BoxGroup("# Game UI Settings"), SerializeField]
+    private GameObject gameQuitCanvas;
+    [BoxGroup("# Game UI Settings"), SerializeField]
+    private GameObject curOpenPanel;
+    
     private PlayerController playerCtrl;
     
     public List<Action<int>> UpdateCurrencyUIActionList = new List<Action<int>>();
@@ -69,6 +76,7 @@ public class UIManager : MonoBehaviour
     private void Start()
     {
         dataMgr = DataManager.Instance;
+        gameMgr = GameManager.Instance;
 
         playerCtrl = FindObjectOfType<PlayerController>();
 
@@ -97,6 +105,20 @@ public class UIManager : MonoBehaviour
         });
 
         StartCoroutine(SetupEquipmentUICo());
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            OpenPanel();
+
+            if (gameQuitCanvas.activeSelf)
+            {
+                gameQuitCanvas.SetActive(true);
+                gameQuitCanvas.transform.GetChild(0).GetComponent<DOTweenAnimation>().DORestart();
+            }
+        }
     }
 
     public async UniTaskVoid UpdateCurrencyUI(float delay)
@@ -135,7 +157,6 @@ public class UIManager : MonoBehaviour
             case EStatusType.MoveSpeed:
                 formatStr = value.ToString("F2");
                 break;
-            default: throw new ArgumentOutOfRangeException();
         }
         
         UpdateStatusUIActionList[(int)type]?.Invoke(formatStr);
@@ -155,7 +176,7 @@ public class UIManager : MonoBehaviour
 
     private IEnumerator AutoSkillCo()
     {
-        while (isAutoUseSkill)
+        while (isAutoUseSkill && gameMgr.IsPlaying)
         {
             yield return null;
 
@@ -173,7 +194,7 @@ public class UIManager : MonoBehaviour
     public void SetCoolSkill(int skillIndex)
     {
         // 동시에 스킬을 사용하지 못하게 막는다.
-        if (isBlockUseSkill)
+        if (isBlockUseSkill || !gameMgr.IsPlaying)
             return;
         
         if (skillIndex < 2 && playerCtrl.TargetEntity == null)
@@ -265,4 +286,17 @@ public class UIManager : MonoBehaviour
     public void UpdatePlayerHpUI() => playerCtrl.UpdateHpUI();
 
     #endregion
+    
+    public void OpenPanel(GameObject panel = null)
+    {
+        if (curOpenPanel)
+        {
+            var dotAnims = curOpenPanel.GetComponentsInChildren<DOTweenAnimation>();
+            foreach (var dotAnim in dotAnims)
+                dotAnim.DORewind();
+            curOpenPanel.SetActive(false);
+        }
+        
+        curOpenPanel = panel;
+    }
 }

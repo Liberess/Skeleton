@@ -28,7 +28,7 @@ public class MonsterManager : MonoBehaviour
     private float spawnCycleTime = 5.0f;
     
     [SerializeField, Range(0.0f, 60.0f)]
-    private float maxSpawnCycleTime = 5.0f;
+    private float originSpawnCycleTime = 5.0f;
     
     [SerializeField]
     private int maxSpawnCount = 100;
@@ -62,10 +62,22 @@ public class MonsterManager : MonoBehaviour
         gameMgr = GameManager.Instance;
         dataMgr = DataManager.Instance;
 
-        spawnCycleTime = maxSpawnCycleTime;
+        spawnCycleTime = originSpawnCycleTime;
         
         Initialize(monsterInitAmount);
+        
         gameMgr.NextWaveAction += () => StartCoroutine(SpawnCo());
+        gameMgr.GameOverAction += () =>
+        {
+            for (int i = spawnedMonsterList.Count - 1; i >= 0; i--)
+            {
+                if (spawnedMonsterList[i] != null)
+                    ReturnObj(spawnedMonsterList[i]);
+                spawnedMonsterList.RemoveAt(i);
+            }
+
+            gameMgr.UpdateRemainMonsterUI(0);
+        };
     }
     
     #region Object Pooling
@@ -122,9 +134,11 @@ public class MonsterManager : MonoBehaviour
     }
     #endregion
 
+    public void Spawn() => StartCoroutine(SpawnCo());
+
     private IEnumerator SpawnCo()
     {
-        curSpawnCount += dataMgr.GameData.stageCount * 2;
+        curSpawnCount = dataMgr.GameData.stageCount * 2;
         StageSpawnCount = curSpawnCount;
         if (curSpawnCount > maxSpawnCount)
             curSpawnCount = maxSpawnCount;
@@ -153,6 +167,7 @@ public class MonsterManager : MonoBehaviour
             {
                 SpawnedMonsterList.Remove(monster);
                 ++gameMgr.curkillCount;
+                ++dataMgr.GameData.killCount;
                 gameMgr.UpdateRemainMonsterUI(--curSpawnCount);
                 StartCoroutine(ReturnObjCo(monster, 1.0f));
 
@@ -163,6 +178,7 @@ public class MonsterManager : MonoBehaviour
             SpawnedMonsterList.Add(monster);
         }
 
+        /*
         spawnWeightDic[EMonsterType.Spider] =
             Mathf.Clamp(spawnWeightDic[EMonsterType.Spider] - dataMgr.GameData.stageCount,
                 0, 100);
@@ -172,8 +188,9 @@ public class MonsterManager : MonoBehaviour
         spawnWeightDic[EMonsterType.Test2] =
             Mathf.Clamp(spawnWeightDic[EMonsterType.Test2] + dataMgr.GameData.stageCount,
                 0, 99);
+                */
 
-        spawnCycleTime = Mathf.Clamp(spawnCycleTime - 0.2f, 0.2f, maxSpawnCycleTime);
+        spawnCycleTime = Mathf.Clamp(originSpawnCycleTime - dataMgr.GameData.stageCount * 0.01f, 0.2f, originSpawnCycleTime);
         
         yield return null;
     }
