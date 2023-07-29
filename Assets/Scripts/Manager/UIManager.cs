@@ -19,23 +19,13 @@ public class UIManager : MonoBehaviour
     private TextMeshProUGUI[] skillCoolTimeTxts = new TextMeshProUGUI[3];
     [BoxGroup("# Skill Settings"), SerializeField]
     private Toggle autoUseSkillTog;
-    
-    //수정
-    [BoxGroup("# Skill Settings"), SerializeField]
-    private bool[] isCoolSkills = { false, false, false };
 
-    [BoxGroup("# Skill Settings"), SerializeField]
+    private bool[] isCoolSkills = { false, false, false };
     private float[] skillCoolTimes = { 0.0f, 0.0f, 0.0f };
-    
-    [BoxGroup("# Skill Settings"), SerializeField]
     private float[] curSkillCoolTimes = { 0.0f, 0.0f, 0.0f };
 
-    [BoxGroup("# Skill Settings"), SerializeField]
     private bool isAutoUseSkill = false;
-    
-    [BoxGroup("# Skill Settings"), SerializeField]
     private bool isBlockUseSkill = false;
-    //수정
 
     [HorizontalLine(color: EColor.Orange), BoxGroup("# Equipment UI Settings"), SerializeField]
     private GameObject equipWeaponGrid;
