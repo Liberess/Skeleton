@@ -72,6 +72,7 @@ public abstract class Entity : LivingEntity
 
     protected static readonly int IsWalk = Animator.StringToHash("isWalk");
     protected static readonly int DoDie = Animator.StringToHash("doDie");
+    protected static readonly int IsAttack = Animator.StringToHash("isAttack");
 
     protected virtual void Awake()
     {
@@ -188,6 +189,17 @@ public abstract class Entity : LivingEntity
     {
         anim.SetBool(IsWalk, false);
     }
+    
+    protected void RotateToTarget()
+    {
+        Vector3 dir = TargetEntity.transform.position - transform.position;
+        if (dir.sqrMagnitude != 0)
+        {
+            Quaternion dirQuat = Quaternion.LookRotation(dir);
+            Quaternion moveQuat = Quaternion.Slerp(rigid.rotation, dirQuat, 0.3f);
+            rigid.MoveRotation(moveQuat);
+        }
+    }
 
     protected virtual void Track_Enter()
     {
@@ -210,6 +222,7 @@ public abstract class Entity : LivingEntity
 
     protected virtual void Track_Exit()
     {
+        rigid.velocity = Vector3.zero;
         anim.SetBool(IsWalk, false);
     }
 
@@ -219,8 +232,40 @@ public abstract class Entity : LivingEntity
             fsm.ChangeState(EStates.Idle);
     }
 
-    protected virtual void Attack_Update() => AttackFlow();
-    protected abstract void AttackFlow();
+    protected virtual void Attack_Update()
+    {
+        if (!IsDead)
+        {
+            if (HasTarget)
+            {
+                RotateToTarget();
+                
+                if (IsAttackable)
+                {
+                    if (!IsAttached)
+                    {
+                        fsm.ChangeState(EStates.Track);
+                        return;
+                    }
+                    
+                    lastAttackTime = Time.time;
+
+                    if (!anim.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
+                        anim.SetBool(IsAttack, true);
+                }
+            }
+            else
+            {
+                TargetEntity = null;
+                fsm.ChangeState(EStates.Idle);
+            }
+        }
+    }
+    
+    protected virtual void Attack_Exit()
+    {
+        anim.SetBool(IsAttack, false);
+    }
 
     protected virtual void OnAttack1Trigger()
     {
@@ -248,11 +293,6 @@ public abstract class Entity : LivingEntity
             if(entityData.entityType == EEntityType.Monster)
                 AudioManager.Instance.PlaySFX(ESFXName.MonsterAttack);
         }
-    }
-
-    protected virtual void Attack_Exit()
-    {
-        
     }
 
     protected virtual void Skill_Enter()

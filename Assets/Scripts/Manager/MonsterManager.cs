@@ -62,7 +62,6 @@ public class MonsterManager : MonoBehaviour
         var newObj = Instantiate(monsterPrefab, transform.position, Quaternion.identity);
         newObj.name = string.Concat(monsterPrefab.name, "_", index);
         newObj.gameObject.SetActive(false);
-        newObj.GetComponent<NavMeshAgent>().enabled = false;
         newObj.transform.SetParent(transform);
         return newObj.GetComponent<Monster>();
     }
@@ -122,10 +121,8 @@ public class MonsterManager : MonoBehaviour
             
             //var pick = picker.GetRandomPick();
             var monster = InstantiateObj(EMonsterType.Spider);
-            var targetPos = spawnPoints[Random.Range(0, spawnPoints.Length)].position;
-            var randPos = Utility.GetRandPointOnNavMesh(targetPos, 3f, NavMesh.AllAreas);
+            var randPos = Utility.GetRandPointOnNavMesh(Vector3.zero, 50f);
             monster.transform.position = randPos;
-
             monster.SetupEntityData(monsterSOs[(int)EMonsterType.Spider].entityData, dataMgr.GameData.stageCount);
 
             monster.DeathAction += () =>

@@ -9,16 +9,16 @@ public static class Utility
     /// center를 중심으로 distance만큼의 범위로
     /// areaMask에 포함되는 random한 좌표를 반환한다.
     /// </summary>
-    public static Vector3 GetRandPointOnNavMesh(Vector3 center, float distance, int areaMask)
+    public static Vector3 GetRandPointOnNavMesh(Vector3 center, float distance)
     {
         Vector3 randPos = Vector3.zero;
         NavMeshHit hit;
-
+  
         for (int i = 0; i < 30; i++)
         {
             randPos = Random.insideUnitSphere * distance + center;
 
-            if (NavMesh.SamplePosition(randPos, out hit, distance, areaMask))
+            if (NavMesh.SamplePosition(randPos, out hit, distance, NavMesh.AllAreas))
                 return hit.position;
         }
 

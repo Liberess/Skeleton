@@ -27,7 +27,6 @@ public class PlayerController : Entity
     private int closetIndex = 0;
     private int targetIndex = 0;
     
-    private static readonly int IsAttack = Animator.StringToHash("isAttack");
     private static readonly int DoSkill = Animator.StringToHash("doSkill");
 
     protected override void Start()
@@ -152,18 +151,7 @@ public class PlayerController : Entity
         RotateToTarget();
     }
 
-    private void RotateToTarget()
-    {
-        Vector3 dir = TargetEntity.transform.position - transform.position;
-        if (dir.sqrMagnitude != 0)
-        {
-            Quaternion dirQuat = Quaternion.LookRotation(dir);
-            Quaternion moveQuat = Quaternion.Slerp(rigid.rotation, dirQuat, 0.3f);
-            rigid.MoveRotation(moveQuat);
-        }
-    }
-
-    protected override void AttackFlow()
+    protected override void Attack_Update()
     {
         if (!IsDead)
         {
@@ -172,6 +160,7 @@ public class PlayerController : Entity
                 anim.SetBool(IsWalk, true);
                 anim.SetBool(IsAttack, false);
                 fsm.ChangeState(EStates.Control, StateTransition.Overwrite);
+                return;
             }
 
             if (HasTarget)
