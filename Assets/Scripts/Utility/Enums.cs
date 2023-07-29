@@ -63,6 +63,13 @@ public enum EMaterialType
     Flash
 }
 
+public enum EStageNumberType
+{
+    All = 0,
+    Main,
+    Sub
+}
+
 public class Enums
 {
 }

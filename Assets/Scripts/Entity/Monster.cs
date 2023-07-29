@@ -36,13 +36,54 @@ public class Monster : Entity
     {
         fsm.Driver.FixedUpdate?.Invoke();
     }
-
-    protected override void TrackFlow()
+    
+    /// <summary>
+    /// 몬스터의 데이터를 세팅한다.
+    /// </summary>
+    /// <param name="entityData">몬스터의 기본 데이터</param>
+    /// <param name="increaseValue">증가될 수치</param>
+    public virtual void SetupEntityData(EntityData entityData, float increaseValue)
     {
-        transform.position = Vector3.MoveTowards(transform.position, TargetEntity.transform.position,
-            EntityData.moveSpeed * Time.deltaTime);
+        EntityData = new EntityData(entityData)
+        {
+            entityName = entityData.entityName,
+            entityType = entityData.entityType,
+            healthPoint = Mathf.RoundToInt(entityData.healthPoint + increaseValue),
+            attackPower = Mathf.RoundToInt(entityData.attackPower + increaseValue),
+            attackRange = entityData.attackRange,
+            maxAttackRange = entityData.maxAttackRange,
+            attackPerSecond = Mathf.RoundToInt(
+                Mathf.Clamp(entityData.attackPerSecond + increaseValue, 0.1f, entityData.maxAttackPerSecond)),
+            maxAttackPerSecond = entityData.maxAttackPerSecond,
+            moveSpeed = Mathf.RoundToInt(
+                Mathf.Clamp(entityData.moveSpeed + increaseValue, 0.5f, entityData.maxMoveSpeed)),
+            maxMoveSpeed = entityData.maxMoveSpeed,
+            increaseHealthPoint = entityData.increaseHealthPoint,
+            increaseAttackPower = entityData.increaseAttackPower
+        };
 
-        RotateToTarget();
+        originHp = EntityData.healthPoint;
+        fsm.ChangeState(EStates.Init);
+    }
+
+    protected override void Track_Update()
+    {
+        if (HasTarget)
+        {
+            if (IsAttackable && IsAttached)
+                fsm.ChangeState(EStates.Attack);
+
+            if (!IsAttached)
+            {
+                transform.position = Vector3.MoveTowards(transform.position, TargetEntity.transform.position,
+                    EntityData.moveSpeed * Time.deltaTime);
+            }
+            
+            RotateToTarget();
+            
+            rigid.velocity = Vector3.zero;
+            rigid.angularVelocity = Vector3.zero;
+        }
     }
 
     protected override void Attack_Update()
@@ -62,9 +103,10 @@ public class Monster : Entity
                     }
 
                     lastAttackTime = Time.time;
-
-                    if (!anim.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
-                        anim.SetBool(IsAttack, true);
+                    anim.SetBool(IsAttack, true);
+                    
+                    rigid.velocity = Vector3.zero;
+                    rigid.angularVelocity = Vector3.zero;
                 }
             }
             else

@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using NaughtyAttributes;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class MonsterManager : MonoBehaviour
 {
@@ -9,16 +9,29 @@ public class MonsterManager : MonoBehaviour
     private GameManager gameMgr;
     private DataManager dataMgr;
     
-    [SerializeField, Range(1, 100)] private int monsterInitAmount = 30;
-    [SerializeField] private GameObject[] monsterPrefabs;
-    [SerializeField] private EntitySO[] monsterSOs;
+    [HorizontalLine(color: EColor.Red), SerializeField, Range(1, 100)]
+    private int monsterInitAmount = 30;
+    
+    [SerializeField]
+    private GameObject[] monsterPrefabs;
+    
+    [SerializeField]
+    private EntitySO[] monsterSOs;
+    
     private Queue<Monster> monsterQueue = new Queue<Monster>();
 
     private int curSpawnCount = 0;
+    
     public int StageSpawnCount { get; private set; }
     
-    [SerializeField, Range(0.0f, 60.0f)] private float spawnCycleTime = 5.0f;
-    [SerializeField] private int maxSpawnCount = 100;
+    [ShowNonSerializedField]
+    private float spawnCycleTime = 5.0f;
+    
+    [SerializeField, Range(0.0f, 60.0f)]
+    private float maxSpawnCycleTime = 5.0f;
+    
+    [SerializeField]
+    private int maxSpawnCount = 100;
 
     private Dictionary<EMonsterType, int> spawnWeightDic = new Dictionary<EMonsterType, int>()
     {
@@ -27,7 +40,14 @@ public class MonsterManager : MonoBehaviour
         { EMonsterType.Test2, 1}
     };
 
-    public List<Monster> SpawnedMonsterList { get; private set; } = new List<Monster>();
+    [SerializeField]
+    private List<Monster> spawnedMonsterList = new List<Monster>();
+
+    public List<Monster> SpawnedMonsterList
+    {
+        get => spawnedMonsterList;
+        private set => spawnedMonsterList = value;
+    }
 
     private void Awake()
     {
@@ -41,6 +61,8 @@ public class MonsterManager : MonoBehaviour
     {
         gameMgr = GameManager.Instance;
         dataMgr = DataManager.Instance;
+
+        spawnCycleTime = maxSpawnCycleTime;
         
         Initialize(monsterInitAmount);
         gameMgr.NextWaveAction += () => StartCoroutine(SpawnCo());
@@ -123,7 +145,9 @@ public class MonsterManager : MonoBehaviour
             var monster = InstantiateObj(EMonsterType.Spider);
             var randPos = Utility.GetRandPointOnNavMesh(Vector3.zero, 50f);
             monster.transform.position = randPos;
-            monster.SetupEntityData(monsterSOs[(int)EMonsterType.Spider].entityData, dataMgr.GameData.stageCount);
+
+            float increaseValue = dataMgr.GameData.stageCount * dataMgr.GetStageNumber(EStageNumberType.Main) * 0.4f;
+            monster.SetupEntityData(monsterSOs[(int)EMonsterType.Spider].entityData, increaseValue);
 
             monster.DeathAction += () =>
             {
@@ -133,7 +157,7 @@ public class MonsterManager : MonoBehaviour
                 StartCoroutine(ReturnObjCo(monster, 1.0f));
 
                 if (SpawnedMonsterList.Count == 0)
-                    gameMgr.StartCoroutine(gameMgr.InvokeNextWaveCo(spawnCycleTime));
+                    gameMgr.StartCoroutine(gameMgr.InvokeNextWaveCo());
             };
 
             SpawnedMonsterList.Add(monster);
@@ -149,6 +173,8 @@ public class MonsterManager : MonoBehaviour
             Mathf.Clamp(spawnWeightDic[EMonsterType.Test2] + dataMgr.GameData.stageCount,
                 0, 99);
 
+        spawnCycleTime = Mathf.Clamp(spawnCycleTime - 0.2f, 0.2f, maxSpawnCycleTime);
+        
         yield return null;
     }
 }

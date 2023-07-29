@@ -26,6 +26,9 @@ public class PlayerController : Entity
     private float targetDist = float.MaxValue;
     private int closetIndex = 0;
     private int targetIndex = 0;
+
+    private bool isDashing = false;
+    private bool isControlling = false;
     
     private static readonly int DoSkill = Animator.StringToHash("doSkill");
 
@@ -46,31 +49,43 @@ public class PlayerController : Entity
         //dynamicJoystick.OnPointerDownAction += () => fsm.ChangeState(EStates.Control, StateTransition.Overwrite);
         dynamicJoystick.OnPointerDownAction += () =>
         {
-            if(fsm.State != EStates.Skill)
+            if (fsm.State != EStates.Skill && !isDashing)
+            {
+                isControlling = true;
+                anim.SetBool(IsAttack, false);
+                anim.SetTrigger("doDisabledAttack");
                 fsm.ChangeState(EStates.Control, StateTransition.Overwrite);
+            }
         };
         
         dynamicJoystick.OnPointerUpAction += () =>
         {
-            if (TargetEntity == null || !TargetEntity.gameObject.activeSelf)
-                fsm.ChangeState(EStates.Idle);
-            else
+            isControlling = false;
+            if (HasTarget)
                 fsm.ChangeState(EStates.Track);
+            else
+                fsm.ChangeState(EStates.Idle);
         };
 
         //staticJoystick.OnPointerDownAction += () => fsm.ChangeState(EStates.Control, StateTransition.Overwrite);
         staticJoystick.OnPointerDownAction += () =>
         {
-            if(fsm.State != EStates.Skill)
+            if (fsm.State != EStates.Skill && !isDashing)
+            {
+                isControlling = true;
+                anim.SetBool(IsAttack, false);
+                anim.SetTrigger("doDisabledAttack");
                 fsm.ChangeState(EStates.Control, StateTransition.Overwrite);
+            }
         };
         
         staticJoystick.OnPointerUpAction += () =>
         {
-            if (TargetEntity == null || !TargetEntity.gameObject.activeSelf)
-                fsm.ChangeState(EStates.Idle);
-            else
+            isControlling = false;
+            if (HasTarget)
                 fsm.ChangeState(EStates.Track);
+            else
+                fsm.ChangeState(EStates.Idle);
         };
     }
 
@@ -163,18 +178,25 @@ public class PlayerController : Entity
         return false;
     }
 
-    protected override void TrackFlow()
+    protected override void Track_Update()
     {
-        if (IsDead)
-            return;
-
         if (FindNearestMonster())
         {
-            var targetPosition = TargetEntity.transform.position;
-            transform.position = Vector3.MoveTowards(transform.position, targetPosition,
-                EntityData.moveSpeed * Time.deltaTime);
+            if(IsAttackable && IsAttached)
+                fsm.ChangeState(EStates.Attack);
+
+            if (!IsAttached && !isControlling)
+            {
+                var targetPosition = TargetEntity.transform.position;
+                transform.position = Vector3.MoveTowards(transform.position, targetPosition,
+                    EntityData.moveSpeed * Time.deltaTime);
+            }
             
-            RotateToTarget();
+            rigid.velocity = Vector3.zero;
+            rigid.angularVelocity = Vector3.zero;
+            
+            if(!isControlling)
+                RotateToTarget();
         }
         else
         {
@@ -184,37 +206,37 @@ public class PlayerController : Entity
 
     protected override void Attack_Update()
     {
-        if (!IsDead)
+        if (moveInputVec.sqrMagnitude != 0)
         {
-            if (moveInputVec.sqrMagnitude != 0)
-            {
-                anim.SetBool(IsWalk, true);
-                anim.SetBool(IsAttack, false);
-                fsm.ChangeState(EStates.Control, StateTransition.Overwrite);
-                return;
-            }
+            anim.SetBool(IsWalk, true);
+            anim.SetBool(IsAttack, false);
+            fsm.ChangeState(EStates.Control, StateTransition.Overwrite);
+            return;
+        }
 
-            if (HasTarget)
-            {
-                RotateToTarget();
+        if (HasTarget)
+        {
+            RotateToTarget();
                 
-                if (IsAttackable)
-                {
-                    if (!IsAttached)
-                    {
-                        fsm.ChangeState(EStates.Track);
-                        return;
-                    }
-                    
-                    lastAttackTime = Time.time;
-                    anim.SetBool(IsAttack, true);
-                }
-            }
-            else
+            if (IsAttackable)
             {
-                TargetEntity = null;
-                fsm.ChangeState(EStates.Idle);
+                if (!IsAttached)
+                {
+                    fsm.ChangeState(EStates.Track);
+                    return;
+                }
+                    
+                lastAttackTime = Time.time;
+                anim.SetBool(IsAttack, true);
+                
+                rigid.velocity = Vector3.zero;
+                rigid.angularVelocity = Vector3.zero;
             }
+        }
+        else
+        {
+            TargetEntity = null;
+            fsm.ChangeState(EStates.Idle);
         }
     }
 
@@ -298,6 +320,8 @@ public class PlayerController : Entity
 
     private IEnumerator DashCo(int amount)
     {
+        isDashing = true;
+        
         while (true)
         {
             yield return null;
@@ -316,6 +340,7 @@ public class PlayerController : Entity
         
         anim.SetTrigger(DoSkill);
         AttackTargetEntity(amount);
+        isDashing = false;
     }
 
     public override void ApplyDamage(DamageMessage dmgMsg)

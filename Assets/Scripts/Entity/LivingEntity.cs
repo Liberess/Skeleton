@@ -42,7 +42,13 @@ public class LivingEntity : MonoBehaviour
         }
     }
 
-    public bool IsDead { get; protected set; }
+    [BoxGroup("# LivingEntity"), ShowNonSerializedField]
+    private bool isDead; 
+    public bool IsDead
+    {
+        get => isDead;
+        protected set => isDead = value;
+    }
 
     public UnityAction DeathAction;
     public UnityAction ChangedHpValueAction;

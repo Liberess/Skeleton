@@ -88,31 +88,6 @@ public abstract class Entity : LivingEntity
         EntityData = null;
     }
 
-    public virtual void SetupEntityData(EntityData entityData, float increaseValue = 1.0f)
-    {
-        EntityData = new EntityData(entityData)
-        {
-            entityName = entityData.entityName,
-            entityType = entityData.entityType,
-            healthPoint = Mathf.RoundToInt(entityData.healthPoint * increaseValue),
-            attackPower = Mathf.RoundToInt(entityData.attackPower * increaseValue),
-            attackRange = entityData.attackRange,
-            maxAttackRange = entityData.maxAttackRange,
-            attackPerSecond = Mathf.RoundToInt(
-                Mathf.Clamp(entityData.attackPerSecond * increaseValue, 0.1f, entityData.maxAttackPerSecond)),
-            maxAttackPerSecond = entityData.maxAttackPerSecond,
-            moveSpeed = Mathf.RoundToInt(
-                Mathf.Clamp(entityData.moveSpeed * increaseValue, 0.5f, entityData.maxMoveSpeed)),
-            maxMoveSpeed = entityData.maxMoveSpeed,
-            increaseHealthPoint = entityData.increaseHealthPoint,
-            increaseAttackPower = entityData.increaseAttackPower
-        };
-
-        originHp = this.entityData.healthPoint;
-
-        fsm.ChangeState(EStates.Init);
-    }
-
     protected virtual void Start()
     {
         DeathAction += () =>
@@ -208,19 +183,7 @@ public abstract class Entity : LivingEntity
     /// 만약 targetEntity가 있고 살아있다면
     /// 공격 범위에 들어왔을때 attack 상태로 전환하고, 범위 밖이라면 추적한다.
     /// </summary>
-    protected virtual void Track_Update()
-    {
-        if (targetEntity != null && !targetEntity.IsDead)
-        {
-            float distance = Vector3.Distance(TargetEntity.transform.position, transform.position);
-            if (distance <= EntityData.attackRange && fsm.State != EStates.Attack)
-                fsm.ChangeState(EStates.Attack);
-            else
-                TrackFlow();
-        }
-    }
-
-    protected abstract void TrackFlow();
+    protected abstract void Track_Update();
 
     protected virtual void Track_Exit()
     {

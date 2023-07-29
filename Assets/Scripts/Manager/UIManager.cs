@@ -143,6 +143,26 @@ public class UIManager : MonoBehaviour
 
     #region Skill
 
+    public void SetAutoUseSkillToggle(bool isActive)
+    {
+        isAutoUseSkill = isActive;
+
+        for (int i = 0; i < isCoolSkills.Length; i++)
+        {
+            if(!isCoolSkills[i])
+                SetCoolSkill(i);
+        }
+    }
+
+    private IEnumerator AutoSkillCo()
+    {
+        while (isAutoUseSkill)
+        {
+            
+        }
+        yield return null;
+    }
+    
     public void SetCoolSkill(int skillIndex)
     {
         if (skillIndex < 2 && playerCtrl.TargetEntity == null)
@@ -180,17 +200,6 @@ public class UIManager : MonoBehaviour
 
         if (isAutoUseSkill)
             SetCoolSkill(skillIndex);
-    }
-
-    public void SetAutoUseSkillToggle(bool isActive)
-    {
-        isAutoUseSkill = isActive;
-
-        for (int i = 0; i < isCoolSkills.Length; i++)
-        {
-            if(!isCoolSkills[i])
-                SetCoolSkill(i);
-        }
     }
 
     #endregion

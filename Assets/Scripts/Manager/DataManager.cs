@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
@@ -214,6 +215,27 @@ public class DataManager : MonoBehaviour
         byte[] bytes = System.Text.Encoding.UTF8.GetBytes(ToJsonData);
         string code = System.Convert.ToBase64String(bytes);
         File.WriteAllText(filePath, code);
+    }
+
+    public int GetStageNumber(EStageNumberType stageNumberType)
+    {
+        string[] subStr = mGameData.stageStr.Split('-');
+
+        int stageNum = -1;
+        switch (stageNumberType)
+        {
+            case EStageNumberType.All:
+                stageNum = mGameData.stageCount;
+                break;
+            case EStageNumberType.Main:
+                stageNum = int.Parse(subStr[0]);
+                break;
+            case EStageNumberType.Sub:
+                stageNum = int.Parse(subStr[1]);
+                break;
+        }
+
+        return stageNum;
     }
 
     public int GetCurrency(ECurrencyType type)
