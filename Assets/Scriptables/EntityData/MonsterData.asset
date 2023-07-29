@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entityData:
     entityName: Spider
+    entityType: 1
     healthPoint: 10
     attackPower: 1
     attackRange: 1
@@ -22,3 +23,5 @@ MonoBehaviour:
     maxAttackPerSecond: 5
     moveSpeed: 1
     maxMoveSpeed: 5
+    increaseHealthPoint: 0
+    increaseAttackPower: 0

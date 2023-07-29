@@ -19,7 +19,7 @@ public class MonsterManager : MonoBehaviour
     
     [SerializeField, Range(0.0f, 60.0f)] private float spawnCycleTime = 5.0f;
     [SerializeField] private int maxSpawnCount = 100;
-    [SerializeField] private Transform[] spawnPoints;
+
     private Dictionary<EMonsterType, int> spawnWeightDic = new Dictionary<EMonsterType, int>()
     {
         { EMonsterType.Spider, 100},

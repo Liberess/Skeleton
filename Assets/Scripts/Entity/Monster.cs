@@ -53,16 +53,19 @@ public class Monster : Entity
         {
             if (HasTarget)
             {
+                Debug.Log("hasTarget");
                 RotateToTarget();
                 
                 if (IsAttackable)
                 {
                     if (!IsAttached)
                     {
+                        Debug.Log("멀어서 새로 추적");
                         fsm.ChangeState(EStates.Track);
                         return;
                     }
                     
+                    Debug.Log("attack");
                     lastAttackTime = Time.time;
 
                     if (!anim.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
@@ -71,6 +74,7 @@ public class Monster : Entity
             }
             else
             {
+                Debug.Log("target null, go idle");
                 TargetEntity = null;
                 fsm.ChangeState(EStates.Idle);
             }

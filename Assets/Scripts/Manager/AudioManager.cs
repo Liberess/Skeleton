@@ -55,13 +55,11 @@ public class AudioManager : MonoBehaviour
     private Slider bgmSlider;
     [BoxGroup("# Setting Audio Controller"), SerializeField]
     private Slider sfxSlider;
-
-    [HorizontalLine(color: EColor.Orange), BoxGroup("# Setting Audio Clip"), SerializeField]
-    private List<Sound> bgmList = new List<Sound>();
-    [BoxGroup("# Setting Audio Clip"), SerializeField]
-    private List<Sound> sfxList = new List<Sound>();
     
-    [HorizontalLine(color: EColor.Yellow), BoxGroup("# Setting Audio Player"), SerializeField]
+    private Dictionary<string, Sound> bgmDic = new Dictionary<string, Sound>();
+    private Dictionary<string, Sound> sfxDic = new Dictionary<string, Sound>();
+
+    [HorizontalLine(color: EColor.Orange), BoxGroup("# Setting Audio Player"), SerializeField]
     private AudioSource bgmPlayer = null;
     [BoxGroup("# Setting Audio Player"), SerializeField]
     private List<AudioSource> sfxPlayerList = new List<AudioSource>();
@@ -92,6 +90,9 @@ public class AudioManager : MonoBehaviour
         
         masterMixer.SetFloat("BGM", bgmSlider.value / 100f);
         masterMixer.SetFloat("SFX", sfxSlider.value / 100f);
+
+        //UpdateAudioPlayer();
+        UpdateAudioClip();
     }
 
     #region UpdateAudioPlayer
@@ -110,23 +111,22 @@ public class AudioManager : MonoBehaviour
 
     private void UpdateSFXPlayer()
     {
-        var players = FindObjectsOfType<AudioSource>();
+        var players = GetComponentsInChildren<AudioSource>();
 
         sfxPlayerList.Clear();
         foreach(var player in players)
         {
-            if (player.name != "BGMPlayer")
+            if (!player.name.Equals("BGMPlayer"))
                 sfxPlayerList.Add(player);
         }
     }
     #endregion
 
     #region Update Audio Clip
-    [ContextMenu("Update Audio Clip Resource")]
     private void UpdateAudioClip()
     {
-        bgmList.Clear();
-        sfxList.Clear();
+        bgmDic.Clear();
+        sfxDic.Clear();
         
         string[] assetPaths =
         {
@@ -147,14 +147,17 @@ public class AudioManager : MonoBehaviour
                 {
                     string nameStr = data.name.Substring(indexOfUnderscore + 1).Trim();
                     string idStr = Regex.Replace(data.name, @"\D", "");
-                    List<Sound> targetList = data.name.Contains("BGM") ? bgmList : sfxList;
-                    targetList.Add(new Sound(nameStr, int.Parse(idStr), data));
+
+                    var targetDic = data.name.Contains("BGM") ? bgmDic : sfxDic;
+                    targetDic.Add(nameStr, new Sound(nameStr, int.Parse(idStr), data));
                 }
             }
         }
 
-        bgmList = bgmList.OrderBy(obj => obj.id).ToList();
-        sfxList = sfxList.OrderBy(obj => obj.id).ToList();
+        bgmDic = bgmDic.OrderBy(obj => 
+            obj.Value.id).ToDictionary(x => x.Key, x => x.Value);
+        sfxDic = sfxDic.OrderBy(obj => 
+            obj.Value.id).ToDictionary(x => x.Key, x => x.Value);
     }
         
     #endregion
@@ -182,74 +185,47 @@ public class AudioManager : MonoBehaviour
     #endregion
 
     #region Audio Play & Stop
-    public void PlayBGM(EBGMName _name)
+    public void PlayBGM(EBGMName bgmName)
     {
-        var bgmName = _name.ToString();
-
-        if (bgmPlayer.clip != null && bgmPlayer.clip.name == bgmName)
+        if (bgmPlayer.clip != null && bgmPlayer.clip.name.Equals(bgmName.ToString()))
             return;
 
-        for (int i = 0; i < bgmList.Count; i++)
+        if (bgmDic.TryGetValue(bgmName.ToString(), out Sound bgm))
         {
-            if (bgmName.Equals(bgmList[i].name))
-            {
-                bgmPlayer.clip = bgmList[i].clip;
-                bgmPlayer.Play();
-            }
+            bgmPlayer.clip = bgm.clip;
+            bgmPlayer.Play();
         }
     }
 
     public void StopBGM() => bgmPlayer.Stop();
 
-    public void PlaySFX(ESFXName _name)
+    public void PlaySFX(ESFXName sfxName)
     {
-        string sfxName = _name.ToString();
-
-        for (int i = 0; i < sfxList.Count; i++)
+        if (sfxDic.TryGetValue(sfxName.ToString(), out Sound bgm))
         {
-            if (sfxName.Equals(sfxList[i].name))
+            for (int j = 0; j < sfxPlayerList.Count; j++)
             {
-                for (int x = 0; x < sfxPlayerList.Count; x++)
+                if (!sfxPlayerList[j].isPlaying)
                 {
-                    if (!sfxPlayerList[x].isPlaying)
-                    {
-                        sfxPlayerList[x].clip = sfxList[i].clip;
-                        sfxPlayerList[x].Play();
-                        return;
-                    }
-                    else
-                    {
-                        if (sfxPlayerList[x].clip == sfxList[i].clip)
-                            return;
-                    }
+                    sfxPlayerList[j].clip = bgm.clip;
+                    sfxPlayerList[j].Play();
+                    return;
                 }
-                return;
             }
         }
     }
 
-    public void StopSFX(ESFXName _name)
+    public void StopSFX(ESFXName sfxName)
     {
-        var sfxName = _name.ToString();
-
-        for (int i = 0; i < sfxList.Count; i++)
+        if (sfxDic.TryGetValue(sfxName.ToString(), out Sound bgm))
         {
-            if (sfxName.Equals(sfxList[i].name))
+            var targetPlayer = sfxPlayerList.Find(x => x.clip == bgm.clip);
+            if (targetPlayer)
             {
-                for (int x = 0; x < sfxPlayerList.Count; x++)
-                {
-                    if (sfxPlayerList[x].isPlaying && sfxPlayerList[x].clip == sfxList[i].clip)
-                    {
-                        sfxPlayerList[x].Stop();
-                        sfxPlayerList[x].clip = null;
-                    }
-                }
-                return;
+                targetPlayer.Stop();
+                targetPlayer.clip = null;
             }
         }
     }
     #endregion
-
-    public AudioClip GetBGMClip(EBGMName bgmName) => bgmList[(int)bgmName].clip;
-    public AudioClip GetSFXClip(ESFXName sfxName) => bgmList[(int)sfxName].clip;
 }

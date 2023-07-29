@@ -92,12 +92,20 @@ public abstract class Entity : LivingEntity
     {
         EntityData = new EntityData(entityData)
         {
+            entityName = entityData.entityName,
+            entityType = entityData.entityType,
             healthPoint = Mathf.RoundToInt(entityData.healthPoint * increaseValue),
             attackPower = Mathf.RoundToInt(entityData.attackPower * increaseValue),
+            attackRange = entityData.attackRange,
+            maxAttackRange = entityData.maxAttackRange,
             attackPerSecond = Mathf.RoundToInt(
                 Mathf.Clamp(entityData.attackPerSecond * increaseValue, 0.1f, entityData.maxAttackPerSecond)),
+            maxAttackPerSecond = entityData.maxAttackPerSecond,
             moveSpeed = Mathf.RoundToInt(
-                Mathf.Clamp(entityData.moveSpeed * increaseValue, 0.5f, entityData.maxMoveSpeed))
+                Mathf.Clamp(entityData.moveSpeed * increaseValue, 0.5f, entityData.maxMoveSpeed)),
+            maxMoveSpeed = entityData.maxMoveSpeed,
+            increaseHealthPoint = entityData.increaseHealthPoint,
+            increaseAttackPower = entityData.increaseAttackPower
         };
 
         originHp = this.entityData.healthPoint;
@@ -127,6 +135,8 @@ public abstract class Entity : LivingEntity
 
     protected virtual void Init_Enter()
     {
+        hpBar.gameObject.SetActive(true);
+        
         originHp = EntityData.healthPoint + EntityData.increaseHealthPoint;
         CurrentHp = originHp;
         
@@ -140,6 +150,8 @@ public abstract class Entity : LivingEntity
 
     protected virtual void Idle_Enter()
     {
+        if(entityData.entityType == EEntityType.Player)
+            Debug.Log("Idle_Enter");
         anim.SetBool(IsWalk, false);
     }
 
@@ -174,6 +186,7 @@ public abstract class Entity : LivingEntity
 
     protected virtual void Idle_Exit()
     {
+        
     }
 
     protected virtual void Control_Enter()
@@ -183,11 +196,12 @@ public abstract class Entity : LivingEntity
 
     protected virtual void Control_FixedUpdate()
     {
+        
     }
 
     protected virtual void Control_Exit()
     {
-        anim.SetBool(IsWalk, false);
+       
     }
     
     protected void RotateToTarget()
@@ -203,6 +217,8 @@ public abstract class Entity : LivingEntity
 
     protected virtual void Track_Enter()
     {
+        if(entityData.entityType == EEntityType.Player)
+            Debug.Log("Track_Enter");
         anim.SetBool(IsWalk, true);
     }
 
@@ -222,6 +238,8 @@ public abstract class Entity : LivingEntity
 
     protected virtual void Track_Exit()
     {
+        if(entityData.entityType == EEntityType.Player)
+            Debug.Log("Track_Exit");
         rigid.velocity = Vector3.zero;
         anim.SetBool(IsWalk, false);
     }
@@ -270,7 +288,17 @@ public abstract class Entity : LivingEntity
     protected virtual void OnAttack1Trigger()
     {
         AttackTargetEntity();
-        fsm.ChangeState(EStates.Track);
+        anim.SetBool(IsAttack, false);
+        
+        if (targetEntity.IsDead)
+        {
+            targetEntity = null;
+            fsm.ChangeState(EStates.Idle);
+        }
+        else
+        {
+            fsm.ChangeState(EStates.Attack);
+        }
     }
 
     protected void AttackTargetEntity(int damage = 0)
@@ -308,6 +336,7 @@ public abstract class Entity : LivingEntity
     protected virtual void Die_Enter()
     {
         SwapMaterial(EMaterialType.Default);
+        hpBar.gameObject.SetActive(false);
         StopAllCoroutines();
     }
 

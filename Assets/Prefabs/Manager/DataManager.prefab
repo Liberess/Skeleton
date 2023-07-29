@@ -47,6 +47,7 @@ MonoBehaviour:
   mGameData:
     playerData:
       entityName: 
+      entityType: 0
       healthPoint: 0
       attackPower: 0
       attackRange: 0
@@ -55,6 +56,8 @@ MonoBehaviour:
       maxAttackPerSecond: 0
       moveSpeed: 0
       maxMoveSpeed: 0
+      increaseHealthPoint: 0
+      increaseAttackPower: 0
     level: 1
     exp: 0
     needsExp: 5
@@ -72,26 +75,206 @@ MonoBehaviour:
     skillEffectAmounts: 000000000000000000000000
     weaponDataList:
     - equipName: 
+      equipID: 0
       equipDescription: 
       equipType: 0
+      isEquip: 0
       isEquipUnlock: 0
       equipLv: 0
       maxEquipLv: 0
       impactAmount: 0
+      originImpactAmount: 0
       equipBuyCost: 0
       equipUpCost: 0
+      originEquipUpCost: 0
       equipIcon: {fileID: 0}
+    - equipName: "\uBB34\uAE30 1"
+      equipID: 1
+      equipDescription: "\uC544\uBB34\uD2BC \uBB34\uAE30\uC784\n\n{0} +{1}"
+      equipType: 0
+      isEquip: 0
+      isEquipUnlock: 0
+      equipLv: 1
+      maxEquipLv: 99
+      impactAmount: 0
+      originImpactAmount: 0
+      equipBuyCost: 1000
+      equipUpCost: 100
+      originEquipUpCost: 100
+      equipIcon: {fileID: 21300000, guid: 30c3473b99a93ab48a29a89a1b7cced2, type: 3}
+    - equipName: "\uBB34\uAE30 2"
+      equipID: 2
+      equipDescription: "\uC544\uBB34\uD2BC \uBB34\uAE30\uC784\n\n{0} +{1}"
+      equipType: 0
+      isEquip: 0
+      isEquipUnlock: 0
+      equipLv: 1
+      maxEquipLv: 99
+      impactAmount: 0
+      originImpactAmount: 0
+      equipBuyCost: 5000
+      equipUpCost: 500
+      originEquipUpCost: 500
+      equipIcon: {fileID: 21300000, guid: 422ce2ba344177449a97fe0f91d36fe7, type: 3}
+    - equipName: "\uBB34\uAE30 3"
+      equipID: 3
+      equipDescription: "\uC544\uBB34\uD2BC \uBB34\uAE30\uC784\n\n{0} +{1}"
+      equipType: 0
+      isEquip: 0
+      isEquipUnlock: 0
+      equipLv: 1
+      maxEquipLv: 99
+      impactAmount: 0
+      originImpactAmount: 0
+      equipBuyCost: 50000
+      equipUpCost: 5000
+      originEquipUpCost: 5000
+      equipIcon: {fileID: 21300000, guid: 900f7aec7c89b124690cb27ede023bbf, type: 3}
+    - equipName: "\uBB34\uAE30 4"
+      equipID: 4
+      equipDescription: "\uC544\uBB34\uD2BC \uBB34\uAE30\uC784\n\n{0} +{1}"
+      equipType: 0
+      isEquip: 0
+      isEquipUnlock: 0
+      equipLv: 1
+      maxEquipLv: 99
+      impactAmount: 0
+      originImpactAmount: 0
+      equipBuyCost: 200000
+      equipUpCost: 20000
+      originEquipUpCost: 20000
+      equipIcon: {fileID: 21300000, guid: bec8f959272e6f6489baf3cc65a0bb35, type: 3}
+    - equipName: "\uBB34\uAE30 5"
+      equipID: 5
+      equipDescription: "\uC544\uBB34\uD2BC \uBB34\uAE30\uC784\n\n{0} +{1}"
+      equipType: 0
+      isEquip: 0
+      isEquipUnlock: 0
+      equipLv: 1
+      maxEquipLv: 99
+      impactAmount: 0
+      originImpactAmount: 0
+      equipBuyCost: 1000000
+      equipUpCost: 100000
+      originEquipUpCost: 100000
+      equipIcon: {fileID: 21300000, guid: aaa3fd0a673d5ea4a8ab1f7c8a8ca650, type: 3}
     armorDataList:
     - equipName: 
+      equipID: 0
       equipDescription: 
       equipType: 1
+      isEquip: 0
       isEquipUnlock: 0
       equipLv: 0
       maxEquipLv: 0
       impactAmount: 0
+      originImpactAmount: 0
       equipBuyCost: 0
       equipUpCost: 0
+      originEquipUpCost: 0
       equipIcon: {fileID: 0}
+    - equipName: "\uBC29\uC5B4\uAD6C 1"
+      equipID: 1
+      equipDescription: "\uC544\uBB34\uD2BC \uBC29\uC5B4\uAD6C\uC784\n\n{0} +{1}"
+      equipType: 1
+      isEquip: 0
+      isEquipUnlock: 0
+      equipLv: 1
+      maxEquipLv: 99
+      impactAmount: 5
+      originImpactAmount: 5
+      equipBuyCost: 1000
+      equipUpCost: 100
+      originEquipUpCost: 100
+      equipIcon: {fileID: 21300000, guid: ce357fe1d62b7a6418ffcd06ed3afe55, type: 3}
+    - equipName: "\uBC29\uC5B4\uAD6C 2"
+      equipID: 2
+      equipDescription: "\uC544\uBB34\uD2BC \uBC29\uC5B4\uAD6C\uC784\n\n{0} +{1}"
+      equipType: 1
+      isEquip: 0
+      isEquipUnlock: 0
+      equipLv: 1
+      maxEquipLv: 99
+      impactAmount: 20
+      originImpactAmount: 20
+      equipBuyCost: 5000
+      equipUpCost: 500
+      originEquipUpCost: 500
+      equipIcon: {fileID: 21300000, guid: 9d1256bc80e6a0d4fb30e6e8ebec4a8b, type: 3}
+    - equipName: "\uBC29\uC5B4\uAD6C 3"
+      equipID: 3
+      equipDescription: "\uC544\uBB34\uD2BC \uBC29\uC5B4\uAD6C\uC784\n\n{0} +{1}"
+      equipType: 1
+      isEquip: 0
+      isEquipUnlock: 0
+      equipLv: 1
+      maxEquipLv: 99
+      impactAmount: 50
+      originImpactAmount: 50
+      equipBuyCost: 50000
+      equipUpCost: 5000
+      originEquipUpCost: 5000
+      equipIcon: {fileID: 21300000, guid: 0a643083c846f41469041c0e8692b80e, type: 3}
+    - equipName: "\uBC29\uC5B4\uAD6C 4"
+      equipID: 4
+      equipDescription: "\uC544\uBB34\uD2BC \uBC29\uC5B4\uAD6C\uC784\n\n{0} +{1}"
+      equipType: 1
+      isEquip: 0
+      isEquipUnlock: 0
+      equipLv: 1
+      maxEquipLv: 99
+      impactAmount: 100
+      originImpactAmount: 100
+      equipBuyCost: 200000
+      equipUpCost: 20000
+      originEquipUpCost: 20000
+      equipIcon: {fileID: 21300000, guid: e8e31239b0858a347976e46b4208b345, type: 3}
+    - equipName: "\uBC29\uC5B4\uAD6C 5"
+      equipID: 5
+      equipDescription: "\uC544\uBB34\uD2BC \uBC29\uC5B4\uAD6C\uC784\n\n{0} +{1}"
+      equipType: 1
+      isEquip: 0
+      isEquipUnlock: 0
+      equipLv: 1
+      maxEquipLv: 99
+      impactAmount: 1000
+      originImpactAmount: 1000
+      equipBuyCost: 1000000
+      equipUpCost: 100000
+      originEquipUpCost: 100000
+      equipIcon: {fileID: 21300000, guid: 57331f8c4dc368a4da6c8b366d2f47c8, type: 3}
+    curEquipWeapon:
+      equipName: 
+      equipID: 0
+      equipDescription: 
+      equipType: 0
+      isEquip: 0
+      isEquipUnlock: 0
+      equipLv: 0
+      maxEquipLv: 0
+      impactAmount: 0
+      originImpactAmount: 0
+      equipBuyCost: 0
+      equipUpCost: 0
+      originEquipUpCost: 0
+      equipIcon: {fileID: 0}
+    curEquipArmor:
+      equipName: 
+      equipID: 0
+      equipDescription: 
+      equipType: 0
+      isEquip: 0
+      isEquipUnlock: 0
+      equipLv: 0
+      maxEquipLv: 0
+      impactAmount: 0
+      originImpactAmount: 0
+      equipBuyCost: 0
+      equipUpCost: 0
+      originEquipUpCost: 0
+      equipIcon: {fileID: 0}
+    curEquipWeaponID: 0
+    curEquipArmorID: 0
   playerOriginData: {fileID: 11400000, guid: 9fff56c861d382a409d6096c3220385a, type: 2}
   playerSkillDatas:
   - {fileID: 11400000, guid: bd94857624f79f14c98346be377596f0, type: 2}
@@ -99,5 +282,15 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 1b1cc525e3ab94347a8b52f88ae33f45, type: 2}
   weaponOriginDataList:
   - {fileID: 11400000, guid: ddfe88aaec357044ca3ce6f6378cf8d0, type: 2}
+  - {fileID: 11400000, guid: f845a679ecb705346a2a01ee0c2e602c, type: 2}
+  - {fileID: 11400000, guid: e6a435ea6e93232479c20479459e36ba, type: 2}
+  - {fileID: 11400000, guid: 100313ec41b98f9489e09f045257131c, type: 2}
+  - {fileID: 11400000, guid: a51ea07dbd1b5c14e9e6297f8f0ee419, type: 2}
+  - {fileID: 11400000, guid: a8101f4ad63f5f647b87778aebb33549, type: 2}
   armorOriginDataList:
   - {fileID: 11400000, guid: 1a54d6d1fa66b3d4da46cb0e8f256850, type: 2}
+  - {fileID: 11400000, guid: 59c716c860b9ab848a8cc10e2383c328, type: 2}
+  - {fileID: 11400000, guid: 0420544d215f37446ae9c4b88e291123, type: 2}
+  - {fileID: 11400000, guid: 2b6a526de5383604cba9a1df8830e471, type: 2}
+  - {fileID: 11400000, guid: a9da92a572f5c6d4cbddabe47cbaf9f6, type: 2}
+  - {fileID: 11400000, guid: 76103b8ee7a57374f8e214f01e403516, type: 2}
