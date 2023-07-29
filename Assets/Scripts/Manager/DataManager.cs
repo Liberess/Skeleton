@@ -158,7 +158,7 @@ public class DataManager : MonoBehaviour
         mGameData.sfx = 50f;
         mGameData.bgm = 50f;
 
-        mGameData.stageStr = "1-0";
+        mGameData.stageStr = "1-1";
 
         mGameData.totalPlayTime = 0.0f;
 
@@ -195,8 +195,6 @@ public class DataManager : MonoBehaviour
             byte[] bytes = System.Convert.FromBase64String(code);
             string FromJsonData = System.Text.Encoding.UTF8.GetString(bytes);
             mGameData = JsonUtility.FromJson<GameData>(FromJsonData);
-
-            InitGameData();
         }
         else
         {

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using NaughtyAttributes;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -49,7 +50,7 @@ public class GameManager : MonoBehaviour
     public UnityAction NextWaveAction;
     public UnityAction GameOverAction;
 
-    [SerializeField] private bool isPlaying = true;
+    [ShowNonSerializedField] private bool isPlaying = false;
     public bool IsPlaying => isPlaying;
 
     public float Exp
@@ -97,9 +98,13 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // 현재 Stage에서 잡은 Monster의 수
     public int curkillCount = 0;
-    public float currentPlayTime = 0;
+    
+    // 죽기 전까지 플레이한 시간
+    private float curPlayTime = 0;
 
+    // 게임을 시작한 시간
     private DateTime startTime;
 
     private void Awake()
@@ -117,18 +122,34 @@ public class GameManager : MonoBehaviour
     {
         uiMgr = UIManager.Instance;
         dataMgr = DataManager.Instance;
-
+        
         playerCtrl = FindObjectOfType<PlayerController>();
-
+        
         expSlider.maxValue = 1.0f;
         remainBar.maxValue = 1.0f;
+        
+        StartGame();
+    }
+
+    private void StartGame()
+    {
+        isPlaying = true;
 
         startTime = DateTime.Now;
 
+        curkillCount = 0;
+
         UpdateGameUI();
+        UpdateRemainMonsterUI(0);
 
-        StartCoroutine(InvokeNextWaveCo(1.0f));
-
+        playerCtrl.gameObject.SetActive(false);
+        playerCtrl.gameObject.SetActive(true);
+  
+        MonsterManager.Instance.Spawn();
+        
+        gameCanvas.SetActive(true);
+        gameOverCanvas.SetActive(false);
+        
         AudioManager.Instance.PlayBGM(EBGMName.InGame);
     }
 
@@ -195,8 +216,8 @@ public class GameManager : MonoBehaviour
         
         DateTime endTime = DateTime.Now;
         TimeSpan timeDif = endTime - startTime;
-        currentPlayTime = (float)timeDif.TotalSeconds;
-        dataMgr.GameData.totalPlayTime += currentPlayTime;
+        curPlayTime = (float)timeDif.TotalSeconds;
+        dataMgr.GameData.totalPlayTime += curPlayTime;
 
         ++dataMgr.GameData.deathCount;
 
@@ -209,8 +230,10 @@ public class GameManager : MonoBehaviour
     public void RetryGame()
     {
         //scenema
+
+        StartGame();
         
-        isPlaying = true;
+        /*isPlaying = true;
         
         curkillCount = 0;
         remainFillImg.fillAmount = 1.0f;
@@ -226,7 +249,7 @@ public class GameManager : MonoBehaviour
         gameCanvas.SetActive(true);
         gameOverCanvas.SetActive(false);
         
-        AudioManager.Instance.PlayBGM(EBGMName.InGame);
+        AudioManager.Instance.PlayBGM(EBGMName.InGame);*/
     }
     
     public void QuitGame()
@@ -237,8 +260,8 @@ public class GameManager : MonoBehaviour
         
             DateTime endTime = DateTime.Now;
             TimeSpan timeDif = endTime - startTime;
-            currentPlayTime = (float)timeDif.TotalSeconds;
-            dataMgr.GameData.totalPlayTime += currentPlayTime;
+            curPlayTime = (float)timeDif.TotalSeconds;
+            dataMgr.GameData.totalPlayTime += curPlayTime;
         }
         
         Application.Quit();
