@@ -6,10 +6,12 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using NaughtyAttributes;
+using UnityEngine.Networking;
 
 public class DataManager : MonoBehaviour
 {
     private readonly string GameDataFileName = "/GameData.json";
+    private readonly string Url = "www.naver.com";
 
     #region Singleton
 
@@ -69,6 +71,9 @@ public class DataManager : MonoBehaviour
 
     public List<EquipmentDataSO> ArmorOriginDataList => armorOriginDataList;
 
+    private int curGoldRewardAmount = 0;
+    private int curKarmaRewardAmount = 0;
+
     private PlayerController playerCtrl;
 
     private void Awake()
@@ -99,32 +104,29 @@ public class DataManager : MonoBehaviour
     {
         string[] assetPaths =
         {
-            "Assets/Scriptables/WeaponData",
-            "Assets/Scriptables/ArmorData"
+            "Scriptable/WeaponData",
+            "Scriptable/ArmorData"
         };
 
-        var guids = AssetDatabase.FindAssets("t:EquipmentDataSO", assetPaths);
-        foreach (var guid in guids)
+        foreach (var path in assetPaths)
         {
-            string path = AssetDatabase.GUIDToAssetPath(guid);
-            EquipmentDataSO data = AssetDatabase.LoadAssetAtPath<EquipmentDataSO>(path);
-
-            if (data != null)
+            var sos = Resources.LoadAll<EquipmentDataSO>(path);
+            foreach (var so in sos)
             {
-                data.EquipmentData.SetEquipID(ParseEquipID(data.name));
+                so.EquipmentData.SetEquipID(ParseEquipID(so.name));
 
-                List<EquipmentDataSO> dataList = data.EquipmentData.equipType == EEquipType.Weapon
+                List<EquipmentDataSO> dataList = so.EquipmentData.equipType == EEquipType.Weapon
                     ? weaponOriginDataList
                     : armorOriginDataList;
 
-                if (!dataList.Contains(data))
+                if (!dataList.Contains(so))
                 {
-                    dataList.Add(data);
+                    dataList.Add(so);
 
-                    if (data.EquipmentData.equipType == EEquipType.Weapon)
-                        mGameData.weaponDataList.Add(new EquipmentData(data));
+                    if (so.EquipmentData.equipType == EEquipType.Weapon)
+                        mGameData.weaponDataList.Add(new EquipmentData(so));
                     else
-                        mGameData.armorDataList.Add(new EquipmentData(data));
+                        mGameData.armorDataList.Add(new EquipmentData(so));
                 }
             }
         }
@@ -143,7 +145,9 @@ public class DataManager : MonoBehaviour
         return -1;
     }
 
-    public void InitGameData()
+    #region Init, Save, Load Data
+
+     public void InitGameData()
     {
         mGameData.level = 1;
         mGameData.exp = 0.0f;
@@ -181,8 +185,10 @@ public class DataManager : MonoBehaviour
 
         mGameData.curEquipWeaponID = -1;
         mGameData.curEquipArmorID = -1;
+        
+        SaveTime();
 
-        UpdateEquipmentOriginDatabase();
+        //UpdateEquipmentOriginDatabase();
     }
 
     public void LoadGameData()
@@ -216,6 +222,70 @@ public class DataManager : MonoBehaviour
         string code = System.Convert.ToBase64String(bytes);
         File.WriteAllText(filePath, code);
     }
+
+    private void SaveTime()
+    {
+        mGameData.lastLogInTime = DateTime.Now;
+        mGameData.lastLogInTimeStr = mGameData.lastLogInTime.ToString();
+    }
+    
+    #endregion
+
+#region 오프라인 보상
+
+public void CalculateOfflineTime() => StartCoroutine(CalculateOfflineTimeCo());
+
+private IEnumerator CalculateOfflineTimeCo()
+    {
+        UnityWebRequest request = new UnityWebRequest();
+
+        using (request = UnityWebRequest.Get(Url))
+        {
+            yield return request.SendWebRequest();
+
+            if (request.isNetworkError)
+            {
+                Debug.LogError(request.error);
+            }
+            else
+            {
+                string offTime = mGameData.lastLogInTimeStr;
+                DateTime exitTime = Convert.ToDateTime(offTime);
+                
+                DateTime dateTime = DateTime.Now;
+                TimeSpan timeStamp = TimeSpan.FromSeconds((dateTime - exitTime).TotalSeconds);
+
+                if(timeStamp.Minutes >= mGameData.minOfflineTime)
+                    ShowOfflineReward(timeStamp);
+            }
+        }
+    }
+
+    public void ShowOfflineReward(TimeSpan timeStamp)
+    {
+        string dayStr = timeStamp.Days > 0 ? string.Concat(timeStamp.Days, "일") : "";
+        string hourStr = timeStamp.Hours > 0 ? string.Concat(timeStamp.Hours, "시간") : "";
+        string minutesStr = timeStamp.Minutes > 0 ? string.Concat(timeStamp.Minutes, "분") : "";
+        string secondsStr = timeStamp.Seconds >= 0 ? string.Concat(timeStamp.Seconds, "초") : "";
+
+        curKarmaRewardAmount = Mathf.RoundToInt(mGameData.level * timeStamp.Minutes * 0.4f);
+        curGoldRewardAmount = Mathf.RoundToInt(mGameData.level * timeStamp.Seconds * 0.2f);
+
+        string amountTxt = $"획득 골드 : {curGoldRewardAmount:n0}" + "\n" + $"획득 카르마 : {curKarmaRewardAmount:n0}";
+        string infoTxt = string.Concat("자동 파밍 시간 : ", dayStr, " ", hourStr, " ", minutesStr, " ", secondsStr);
+        
+        UIManager.Instance.SetOfflineRewardUI(infoTxt, amountTxt).Forget();
+    }
+
+    public void GetOfflineReward()
+    {
+        mGameData.gold += curGoldRewardAmount;
+        mGameData.karma += curKarmaRewardAmount;
+
+        UIManager.Instance.UpdateCurrencyUI().Forget();
+    }
+    
+    #endregion
 
     public int GetStageNumber(EStageNumberType stageNumberType)
     {
@@ -369,6 +439,20 @@ public class DataManager : MonoBehaviour
         return false;
     }
 
-    private void OnApplicationPause(bool pause) => SaveGameData();
-    private void OnApplicationQuit() => SaveGameData();
+    private void OnApplicationPause(bool pause)
+    {
+        if(GameManager.Instance.IsPlaying && GameManager.Instance.GameState == EGameState.InGame)
+            SaveTime();
+        SaveGameData();
+    }
+    
+    private void OnApplicationQuit()
+    {    
+        Application.CancelQuit();
+        SaveTime();
+        SaveGameData();
+        #if !UNITY_EDITOR
+        System.Diagnostics.Process.GetCurrentProcess().Kill();
+        #endif
+    }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -41,4 +42,10 @@ public class GameData
     [ReadOnly] public EquipmentData curEquipArmor;
     [ReadOnly] public int curEquipWeaponID;
     [ReadOnly] public int curEquipArmorID;
+    
+    // 오프라인 관련 정보
+    [Header("## Equipment Datas"), Space(5)]
+    [ReadOnly] public string lastLogInTimeStr;
+    [ReadOnly] public DateTime lastLogInTime;
+    [ReadOnly] public float minOfflineTime = 10f;
 }

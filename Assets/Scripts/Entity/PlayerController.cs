@@ -122,7 +122,9 @@ public class PlayerController : Entity
     {
         // 플레이어의 경우에는 복수의 target이 존재하기에,
         // 매번 가장 가까운 target을 확인해야 한다.
-        if (FindNearestMonster())
+        FindNearestMonster();
+        
+        if (HasTarget)
         {
             if(IsAttackable && IsAttached)
                 fsm.ChangeState(EStates.Attack);
@@ -134,8 +136,7 @@ public class PlayerController : Entity
     /// <summary>
     /// 가장 가까이에 있는 target을 찾는다.
     /// </summary>
-    /// <returns>타겟이 있는지 없는지</returns>
-    private bool FindNearestMonster()
+    private void FindNearestMonster()
     {
         if (monsterMgr.SpawnedMonsterList.Count > 0)
         {
@@ -171,16 +172,14 @@ public class PlayerController : Entity
 
             closetDist = float.MaxValue;
             targetDist = float.MaxValue;
-
-            return true;
         }
-        
-        return false;
     }
 
     protected override void Track_Update()
     {
-        if (FindNearestMonster())
+        FindNearestMonster();
+        
+        if (HasTarget)
         {
             if(IsAttackable && IsAttached)
                 fsm.ChangeState(EStates.Attack);

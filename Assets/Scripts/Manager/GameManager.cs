@@ -132,8 +132,8 @@ public class GameManager : MonoBehaviour
         expSlider.maxValue = 1.0f;
         remainBar.maxValue = 1.0f;
 
-        Gold = 7777777;
-        Karma = 7777777;
+        Gold = 50000;
+        Karma = 50000;
         
         mainCanvas.SetActive(true);
     }
@@ -146,6 +146,9 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
+        if (gameState == EGameState.Main)
+            dataMgr.CalculateOfflineTime();
+        
         gameState = EGameState.InGame;
         
         isPlaying = true;
@@ -246,31 +249,8 @@ public class GameManager : MonoBehaviour
         AudioManager.Instance.StopBGM();
     }
 
-    public void RetryGame()
-    {
-        //scenema
+    public void RetryGame() => StartGame();
 
-        StartGame();
-        
-        /*isPlaying = true;
-        
-        curkillCount = 0;
-        remainFillImg.fillAmount = 1.0f;
-
-        UpdateGameUI();
-        UpdateRemainMonsterUI(0);
-
-        playerCtrl.gameObject.SetActive(false);
-        playerCtrl.gameObject.SetActive(true);
-  
-        MonsterManager.Instance.Spawn();
-        
-        gameCanvas.SetActive(true);
-        gameOverCanvas.SetActive(false);
-        
-        AudioManager.Instance.PlayBGM(EBGMName.InGame);*/
-    }
-    
     public void QuitGame()
     {
         if (isPlaying)

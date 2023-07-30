@@ -131,26 +131,24 @@ public class AudioManager : MonoBehaviour
         
         string[] assetPaths =
         {
-            "Assets/Audios/BGM",
-            "Assets/Audios/SFX"
+            "Audio/BGM",
+            "Audio/SFX"
         };
 
-        var guids = AssetDatabase.FindAssets("t:AudioClip", assetPaths);
-        foreach (var guid in guids)
+        foreach (var path in assetPaths)
         {
-            string path = AssetDatabase.GUIDToAssetPath(guid);
-            AudioClip data = AssetDatabase.LoadAssetAtPath<AudioClip>(path);
+            var clips = Resources.LoadAll<AudioClip>(path);
 
-            if (data != null)
+            foreach (var clip in clips)
             {
-                int indexOfUnderscore = data.name.LastIndexOf('_');
-                if (indexOfUnderscore >= 0 && indexOfUnderscore < data.name.Length - 1)
+                int indexOfUnderscore = clip.name.LastIndexOf('_');
+                if (indexOfUnderscore >= 0 && indexOfUnderscore < clip.name.Length - 1)
                 {
-                    string nameStr = data.name.Substring(indexOfUnderscore + 1).Trim();
-                    string idStr = Regex.Replace(data.name, @"\D", "");
+                    string nameStr = clip.name.Substring(indexOfUnderscore + 1).Trim();
+                    string idStr = Regex.Replace(clip.name, @"\D", "");
 
-                    var targetDic = data.name.Contains("BGM") ? bgmDic : sfxDic;
-                    targetDic.Add(nameStr, new Sound(nameStr, int.Parse(idStr), data));
+                    var targetDic = clip.name.Contains("BGM") ? bgmDic : sfxDic;
+                    targetDic.Add(nameStr, new Sound(nameStr, int.Parse(idStr), clip));
                 }
             }
         }

@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d810a4bd9d67944a95d01273e7b08f8, type: 3}
+  m_Name: Weapon_00
+  m_EditorClassIdentifier: 
+  equipmentData:
+    equipName: "\uBB34\uAE30 0"
+    equipID: 0
+    equipDescription: "\uC544\uBB34\uD2BC \uBB34\uAE30\uC784\n\n{0} +{1}"
+    equipType: 0
+    isEquip: 0
+    isEquipUnlock: 0
+    equipLv: 1
+    maxEquipLv: 99
+    impactAmount: 1
+    originImpactAmount: 1
+    equipBuyCost: 50
+    equipUpCost: 50
+    originEquipUpCost: 5
+    equipIcon: {fileID: 21300000, guid: e91fc63fcd9bb1c4abf7ffdc0848a328, type: 3}

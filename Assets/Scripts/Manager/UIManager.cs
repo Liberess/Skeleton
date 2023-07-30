@@ -54,6 +54,15 @@ public class UIManager : MonoBehaviour
     [BoxGroup("# Game UI Settings"), SerializeField]
     private GameObject[] menuPanels;
     
+    [HorizontalLine(color: EColor.Blue), BoxGroup("# Offline Reward UI Settings"), SerializeField]
+    private GameObject offlineRewardPanel;
+    [BoxGroup("# Offline Reward UI Settings"), SerializeField]
+    private TextMeshProUGUI offlineTimeTxt;
+    [BoxGroup("# Offline Reward UI Settings"), SerializeField]
+    private TextMeshProUGUI closeRemainTimeTxt;
+    [BoxGroup("# Offline Reward UI Settings"), SerializeField]
+    private TextMeshProUGUI offlineRewardAmountTxt;
+    
     private GameObject curOpenPanel;
     
     private PlayerController playerCtrl;
@@ -205,6 +214,37 @@ public class UIManager : MonoBehaviour
         }
         
         UpdateStatusUIActionList[(int)type]?.Invoke(formatStr);
+    }
+
+    public async UniTaskVoid SetOfflineRewardUI(string infoTxt, string amountTxt)
+    {
+        offlineRewardPanel.gameObject.SetActive(true);
+        offlineTimeTxt.text = infoTxt;
+        offlineRewardAmountTxt.text = amountTxt;
+        offlineRewardPanel.GetComponentInChildren<DOTweenAnimation>().DOPlay();
+
+        float remainTime = 10.0f;
+        closeRemainTimeTxt.text = remainTime.ToString("F0");
+        
+        while (true)
+        {
+            remainTime -= Time.deltaTime;
+            closeRemainTimeTxt.text = remainTime.ToString("F0");
+
+            if (Input.anyKeyDown)
+                break;
+            
+            if (remainTime <= 0)
+                break;
+            
+            await UniTask.Yield(PlayerLoopTiming.Update);
+        }
+
+        closeRemainTimeTxt.gameObject.SetActive(false);
+        offlineTimeTxt.gameObject.SetActive(false);
+        offlineRewardPanel.gameObject.SetActive(false);
+
+        DataManager.Instance.GetOfflineReward();
     }
 
     #region Skill
