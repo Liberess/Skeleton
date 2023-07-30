@@ -153,7 +153,7 @@ public class DataManager : MonoBehaviour
         mGameData.karma = 0;
         mGameData.killCount = 0;
         mGameData.deathCount = 0;
-        mGameData.stageCount = 0;
+        mGameData.stageCount = 1;
 
         mGameData.sfx = 50f;
         mGameData.bgm = 50f;
@@ -193,8 +193,10 @@ public class DataManager : MonoBehaviour
         {
             string code = File.ReadAllText(filePath);
             byte[] bytes = System.Convert.FromBase64String(code);
-            string FromJsonData = System.Text.Encoding.UTF8.GetString(bytes);
-            mGameData = JsonUtility.FromJson<GameData>(FromJsonData);
+            string fromJsonData = System.Text.Encoding.UTF8.GetString(bytes);
+            mGameData = JsonUtility.FromJson<GameData>(fromJsonData);
+
+            InitGameData();
         }
         else
         {
@@ -209,8 +211,8 @@ public class DataManager : MonoBehaviour
     {
         string filePath = Application.persistentDataPath + GameDataFileName;
 
-        string ToJsonData = JsonUtility.ToJson(mGameData);
-        byte[] bytes = System.Text.Encoding.UTF8.GetBytes(ToJsonData);
+        string toJsonData = JsonUtility.ToJson(mGameData);
+        byte[] bytes = System.Text.Encoding.UTF8.GetBytes(toJsonData);
         string code = System.Convert.ToBase64String(bytes);
         File.WriteAllText(filePath, code);
     }

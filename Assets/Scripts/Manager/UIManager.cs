@@ -47,7 +47,13 @@ public class UIManager : MonoBehaviour
     
     [HorizontalLine(color: EColor.Green), BoxGroup("# Game UI Settings"), SerializeField]
     private GameObject gameQuitCanvas;
+
     [BoxGroup("# Game UI Settings"), SerializeField]
+    private Button[] menuBtns;
+    
+    [BoxGroup("# Game UI Settings"), SerializeField]
+    private GameObject[] menuPanels;
+    
     private GameObject curOpenPanel;
     
     private PlayerController playerCtrl;
@@ -80,14 +86,6 @@ public class UIManager : MonoBehaviour
 
         playerCtrl = FindObjectOfType<PlayerController>();
 
-        for (int i = 0; i < dataMgr.PlayerSkillDatas.Length; i++)
-        {
-            skillCoolTimes[i] = dataMgr.PlayerSkillDatas[i].skillCoolTime;
-            skillCoolTimeTxts[i] = skillCoolImgs[i].GetComponentInChildren<TextMeshProUGUI>();
-            skillCoolImgs[i].gameObject.SetActive(false);
-            skillBtns[i].transform.GetChild(0).GetComponent<Image>().sprite = dataMgr.PlayerSkillDatas[i].skillIcon;
-        }
-        
         autoUseSkillTog.onValueChanged.AddListener(SetAutoUseSkillToggle);
 
         dynamicJoystickTog.onValueChanged.AddListener((active) =>
@@ -104,12 +102,14 @@ public class UIManager : MonoBehaviour
             playerCtrl.ControlJoystick(EJoystickType.Static, active);
         });
 
+        InitializedUI();
+        BindingMenuButton();
         StartCoroutine(SetupEquipmentUICo());
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape) && gameMgr.IsPlaying)
         {
             OpenPanel();
 
@@ -121,7 +121,52 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public async UniTaskVoid UpdateCurrencyUI(float delay)
+    public void InitializedUI()
+    {
+        gameQuitCanvas.SetActive(false);
+
+        UpdateCurrencyUI().Forget();
+
+        for (int i = 0; i < dataMgr.PlayerSkillDatas.Length; i++)
+        {
+            skillCoolTimes[i] = dataMgr.PlayerSkillDatas[i].skillCoolTime;
+            skillCoolTimeTxts[i] = skillCoolImgs[i].GetComponentInChildren<TextMeshProUGUI>();
+            skillCoolImgs[i].gameObject.SetActive(false);
+            skillBtns[i].transform.GetChild(0).GetComponent<Image>().sprite = dataMgr.PlayerSkillDatas[i].skillIcon;
+        }
+    }
+
+    private void BindingMenuButton()
+    {
+        foreach (var panel in menuPanels)
+        {
+            panel.SetActive(true);
+            panel.SetActive(false);
+        }
+
+        for (int i = 0; i < menuBtns.Length; i++)
+        {
+            int index = i;
+            menuBtns[i].onClick.RemoveAllListeners();
+            menuBtns[i].onClick.AddListener(() =>
+            {
+                if (menuPanels[index].activeSelf)
+                {
+                    OpenPanel();
+
+                    foreach (var doTween in menuBtns[index].GetComponentsInChildren<DOTweenAnimation>())
+                        doTween.DORewind();
+                }
+                else
+                {
+                    OpenPanel(menuPanels[index]);
+                    menuBtns[index].GetComponent<DOTweenAnimation>().DOPlay();
+                }
+            });
+        }
+    }
+
+    public async UniTaskVoid UpdateCurrencyUI(float delay = 0.0f)
     {
         await UniTask.Delay(TimeSpan.FromSeconds(delay));
         foreach (ECurrencyType type in Enum.GetValues(typeof(ECurrencyType)))
@@ -246,7 +291,7 @@ public class UIManager : MonoBehaviour
     {
         yield return new WaitForEndOfFrame();
         
-        foreach (var weaponData in DataManager.Instance.WeaponOriginDataList)
+        foreach (var weaponData in DataManager.Instance.GameData.weaponDataList)
         {
             var weaponSlot = Instantiate(equipSlotPrefab).GetComponent<EquipmentSlot>();
             weaponSlot.transform.SetParent(equipWeaponGrid.transform, false);
@@ -256,7 +301,7 @@ public class UIManager : MonoBehaviour
             weaponSlot.SetupSlot(weaponData);
         }
         
-        foreach (var armorData in DataManager.Instance.ArmorOriginDataList)
+        foreach (var armorData in DataManager.Instance.GameData.armorDataList)
         {
             var armorSlot = Instantiate(equipSlotPrefab).GetComponent<EquipmentSlot>();
             armorSlot.transform.SetParent(equipArmorGrid.transform, false);

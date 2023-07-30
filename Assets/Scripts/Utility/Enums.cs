@@ -70,6 +70,12 @@ public enum EStageNumberType
     Sub
 }
 
+public enum EGameState
+{
+    Main = 0,
+    InGame
+}
+
 public class Enums
 {
 }

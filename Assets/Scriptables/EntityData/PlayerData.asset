@@ -15,7 +15,7 @@ MonoBehaviour:
   entityData:
     entityName: Player
     entityType: 0
-    healthPoint: 10
+    healthPoint: 100
     attackPower: 2
     attackRange: 1
     maxAttackRange: 5

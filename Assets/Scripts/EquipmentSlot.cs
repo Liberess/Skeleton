@@ -7,8 +7,6 @@ using TMPro;
 
 public class EquipmentSlot : MonoBehaviour
 {
-    private EquipmentDataSO equipDataSO;
-
     public EquipmentData EquipData { get; private set; }
 
     [SerializeField] private TextMeshProUGUI nameTxt;
@@ -29,31 +27,30 @@ public class EquipmentSlot : MonoBehaviour
         equipBtn.onClick.AddListener(OnClickEquip);
     }
 
-    public void SetupSlot(EquipmentDataSO dataSO)
+    public void SetupSlot(EquipmentData data)
     {
-        equipDataSO = dataSO;
+        //EquipData = DataManager.Instance.GetEquipmentData(equipDataSO.EquipmentData.equipType, equipDataSO.EquipmentData.EquipID);
+        EquipData = data;
         
-        EquipData = DataManager.Instance.GetEquipmentData(equipDataSO.EquipmentData.equipType, equipDataSO.EquipmentData.EquipID);
-        
-        if(equipDataSO.EquipmentData.equipType == EEquipType.Weapon)
+        if(EquipData.equipType == EEquipType.Weapon)
             UIManager.Instance.UpdateWeaponUIAction += UpdateSlot;
         else
             UIManager.Instance.UpdateArmorUIAction += UpdateSlot;
 
-        nameTxt.text = equipDataSO.EquipmentData.equipName;
-        lvTxt.text = equipDataSO.EquipmentData.equipLv.ToString();
+        nameTxt.text = EquipData.equipName;
+        lvTxt.text = EquipData.equipLv.ToString();
         
-        int cost = equipDataSO.EquipmentData.equipBuyCost;
+        int cost = EquipData.equipBuyCost;
         costTxt.text = string.Concat("<sprite=0>", cost > 0 ? $"{cost:#,###}" : "0");
 
-        if (equipDataSO.EquipmentData.equipType == EEquipType.Weapon)
+        if (EquipData.equipType == EEquipType.Weapon)
             impactNameStr = "공격력";
         else
             impactNameStr = "체력";
 
-        descriptTxt.text = string.Format(equipDataSO.EquipmentData.equipDescription, impactNameStr,
-            equipDataSO.EquipmentData.impactAmount);
-        equipIcon.sprite = equipDataSO.EquipmentData.equipIcon;
+        descriptTxt.text = string.Format(EquipData.equipDescription, impactNameStr,
+            EquipData.impactAmount);
+        equipIcon.sprite = EquipData.equipIcon;
         
         UpdateSlot();
     }
@@ -75,7 +72,7 @@ public class EquipmentSlot : MonoBehaviour
         costTxt.gameObject.SetActive(!isMaxLevel);
         
         descriptTxt.text = string.Format(EquipData.equipDescription, impactNameStr,
-            equipDataSO.EquipmentData.impactAmount);
+            EquipData.impactAmount);
     }
 
     private void OnClickBuy()
@@ -86,11 +83,17 @@ public class EquipmentSlot : MonoBehaviour
             {
                 GameManager.Instance.Gold -= EquipData.equipUpCost;
                 EquipData.equipUpCost = Mathf.RoundToInt(
-                    Mathf.Clamp(EquipData.equipUpCost + equipDataSO.EquipmentData.originEquipUpCost * 1.4f, 0.0f,
+                    Mathf.Clamp(EquipData.equipUpCost + EquipData.originEquipUpCost * 1.4f, 0.0f,
                         DataManager.Instance.GameData.MaxGoodsAmount));
                 EquipData.impactAmount = Mathf.RoundToInt(
-                    Mathf.Clamp(EquipData.impactAmount + equipDataSO.EquipmentData.originImpactAmount * 1.4f, 0.0f,
+                    Mathf.Clamp(EquipData.impactAmount + EquipData.originImpactAmount * 1.4f, 0.0f,
                         DataManager.Instance.GameData.MaxGoodsAmount));
+
+                if (EquipData.equipType == EEquipType.Weapon)
+                    DataManager.Instance.GameData.playerData.increaseAttackPower = EquipData.impactAmount;
+                else
+                    DataManager.Instance.GameData.playerData.increaseHealthPoint = EquipData.impactAmount;
+                
                 EquipData.equipLv += 1;
                 UpdateSlot();
             }

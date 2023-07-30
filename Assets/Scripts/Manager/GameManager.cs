@@ -35,7 +35,8 @@ public class GameManager : MonoBehaviour
     private UIManager uiMgr;
     private DataManager dataMgr;
     private PlayerController playerCtrl;
-
+    
+    [SerializeField] private GameObject mainCanvas;
     [SerializeField] private GameObject gameCanvas;
     [SerializeField] private GameObject gameOverCanvas;
 
@@ -52,6 +53,9 @@ public class GameManager : MonoBehaviour
 
     [ShowNonSerializedField] private bool isPlaying = false;
     public bool IsPlaying => isPlaying;
+    
+    [ShowNonSerializedField] private EGameState gameState;
+    public EGameState GameState => gameState;
 
     public float Exp
     {
@@ -127,12 +131,23 @@ public class GameManager : MonoBehaviour
         
         expSlider.maxValue = 1.0f;
         remainBar.maxValue = 1.0f;
+
+        Gold = 7777777;
+        Karma = 7777777;
         
-        StartGame();
+        mainCanvas.SetActive(true);
     }
 
-    private void StartGame()
+    private void Update()
     {
+        if(gameState == EGameState.Main && Input.anyKeyDown)
+            StartGame();
+    }
+
+    public void StartGame()
+    {
+        gameState = EGameState.InGame;
+        
         isPlaying = true;
 
         startTime = DateTime.Now;
@@ -145,10 +160,14 @@ public class GameManager : MonoBehaviour
         playerCtrl.gameObject.SetActive(false);
         playerCtrl.gameObject.SetActive(true);
   
+        uiMgr.InitializedUI();
+        
         MonsterManager.Instance.Spawn();
         
+        mainCanvas.SetActive(false);
         gameCanvas.SetActive(true);
         gameOverCanvas.SetActive(false);
+        uiMgr.OpenPanel();
         
         AudioManager.Instance.PlayBGM(EBGMName.InGame);
     }

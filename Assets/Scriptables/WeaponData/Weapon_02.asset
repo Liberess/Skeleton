@@ -22,6 +22,7 @@ MonoBehaviour:
     equipLv: 1
     maxEquipLv: 99
     impactAmount: 20
+    originImpactAmount: 20
     equipBuyCost: 5000
     equipUpCost: 5000
     originEquipUpCost: 500
