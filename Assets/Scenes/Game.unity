@@ -29690,7 +29690,7 @@ PrefabInstance:
     - target: {fileID: 3021994958218476297, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 120
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3021994958218476297, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
@@ -29735,7 +29735,7 @@ PrefabInstance:
     - target: {fileID: 3021994958218476297, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 370
       objectReference: {fileID: 0}
     - target: {fileID: 3021994958218476297, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
@@ -34406,7 +34406,7 @@ PrefabInstance:
     - target: {fileID: 3021994958218476297, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 120
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3021994958218476297, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
@@ -34451,7 +34451,7 @@ PrefabInstance:
     - target: {fileID: 3021994958218476297, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 710
       objectReference: {fileID: 0}
     - target: {fileID: 3021994958218476297, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
@@ -34958,7 +34958,7 @@ PrefabInstance:
     - target: {fileID: 3021994958218476297, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 120
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3021994958218476297, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
@@ -35003,7 +35003,7 @@ PrefabInstance:
     - target: {fileID: 3021994958218476297, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 540
       objectReference: {fileID: 0}
     - target: {fileID: 3021994958218476297, guid: a8bcdfe3c785e7745b42d6c4057e043e,
         type: 3}
@@ -49079,7 +49079,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &2047945823
 MonoBehaviour:
   m_ObjectHideFlags: 0

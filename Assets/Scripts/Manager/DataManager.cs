@@ -196,7 +196,7 @@ public class DataManager : MonoBehaviour
             string fromJsonData = System.Text.Encoding.UTF8.GetString(bytes);
             mGameData = JsonUtility.FromJson<GameData>(fromJsonData);
 
-            InitGameData();
+            //InitGameData();
         }
         else
         {
@@ -316,14 +316,24 @@ public class DataManager : MonoBehaviour
                     // 현재의 최대 체력에서 기존의 장비의 효과를 빼고, 구매한 장비의 효과를 더한 값이
                     // 현재의 체력보다 낮다면, 의도치 않은 결과를 야기하므로 판단한다.
                     if (IsChangeableArmor(data.impactAmount))
+                    {
                         DisarmEquipment(EEquipType.Armor);
+                        
+                        data.isEquip = true;
+                        mGameData.curEquipArmor = data;
+                        mGameData.curEquipArmorID = data.EquipID;
+                        mGameData.playerData.increaseHealthPoint = mGameData.curEquipArmor.impactAmount;
+                        playerCtrl.UpdateHpUI();
+                    }
                 }
-                
-                data.isEquip = true;
-                mGameData.curEquipArmor = data;
-                mGameData.curEquipArmorID = data.EquipID;
-                mGameData.playerData.increaseHealthPoint = mGameData.curEquipArmor.impactAmount;
-                playerCtrl.UpdateHpUI();
+                else
+                {
+                    data.isEquip = true;
+                    mGameData.curEquipArmor = data;
+                    mGameData.curEquipArmorID = data.EquipID;
+                    mGameData.playerData.increaseHealthPoint = mGameData.curEquipArmor.impactAmount;
+                    playerCtrl.UpdateHpUI();
+                }
             }
         }
     }
@@ -332,18 +342,16 @@ public class DataManager : MonoBehaviour
     {
         if (equipType == EEquipType.Weapon)
         {
-            mGameData.curEquipWeapon.isEquip = false;
+            GetEquipmentData(equipType, mGameData.curEquipWeapon.EquipID).isEquip = false;
             UIManager.Instance.UpdateWeaponUIAction?.Invoke();
             mGameData.curEquipWeaponID = -1;
             mGameData.curEquipWeapon = null;
         }
         else
         {
-            mGameData.curEquipArmor.isEquip = false;
+            GetEquipmentData(equipType, mGameData.curEquipArmor.EquipID).isEquip = false;
             UIManager.Instance.UpdateArmorUIAction?.Invoke();
             mGameData.curEquipArmorID = -1;
-            mGameData.playerData.increaseHealthPoint = mGameData.curEquipArmor.impactAmount;
-            playerCtrl.UpdateHpUI();
             mGameData.curEquipArmor = null;
         }
     }

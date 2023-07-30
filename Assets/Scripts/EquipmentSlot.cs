@@ -114,7 +114,9 @@ public class EquipmentSlot : MonoBehaviour
     {
         if (EquipData.equipType == EEquipType.Weapon)
         {
-            DataManager.Instance.DisarmEquipment(EquipData.equipType);
+            if (DataManager.Instance.GameData.curEquipWeaponID >= 0)
+                DataManager.Instance.DisarmEquipment(EquipData.equipType);
+  
             EquipData.isEquip = true;
             DataManager.Instance.GameData.curEquipWeapon = EquipData;
             DataManager.Instance.GameData.curEquipWeaponID = EquipData.EquipID;
@@ -125,7 +127,8 @@ public class EquipmentSlot : MonoBehaviour
         {
             if (DataManager.Instance.IsChangeableArmor(EquipData.impactAmount))
             {
-                DataManager.Instance.DisarmEquipment(EquipData.equipType);
+                if (DataManager.Instance.GameData.curEquipArmorID >= 0)
+                    DataManager.Instance.DisarmEquipment(EquipData.equipType);
                 EquipData.isEquip = true;
                 DataManager.Instance.GameData.curEquipArmor = EquipData;
                 DataManager.Instance.GameData.curEquipArmorID = EquipData.EquipID;
