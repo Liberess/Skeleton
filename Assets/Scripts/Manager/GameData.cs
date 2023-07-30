@@ -16,6 +16,7 @@ public class GameData
     public readonly int MaxGoodsAmount = 999999999;
 
     [Header("## Game Datas"), Space(5)]
+    [ReadOnly] public bool isNewGame = true;
     [ReadOnly] public float totalPlayTime = 0.0f;
     [ReadOnly] public int killCount = 0;
     [ReadOnly] public int deathCount = 0;

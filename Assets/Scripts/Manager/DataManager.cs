@@ -13,27 +13,8 @@ public class DataManager : MonoBehaviour
     private readonly string GameDataFileName = "/GameData.json";
     private readonly string Url = "www.naver.com";
 
-    #region Singleton
-
-    private static GameObject mContainer;
-
-    private static DataManager mInstance;
-
-    public static DataManager Instance
-    {
-        get
-        {
-            if (mInstance == null)
-            {
-                mContainer = new GameObject();
-                mContainer.name = "DataManager";
-                mInstance = mContainer.AddComponent(typeof(DataManager)) as DataManager;
-            }
-
-            return mInstance;
-        }
-    }
-
+    public static DataManager Instance { get; private set; }
+    
     [HorizontalLine(color: EColor.Orange), BoxGroup("# GameData"), SerializeField]
     private GameData mGameData;
 
@@ -50,9 +31,7 @@ public class DataManager : MonoBehaviour
             return mGameData;
         }
     }
-
-    #endregion
-
+    
     [HorizontalLine(color: EColor.Blue), BoxGroup("# PlayerData"), SerializeField]
     private EntitySO playerOriginData;
 
@@ -78,12 +57,12 @@ public class DataManager : MonoBehaviour
 
     private void Awake()
     {
-        if (mInstance == null)
+        if (Instance == null)
         {
-            mInstance = this;
+            Instance = this;
             DontDestroyOnLoad(gameObject);
         }
-        else if (mInstance != this)
+        else if (Instance != this)
         {
             Destroy(gameObject);
             return;
@@ -153,6 +132,7 @@ public class DataManager : MonoBehaviour
         mGameData.exp = 0.0f;
         mGameData.needsExp = 5.0f;
 
+        mGameData.isNewGame = true;
         mGameData.gold = 0;
         mGameData.karma = 0;
         mGameData.killCount = 0;
@@ -174,11 +154,11 @@ public class DataManager : MonoBehaviour
         for (int i = 0; i < PlayerSkillDatas.Length; i++)
             mGameData.skillEffectAmounts[i] = PlayerSkillDatas[i].skillImpactAmount;
 
-        weaponOriginDataList.Clear();
-        armorOriginDataList.Clear();
+        weaponOriginDataList = new List<EquipmentDataSO>();
+        armorOriginDataList = new List<EquipmentDataSO>();
 
-        mGameData.weaponDataList.Clear();
-        mGameData.armorDataList.Clear();
+        mGameData.weaponDataList = new List<EquipmentData>();
+        mGameData.armorDataList = new List<EquipmentData>();
 
         mGameData.curEquipWeapon = null;
         mGameData.curEquipArmor = null;
@@ -188,7 +168,7 @@ public class DataManager : MonoBehaviour
         
         SaveTime();
 
-        //UpdateEquipmentOriginDatabase();
+        UpdateEquipmentOriginDatabase();
     }
 
     public void LoadGameData()
@@ -202,7 +182,7 @@ public class DataManager : MonoBehaviour
             string fromJsonData = System.Text.Encoding.UTF8.GetString(bytes);
             mGameData = JsonUtility.FromJson<GameData>(fromJsonData);
 
-            //InitGameData();
+            mGameData.isNewGame = false;
         }
         else
         {

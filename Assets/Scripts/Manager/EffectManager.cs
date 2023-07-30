@@ -9,7 +9,6 @@ public class EffectManager : MonoBehaviour
 
     [SerializeField] private GameObject fireBallPrefab;
     [SerializeField] private GameObject explosionPrefab;
-    [SerializeField] private GameObject bloodPrefab;
     [SerializeField, Range(1, 100)] private int initAmount = 30;
 
     private Dictionary<EEffectType, Queue<GameObject>> queDic =
@@ -37,7 +36,6 @@ public class EffectManager : MonoBehaviour
 
         Initialize(EEffectType.FireBall, 2);
         Initialize(EEffectType.Explosion, 2);
-        //Initialize(EEffectType.Blood, 2);
     }
     
     #region Object Pooling

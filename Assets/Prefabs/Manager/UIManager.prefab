@@ -24,13 +24,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7664524480764987852}
-  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5142881022288409890
 MonoBehaviour:
@@ -44,5 +44,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50d95469992f33644a96ca04fa31bf02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skillCoolImgs: []
-  skillCoolTimeTxts: []
+  skillBtns:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  skillCoolImgs:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  autoUseSkillTog: {fileID: 0}
+  equipWeaponGrid: {fileID: 0}
+  equipArmorGrid: {fileID: 0}
+  equipSlotPrefab: {fileID: 5942874292687548536, guid: f529d313172bdc84c93923898d0c04a3,
+    type: 3}
+  equipWeaponBtn: {fileID: 0}
+  equipArmorBtn: {fileID: 0}
+  dynamicJoystickTog: {fileID: 0}
+  staticJoystickTog: {fileID: 0}
+  gameQuitCanvas: {fileID: 0}
+  menuBtns:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  menuPanels:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  offlineRewardPanel: {fileID: 0}
+  offlineTimeTxt: {fileID: 0}
+  closeRemainTimeTxt: {fileID: 0}
+  offlineRewardAmountTxt: {fileID: 0}

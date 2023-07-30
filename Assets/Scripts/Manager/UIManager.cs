@@ -162,7 +162,6 @@ public class UIManager : MonoBehaviour
                 if (menuPanels[index].activeSelf)
                 {
                     OpenPanel();
-
                     foreach (var doTween in menuBtns[index].GetComponentsInChildren<DOTweenAnimation>())
                         doTween.DORewind();
                 }
@@ -383,5 +382,8 @@ public class UIManager : MonoBehaviour
         }
         
         curOpenPanel = panel;
+        
+        if(panel)
+            panel.SetActive(true);
     }
 }

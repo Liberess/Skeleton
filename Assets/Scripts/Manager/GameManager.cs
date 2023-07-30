@@ -9,28 +9,7 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    #region Singleton
-
-    private static GameObject mContainer;
-
-    private static GameManager mInstance;
-
-    public static GameManager Instance
-    {
-        get
-        {
-            if (mInstance == null)
-            {
-                mContainer = new GameObject();
-                mContainer.name = "GameManager";
-                mInstance = mContainer.AddComponent(typeof(GameManager)) as GameManager;
-            }
-
-            return mInstance;
-        }
-    }
-
-    #endregion
+    public static GameManager Instance { get; private set; }
 
     private UIManager uiMgr;
     private DataManager dataMgr;
@@ -113,9 +92,9 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        if (mInstance == null)
-            mInstance = this;
-        else if (mInstance != this)
+        if (Instance == null)
+            Instance = this;
+        else if (Instance != this)
             Destroy(gameObject);
 
         GameOverAction += GameOver;
@@ -146,7 +125,7 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
-        if (gameState == EGameState.Main)
+        if (gameState == EGameState.Main && !dataMgr.GameData.isNewGame)
             dataMgr.CalculateOfflineTime();
         
         gameState = EGameState.InGame;

@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using TMPro;
 
-public class TxetFade : MonoBehaviour
+public class TextFade : MonoBehaviour
 {
     private TextMeshProUGUI txt;
 

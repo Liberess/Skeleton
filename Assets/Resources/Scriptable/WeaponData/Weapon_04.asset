@@ -15,7 +15,7 @@ MonoBehaviour:
   equipmentData:
     equipName: "\uBB34\uAE30 4"
     equipID: 4
-    equipDescription: "\uC544\uBB34\uD2BC \uBB34\uAE30\uC784\n\n{0} +{1}"
+    equipDescription: "\uC88B\uC740 \uBB34\uAE30\uB2E4.\n\n{0} +{1}"
     equipType: 0
     isEquip: 0
     isEquipUnlock: 0
