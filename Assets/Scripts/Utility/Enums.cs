@@ -34,9 +34,9 @@ public enum ESkillType
 
 public enum EEffectType
 {
-    FireBall = 0,
+    PhantomBlade = 0,
+    FireBall,
     Explosion,
-    Blood
 }
 
 public enum EEquipType
@@ -74,6 +74,12 @@ public enum EGameState
 {
     Main = 0,
     InGame
+}
+
+public enum EProjectileType
+{
+    Blade = 0,
+    FireBall
 }
 
 public class Enums

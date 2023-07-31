@@ -53,7 +53,7 @@ public abstract class Entity : LivingEntity
     protected float lastAttackTime = 0.0f;
 
     protected bool IsAttackable =>
-        Time.time >= lastAttackTime + EntityData.attackPerSecond;
+        Time.time >= lastAttackTime + EntityData.attackSpeed;
 
     public bool IsAttached =>
         TargetEntity != null && Vector3.Distance(TargetEntity.transform.position, transform.position) <= entityData.attackRange;

@@ -70,7 +70,7 @@ public class StatusUpgradeSlot : MonoBehaviour
                 statValueTxt.text = string.Concat("+", statValue.ToString("F2"), "/m");
                 break;
             case EStatusType.AttackPerSecond:
-                statValue = DataManager.Instance.GameData.playerData.attackPerSecond;
+                statValue = DataManager.Instance.GameData.playerData.attackSpeed;
                 statValueTxt.text = string.Concat("+", statValue.ToString("F2"), "/s");
                 break;
             case EStatusType.MoveSpeed:
@@ -119,9 +119,9 @@ public class StatusUpgradeSlot : MonoBehaviour
                         DataManager.Instance.GameData.playerData.maxAttackRange);
                 break;
             case EStatusType.AttackPerSecond:
-                DataManager.Instance.GameData.playerData.attackPerSecond =
-                    Mathf.Clamp(DataManager.Instance.GameData.playerData.attackPerSecond + 0.001f, 0.0f,
-                        DataManager.Instance.GameData.playerData.maxAttackPerSecond);
+                DataManager.Instance.GameData.playerData.attackSpeed =
+                    Mathf.Clamp(DataManager.Instance.GameData.playerData.attackSpeed + 0.001f, 0.0f,
+                        DataManager.Instance.GameData.playerData.maxAttackSecond);
                 break;
             case EStatusType.MoveSpeed:
                 DataManager.Instance.GameData.playerData.moveSpeed =

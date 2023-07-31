@@ -19,8 +19,8 @@ MonoBehaviour:
     attackPower: 1
     attackRange: 1
     maxAttackRange: 5
-    attackPerSecond: 1
-    maxAttackPerSecond: 5
+    attackSpeed: 0.5
+    maxAttackSecond: 5
     moveSpeed: 1
     maxMoveSpeed: 5
     increaseHealthPoint: 0

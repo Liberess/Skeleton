@@ -7,8 +7,7 @@ public class EffectManager : MonoBehaviour
 {
     public static EffectManager Instance { get; private set; }
 
-    [SerializeField] private GameObject fireBallPrefab;
-    [SerializeField] private GameObject explosionPrefab;
+    [SerializeField] private GameObject[] effectPrefabs = new GameObject[3];
     [SerializeField, Range(1, 100)] private int initAmount = 30;
 
     private Dictionary<EEffectType, Queue<GameObject>> queDic =
@@ -29,13 +28,12 @@ public class EffectManager : MonoBehaviour
     {
         queDic.Clear();
         quePrefabDic.Clear();
-        
-        quePrefabDic.Add(EEffectType.FireBall, fireBallPrefab);
-        quePrefabDic.Add(EEffectType.Explosion, explosionPrefab);
-        //quePrefabDic.Add(EEffectType.Blood, bloodPrefab);
 
-        Initialize(EEffectType.FireBall, 2);
-        Initialize(EEffectType.Explosion, 2);
+        for (int i = 0; i < effectPrefabs.Length; i++)
+        {
+            quePrefabDic.Add((EEffectType)i, effectPrefabs[i]);
+            Initialize((EEffectType)i, initAmount);
+        }
     }
     
     #region Object Pooling
@@ -93,11 +91,23 @@ public class EffectManager : MonoBehaviour
         Instance.queDic[type].Enqueue(obj);
     }
 
+    /// <summary>
+    /// delayTime만큼 시간이 지난 뒤에 오브젝트를 반환하는 코루틴을 호출한다.
+    /// </summary>
+    /// <param name="type">반환할 이펙트의 타입</param>
+    /// <param name="obj">반환할 이펙트 오브젝트</param>
+    /// <param name="delayTime">반환 딜레이 타임</param>
     public void ReturnObj(EEffectType type, GameObject obj, float delayTime = 0.0f)
     {
         StartCoroutine(ReturnObjCo(type, obj, delayTime));
     }
 
+    /// <summary>
+    /// delayTime만큼 시간이 지난 뒤에 오브젝트를 반환한다.
+    /// </summary>
+    /// <param name="type">반환할 이펙트의 타입</param>
+    /// <param name="obj">반환할 이펙트 오브젝트</param>
+    /// <param name="delayTime">반환 딜레이 타임</param>
     private IEnumerator ReturnObjCo(EEffectType type, GameObject obj, float delayTime = 0.0f)
     {
         yield return new WaitForSeconds(delayTime);

@@ -15,12 +15,12 @@ MonoBehaviour:
   entityData:
     entityName: Player
     entityType: 0
-    healthPoint: 100
+    healthPoint: 50
     attackPower: 2
     attackRange: 1
     maxAttackRange: 5
-    attackPerSecond: 1
-    maxAttackPerSecond: 30
+    attackSpeed: 1
+    maxAttackSecond: 10
     moveSpeed: 3
     maxMoveSpeed: 15
     increaseHealthPoint: 0

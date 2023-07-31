@@ -52,9 +52,9 @@ public class Monster : Entity
             attackPower = Mathf.RoundToInt(entityData.attackPower + increaseValue),
             attackRange = entityData.attackRange,
             maxAttackRange = entityData.maxAttackRange,
-            attackPerSecond = Mathf.RoundToInt(
-                Mathf.Clamp(entityData.attackPerSecond + increaseValue, 0.1f, entityData.maxAttackPerSecond)),
-            maxAttackPerSecond = entityData.maxAttackPerSecond,
+            attackSpeed = Mathf.RoundToInt(
+                Mathf.Clamp(entityData.attackSpeed + increaseValue, 0.1f, entityData.maxAttackSecond)),
+            maxAttackSecond = entityData.maxAttackSecond,
             moveSpeed = Mathf.RoundToInt(
                 Mathf.Clamp(entityData.moveSpeed + increaseValue, 0.5f, entityData.maxMoveSpeed)),
             maxMoveSpeed = entityData.maxMoveSpeed,

@@ -4829,7 +4829,7 @@ GameObject:
   - component: {fileID: 2794073066416117809}
   - component: {fileID: 4730405291730896173}
   m_Layer: 0
-  m_Name: Explosion
+  m_Name: FX2_Explosion
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

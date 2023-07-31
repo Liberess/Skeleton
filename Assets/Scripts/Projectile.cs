@@ -3,34 +3,36 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Projectile : MonoBehaviour
+public abstract class Projectile : MonoBehaviour
 {
-    private float moveVelocity;
-    private float impactRange;
-    private float lifeDistance;
+    protected float moveVelocity;
+    protected float impactRange;
+    protected float lifeDistance;
 
-    private Vector3 startPos;
-    private DamageMessage dmgMsg;
-    private LayerMask targetLayer;
+    protected Vector3 startPos;
+    protected DamageMessage dmgMsg;
+    protected LayerMask targetLayer;
 
-    private Rigidbody rigid;
+    protected Rigidbody rigid;
 
-    private void Awake()
+    protected virtual void Awake()
     {
         rigid = GetComponent<Rigidbody>();
     }
 
-    private void Update()
+    protected virtual void Update()
     {
         var distance = Vector3.Distance(startPos, transform.position);
         if (distance >= lifeDistance)
-            EffectManager.Instance.ReturnObj(EEffectType.Explosion, gameObject);
+            ReturnObject(0.0f);
     }
 
-    private void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
         rigid.velocity = transform.forward * moveVelocity;
     }
+
+    protected abstract void ReturnObject(float delay = 0.0f);
 
     public void SetupProjectile(DamageMessage dmg, LayerMask layerMask, float velocity, float distance, float range)
     {
@@ -43,27 +45,11 @@ public class Projectile : MonoBehaviour
         lifeDistance = distance;
     }
 
-    private void OnTriggerEnter(Collider other)
+    protected abstract void OnEnterProcess(Collider other);
+
+    protected virtual void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.layer == Utility.MaskToLayer(targetLayer))
-        {
-            Collider[] cols = Physics.OverlapSphere(transform.position, impactRange, targetLayer.value);
-            if (cols.Length > 0)
-            {
-                AudioManager.Instance.PlaySFX(ESFXName.Explosion);
-                
-                var explosion = EffectManager.Instance.InstantiateObj(EEffectType.Explosion);
-                explosion.transform.position = transform.position;
-                EffectManager.Instance.ReturnObj(EEffectType.Explosion, explosion, 2.0f);
-
-                foreach (var col in cols)
-                {
-                    if (col.TryGetComponent(out LivingEntity livingEntity))
-                        livingEntity.ApplyDamage(dmgMsg);
-                }
-
-                EffectManager.Instance.ReturnObj(EEffectType.FireBall, gameObject);
-            }
-        }
+            OnEnterProcess(other);
     }
 }

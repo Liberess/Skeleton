@@ -26,6 +26,9 @@ public class PlayerController : Entity
     private float targetDist = float.MaxValue;
     private int closetIndex = 0;
     private int targetIndex = 0;
+    
+    [HorizontalLine(color: EColor.Yellow), BoxGroup("# Attack Effect Settings"), SerializeField]
+    private TrailRenderer attackTrailRen;
 
     private bool isDashing = false;
     private bool isControlling = false;
@@ -41,12 +44,19 @@ public class PlayerController : Entity
 
         JoystickEventBinding();
 
+        attackTrailRen.enabled = false;
+
         base.Start();
     }
+    
+    // Only Used in Attack Animation Event
+    private void EnableAttackTrail() => attackTrailRen.enabled = true;
+    
+    // Only Used in Attack Animation Event
+    private void DisableAttackTrail() => attackTrailRen.enabled = false;
 
     private void JoystickEventBinding()
     {
-        //dynamicJoystick.OnPointerDownAction += () => fsm.ChangeState(EStates.Control, StateTransition.Overwrite);
         dynamicJoystick.OnPointerDownAction += () =>
         {
             if (fsm.State != EStates.Skill && !isDashing)
@@ -66,8 +76,7 @@ public class PlayerController : Entity
             else
                 fsm.ChangeState(EStates.Idle);
         };
-
-        //staticJoystick.OnPointerDownAction += () => fsm.ChangeState(EStates.Control, StateTransition.Overwrite);
+        
         staticJoystick.OnPointerDownAction += () =>
         {
             if (fsm.State != EStates.Skill && !isDashing)
@@ -149,7 +158,7 @@ public class PlayerController : Entity
                 curDist = Vector3.Distance(transform.position, monsterPos);
 
                 if (Physics.Raycast(transform.position, monsterPos - transform.position,
-                        EntityData.attackRange, targetLayer.value))
+                        20f, targetLayer.value))
                 {
                     if (targetDist >= curDist)
                     {
@@ -219,6 +228,9 @@ public class PlayerController : Entity
                 
             if (IsAttackable)
             {
+                rigid.velocity = Vector3.zero;
+                rigid.angularVelocity = Vector3.zero;
+                
                 if (!IsAttached)
                 {
                     fsm.ChangeState(EStates.Track);
@@ -227,9 +239,6 @@ public class PlayerController : Entity
                     
                 lastAttackTime = Time.time;
                 anim.SetBool(IsAttack, true);
-                
-                rigid.velocity = Vector3.zero;
-                rigid.angularVelocity = Vector3.zero;
             }
         }
         else
@@ -241,6 +250,7 @@ public class PlayerController : Entity
 
     protected override void OnAttack1Trigger()
     {
+        anim.SetFloat("attackSpeed", EntityData.attackSpeed);
         AttackTargetEntity(EntityData.attackPower + EntityData.increaseAttackPower);
         fsm.ChangeState(EStates.Track);
     }
