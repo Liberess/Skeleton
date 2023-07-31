@@ -130,7 +130,7 @@ public class GameManager : MonoBehaviour
 #else
         if (Application.platform == RuntimePlatform.Android)
         {
-            if (!isPlaying && && gameState == EGameState.Main && Input.anyKeyDown)
+            if (!isPlaying && gameState == EGameState.Main && Input.anyKeyDown)
                 StartGame();
         }
 #endif

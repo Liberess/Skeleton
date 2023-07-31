@@ -3,7 +3,7 @@ guid: 389be3483ef26ae4886e2b0a97fdaff1
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
-  serializedVersion: 12
+  serializedVersion: 11
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -20,12 +20,11 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
-    flipGreenChannel: 0
   isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
-  ignoreMipmapLimit: 0
+  ignoreMasterTextureLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -64,8 +63,6 @@ TextureImporter:
   textureFormatSet: 0
   ignorePngGamma: 0
   applyGammaDecoding: 1
-  swizzle: 50462976
-  cookieLightType: 1
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -77,7 +74,6 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
-    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
@@ -90,7 +86,6 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
-    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
@@ -103,20 +98,18 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
-    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 1
   - serializedVersion: 3
     buildTarget: Android
-    maxTextureSize: 2048
+    maxTextureSize: 1024
     resizeAlgorithm: 0
-    textureFormat: -1
+    textureFormat: 50
     textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
+    overridden: 1
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
@@ -129,7 +122,30 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
-    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Windows Store Apps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
@@ -1490,73 +1506,74 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      mainlevbuild_0: 329678939
-      mainlevbuild_1: -1951119457
-      mainlevbuild_10: 2128629645
-      mainlevbuild_11: 1349676043
-      mainlevbuild_12: 801375982
-      mainlevbuild_13: 511047545
-      mainlevbuild_14: 1000469702
-      mainlevbuild_15: -198724509
-      mainlevbuild_16: 1778892798
-      mainlevbuild_17: -1208688490
-      mainlevbuild_18: -1264904684
-      mainlevbuild_19: -985023892
-      mainlevbuild_2: 2091852658
-      mainlevbuild_20: -2041725194
-      mainlevbuild_21: 457081878
-      mainlevbuild_22: 1218121066
-      mainlevbuild_23: -293513280
-      mainlevbuild_24: -1639180295
-      mainlevbuild_25: -2115180338
-      mainlevbuild_26: -160804400
-      mainlevbuild_27: 580442595
-      mainlevbuild_28: 414523216
-      mainlevbuild_29: -477226504
-      mainlevbuild_3: 1770932508
-      mainlevbuild_30: 757509803
-      mainlevbuild_31: -482772177
-      mainlevbuild_32: -1575982836
-      mainlevbuild_33: -1573125348
       mainlevbuild_34: 614737334
-      mainlevbuild_35: 736022188
-      mainlevbuild_36: 864903534
-      mainlevbuild_37: 166050935
-      mainlevbuild_38: 1423233267
-      mainlevbuild_39: -833292472
-      mainlevbuild_4: 1810540245
-      mainlevbuild_40: -1014472402
-      mainlevbuild_41: 1290126120
-      mainlevbuild_42: 2029678456
-      mainlevbuild_43: -1322551664
-      mainlevbuild_44: -1886636417
-      mainlevbuild_45: 1890242960
-      mainlevbuild_46: 55142287
-      mainlevbuild_47: -302586241
-      mainlevbuild_48: -1210319402
-      mainlevbuild_49: -739769360
-      mainlevbuild_5: -2070058056
-      mainlevbuild_50: -1892793371
-      mainlevbuild_51: -2078545233
-      mainlevbuild_52: 1796645660
       mainlevbuild_53: 1887055038
+      mainlevbuild_20: -2041725194
+      mainlevbuild_1: -1951119457
+      mainlevbuild_23: -293513280
+      mainlevbuild_12: 801375982
+      mainlevbuild_41: 1290126120
+      mainlevbuild_11: 1349676043
+      mainlevbuild_0: 329678939
+      mainlevbuild_33: -1573125348
+      mainlevbuild_24: -1639180295
+      mainlevbuild_43: -1322551664
+      mainlevbuild_5: -2070058056
+      mainlevbuild_44: -1886636417
+      mainlevbuild_15: -198724509
+      mainlevbuild_27: 580442595
+      mainlevbuild_19: -985023892
+      mainlevbuild_48: -1210319402
+      mainlevbuild_30: 757509803
+      mainlevbuild_49: -739769360
+      mainlevbuild_56: 1072547542
+      mainlevbuild_2: 2091852658
+      mainlevbuild_63: -9666478
+      mainlevbuild_35: 736022188
+      mainlevbuild_62: 1651200380
+      mainlevbuild_58: 1034324010
+      mainlevbuild_50: -1892793371
+      mainlevbuild_59: -887077091
+      mainlevbuild_28: 414523216
+      mainlevbuild_37: 166050935
+      mainlevbuild_45: 1890242960
+      mainlevbuild_26: -160804400
       mainlevbuild_54: -128536715
       mainlevbuild_55: 21035421
-      mainlevbuild_56: 1072547542
-      mainlevbuild_57: 2130363823
-      mainlevbuild_58: 1034324010
-      mainlevbuild_59: -887077091
-      mainlevbuild_6: -1729911139
-      mainlevbuild_60: 1956626033
-      mainlevbuild_61: -997166732
-      mainlevbuild_62: 1651200380
-      mainlevbuild_63: -9666478
+      mainlevbuild_17: -1208688490
+      mainlevbuild_3: 1770932508
       mainlevbuild_64: -1018729059
-      mainlevbuild_7: 42554129
+      mainlevbuild_40: -1014472402
+      mainlevbuild_22: 1218121066
       mainlevbuild_8: -451214222
+      mainlevbuild_25: -2115180338
+      mainlevbuild_42: 2029678456
+      mainlevbuild_18: -1264904684
+      mainlevbuild_38: 1423233267
+      mainlevbuild_47: -302586241
+      mainlevbuild_29: -477226504
+      mainlevbuild_32: -1575982836
+      mainlevbuild_21: 457081878
+      mainlevbuild_36: 864903534
+      mainlevbuild_13: 511047545
+      mainlevbuild_6: -1729911139
+      mainlevbuild_46: 55142287
+      mainlevbuild_7: 42554129
+      mainlevbuild_14: 1000469702
+      mainlevbuild_39: -833292472
+      mainlevbuild_10: 2128629645
+      mainlevbuild_4: 1810540245
+      mainlevbuild_60: 1956626033
+      mainlevbuild_31: -482772177
+      mainlevbuild_16: 1778892798
       mainlevbuild_9: -502645035
-  mipmapLimitGroupName: 
+      mainlevbuild_51: -2078545233
+      mainlevbuild_52: 1796645660
+      mainlevbuild_61: -997166732
+      mainlevbuild_57: 2130363823
+  spritePackingTag: 
   pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 

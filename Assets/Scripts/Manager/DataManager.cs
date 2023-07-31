@@ -427,12 +427,14 @@ private IEnumerator CalculateOfflineTimeCo()
     }
     
     private void OnApplicationQuit()
-    {    
-        Application.CancelQuit();
+    {
         SaveTime();
         SaveGameData();
-        #if !UNITY_EDITOR
-        System.Diagnostics.Process.GetCurrentProcess().Kill();
-        #endif
+
+        if (Application.platform == RuntimePlatform.Android)
+        {
+            Application.CancelQuit();
+            System.Diagnostics.Process.GetCurrentProcess().Kill();
+        }
     }
 }

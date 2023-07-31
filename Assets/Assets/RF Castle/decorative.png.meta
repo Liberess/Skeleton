@@ -3,7 +3,7 @@ guid: 029030ab7555c8c4e95178103a2328f6
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
-  serializedVersion: 12
+  serializedVersion: 11
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -20,12 +20,11 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
-    flipGreenChannel: 0
   isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
-  ignoreMipmapLimit: 0
+  ignoreMasterTextureLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -64,8 +63,6 @@ TextureImporter:
   textureFormatSet: 0
   ignorePngGamma: 0
   applyGammaDecoding: 1
-  swizzle: 50462976
-  cookieLightType: 1
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -77,7 +74,6 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
-    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
@@ -90,7 +86,6 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
-    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
@@ -103,20 +98,18 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
-    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 1
   - serializedVersion: 3
     buildTarget: Android
-    maxTextureSize: 2048
+    maxTextureSize: 1024
     resizeAlgorithm: 0
-    textureFormat: -1
+    textureFormat: 50
     textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
+    overridden: 1
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
@@ -129,7 +122,30 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
-    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Windows Store Apps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
@@ -1280,62 +1296,63 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      decorative_0: -477175025
-      decorative_1: 886701351
-      decorative_10: 1018367746
-      decorative_11: -387205779
-      decorative_12: 1296977802
-      decorative_13: 975648847
-      decorative_14: 2483118
-      decorative_15: -1612360780
-      decorative_16: -2103773855
-      decorative_17: 199212538
-      decorative_18: -1721455063
-      decorative_19: 19032952
-      decorative_2: 1270414951
-      decorative_20: 376208885
-      decorative_21: -1971504168
-      decorative_22: 1308985984
-      decorative_23: -621626867
-      decorative_24: 932360411
-      decorative_25: -997362699
-      decorative_26: 1738675337
-      decorative_27: -1229463402
-      decorative_28: 1315670091
-      decorative_29: -535261197
-      decorative_3: -414598145
-      decorative_30: 1555164622
-      decorative_31: 1437652954
-      decorative_32: 697395439
-      decorative_33: -1362631915
-      decorative_34: -255461263
-      decorative_35: 1688115312
-      decorative_36: -541902460
-      decorative_37: 553570036
-      decorative_38: -1641301119
-      decorative_39: 1494176423
-      decorative_4: 1792224398
-      decorative_40: 1419028779
-      decorative_41: -2057317529
-      decorative_42: 1925124077
-      decorative_43: -1227995257
-      decorative_44: 368344829
-      decorative_45: -780172697
-      decorative_46: -1731458365
-      decorative_47: -1506434196
-      decorative_48: 1183997664
       decorative_49: 185278043
-      decorative_5: -772061512
+      decorative_41: -2057317529
+      decorative_40: 1419028779
+      decorative_21: -1971504168
+      decorative_16: -2103773855
+      decorative_46: -1731458365
       decorative_50: 132823397
+      decorative_5: -772061512
+      decorative_37: 553570036
+      decorative_26: 1738675337
+      decorative_3: -414598145
+      decorative_12: 1296977802
+      decorative_43: -1227995257
+      decorative_10: 1018367746
+      decorative_53: 437089350
+      decorative_1: 886701351
+      decorative_9: -1240935674
+      decorative_15: -1612360780
+      decorative_32: 697395439
+      decorative_38: -1641301119
+      decorative_20: 376208885
+      decorative_34: -255461263
       decorative_51: -1455919477
       decorative_52: -968246885
-      decorative_53: 437089350
-      decorative_6: 1983380403
+      decorative_17: 199212538
+      decorative_13: 975648847
+      decorative_27: -1229463402
+      decorative_30: 1555164622
+      decorative_42: 1925124077
       decorative_7: -1044750263
       decorative_8: 2085835886
-      decorative_9: -1240935674
-  mipmapLimitGroupName: 
+      decorative_18: -1721455063
+      decorative_0: -477175025
+      decorative_4: 1792224398
+      decorative_6: 1983380403
+      decorative_47: -1506434196
+      decorative_25: -997362699
+      decorative_44: 368344829
+      decorative_29: -535261197
+      decorative_36: -541902460
+      decorative_48: 1183997664
+      decorative_45: -780172697
+      decorative_28: 1315670091
+      decorative_22: 1308985984
+      decorative_23: -621626867
+      decorative_2: 1270414951
+      decorative_35: 1688115312
+      decorative_11: -387205779
+      decorative_14: 2483118
+      decorative_31: 1437652954
+      decorative_24: 932360411
+      decorative_19: 19032952
+      decorative_33: -1362631915
+      decorative_39: 1494176423
+  spritePackingTag: 
   pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 
