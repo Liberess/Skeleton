@@ -75,6 +75,7 @@ public abstract class Entity : LivingEntity
     protected static readonly int IsWalk = Animator.StringToHash("isWalk");
     protected static readonly int DoDie = Animator.StringToHash("doDie");
     protected static readonly int IsAttack = Animator.StringToHash("isAttack");
+    protected static readonly int AttackSpeed = Animator.StringToHash("attackSpeed");
 
     protected virtual void Awake()
     {
@@ -205,6 +206,8 @@ public abstract class Entity : LivingEntity
 
     protected virtual void Attack_Enter()
     {
+        anim.SetFloat(AttackSpeed, EntityData.attackSpeed);
+        
         if(!HasTarget)
             fsm.ChangeState(EStates.Idle);
     }
@@ -242,11 +245,11 @@ public abstract class Entity : LivingEntity
         anim.SetBool(IsAttack, false);
     }
 
-    protected virtual void OnAttack1Trigger()
+    public virtual void OnAttack1Trigger()
     {
         AttackTargetEntity();
         anim.SetBool(IsAttack, false);
-        
+
         if (targetEntity.IsDead)
         {
             targetEntity = null;

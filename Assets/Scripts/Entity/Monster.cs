@@ -52,11 +52,9 @@ public class Monster : Entity
             attackPower = Mathf.RoundToInt(entityData.attackPower + increaseValue),
             attackRange = entityData.attackRange,
             maxAttackRange = entityData.maxAttackRange,
-            attackSpeed = Mathf.RoundToInt(
-                Mathf.Clamp(entityData.attackSpeed + increaseValue, 0.1f, entityData.maxAttackSecond)),
+            attackSpeed = Mathf.Clamp(entityData.attackSpeed + 0.1f, entityData.attackSpeed, entityData.maxAttackSecond),
             maxAttackSecond = entityData.maxAttackSecond,
-            moveSpeed = Mathf.RoundToInt(
-                Mathf.Clamp(entityData.moveSpeed + increaseValue, 0.5f, entityData.maxMoveSpeed)),
+            moveSpeed = Mathf.Clamp(entityData.moveSpeed + 0.1f, entityData.moveSpeed, entityData.maxMoveSpeed),
             maxMoveSpeed = entityData.maxMoveSpeed,
             increaseHealthPoint = entityData.increaseHealthPoint,
             increaseAttackPower = entityData.increaseAttackPower
@@ -122,6 +120,7 @@ public class Monster : Entity
 
     public override void ApplyDamage(DamageMessage dmgMsg)
     {
+        
         AudioManager.Instance.PlaySFX(ESFXName.MonsterHit);
         base.ApplyDamage(dmgMsg);
     }

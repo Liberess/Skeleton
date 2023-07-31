@@ -248,9 +248,8 @@ public class PlayerController : Entity
         }
     }
 
-    protected override void OnAttack1Trigger()
+    public override void OnAttack1Trigger()
     {
-        anim.SetFloat("attackSpeed", EntityData.attackSpeed);
         AttackTargetEntity(EntityData.attackPower + EntityData.increaseAttackPower);
         fsm.ChangeState(EStates.Track);
     }

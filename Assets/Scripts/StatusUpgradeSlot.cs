@@ -107,10 +107,10 @@ public class StatusUpgradeSlot : MonoBehaviour
         switch (statusType)
         {
             case EStatusType.AttackPower:
-                DataManager.Instance.GameData.playerData.attackPower += 5;
+                DataManager.Instance.GameData.playerData.attackPower += 1;
                 break;
             case EStatusType.HealthPoint:
-                DataManager.Instance.GameData.playerData.healthPoint += 10;
+                DataManager.Instance.GameData.playerData.healthPoint += 2;
                 FindObjectOfType<PlayerController>().UpdateHpUI();
                 break;
             case EStatusType.AttackRange:
