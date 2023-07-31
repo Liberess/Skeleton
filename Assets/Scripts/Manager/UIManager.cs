@@ -63,7 +63,7 @@ public class UIManager : MonoBehaviour
     [BoxGroup("# Offline Reward UI Settings"), SerializeField]
     private TextMeshProUGUI offlineRewardAmountTxt;
     
-    private GameObject curOpenPanel;
+    [SerializeField] private GameObject curOpenPanel;
     
     private PlayerController playerCtrl;
     
@@ -118,16 +118,34 @@ public class UIManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape) && gameMgr.IsPlaying)
+#if UNITY_EDITOR
+        if (gameMgr.IsPlaying && Input.GetButtonDown("Cancel"))
         {
-            OpenPanel();
-
-            if (gameQuitCanvas.activeSelf)
+            if (curOpenPanel)
             {
-                gameQuitCanvas.SetActive(true);
+                OpenPanel();
+            }
+            else
+            {
+                gameQuitCanvas.SetActive(!gameQuitCanvas.activeSelf);
                 gameQuitCanvas.transform.GetChild(0).GetComponent<DOTweenAnimation>().DORestart();
             }
         }
+#else
+        if (gameMgr.IsPlaying && Input.touchCount > 0)
+        {
+            if (Input.GetTouch(0).phase == TouchPhase.Began)
+            {
+                OpenPanel();
+
+                if (!curOpenPanel)
+                {
+                    gameQuitCanvas.SetActive(!gameQuitCanvas.activeSelf);
+                    gameQuitCanvas.transform.GetChild(0).GetComponent<DOTweenAnimation>().DORestart();
+                }
+            }
+        }
+#endif
     }
 
     public void InitializedUI()
@@ -143,6 +161,30 @@ public class UIManager : MonoBehaviour
             skillCoolImgs[i].gameObject.SetActive(false);
             skillBtns[i].transform.GetChild(0).GetComponent<Image>().sprite = dataMgr.PlayerSkillDatas[i].skillIcon;
         }
+    }
+    
+    public void OpenPanel(GameObject panel = null)
+    {
+        if (curOpenPanel)
+        {
+            DOTweenAnimation[] dotAnims = curOpenPanel.GetComponentsInChildren<DOTweenAnimation>();
+            for (int i = 0; i < dotAnims.Length; i++)
+                dotAnims[i].DORewind();
+            
+            curOpenPanel.SetActive(false);
+
+            // 만약 panel이 cur와 같다면 이미 열려있다는 뜻이므로, null로 만든다.
+            // 그러면 아래에서 할당을 하지 않기에 panel을 다시 열지 않고 종료된다.
+            if (curOpenPanel == panel)
+            {
+                curOpenPanel = null;
+                return;
+            }
+        }
+        
+        curOpenPanel = panel;
+        if (panel)
+            panel.SetActive(true);
     }
 
     private void BindingMenuButton()
@@ -370,20 +412,4 @@ public class UIManager : MonoBehaviour
     public void UpdatePlayerHpUI() => playerCtrl.UpdateHpUI();
 
     #endregion
-    
-    public void OpenPanel(GameObject panel = null)
-    {
-        if (curOpenPanel)
-        {
-            var dotAnims = curOpenPanel.GetComponentsInChildren<DOTweenAnimation>();
-            foreach (var dotAnim in dotAnims)
-                dotAnim.DORewind();
-            curOpenPanel.SetActive(false);
-        }
-        
-        curOpenPanel = panel;
-        
-        if(panel)
-            panel.SetActive(true);
-    }
 }

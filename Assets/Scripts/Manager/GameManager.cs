@@ -97,6 +97,8 @@ public class GameManager : MonoBehaviour
         else if (Instance != this)
             Destroy(gameObject);
 
+        Application.targetFrameRate = 60;
+
         GameOverAction += GameOver;
         NextWaveAction += NextStage;
     }
@@ -119,8 +121,13 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if(gameState == EGameState.Main && Input.anyKeyDown)
+#if UNITY_EDITOR
+        if (!isPlaying && Input.anyKeyDown)
             StartGame();
+#else
+        if (!isPlaying && Input.touchCount > 0)
+            StartGame();
+#endif
     }
 
     public void StartGame()
@@ -135,6 +142,7 @@ public class GameManager : MonoBehaviour
         startTime = DateTime.Now;
 
         curkillCount = 0;
+        remainBar.value = 0;
 
         UpdateGameUI();
         UpdateRemainMonsterUI(0);
@@ -159,7 +167,8 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator InvokeNextWaveCo(float delay = 0.0f)
     {
-        curkillCount = 0;
+        /*curkillCount = 0;
+        remainBar.value = 0;*/
         
         yield return new WaitForSeconds(delay);
 
@@ -180,8 +189,10 @@ public class GameManager : MonoBehaviour
         {
             ++mainStageNum;
             subStageNum = 1;
-            BossStage();
         }
+        
+        curkillCount = 0;
+        remainBar.value = 0;
         
         ++dataMgr.GameData.stageCount;
         
@@ -190,11 +201,6 @@ public class GameManager : MonoBehaviour
         dataMgr.GameData.stageStr = string.Concat(mainStageNum, '-', subStageNum);
         stageTxt.text = dataMgr.GameData.stageStr;
         remainFillImg.fillAmount = 1.0f;
-    }
-
-    private void BossStage()
-    {
-        
     }
 
     private void UpdateGameUI()
@@ -208,7 +214,9 @@ public class GameManager : MonoBehaviour
     {
         remainTxt.text = count.ToString();
         remainFillImg.fillAmount = ((float)count / MonsterManager.Instance.StageSpawnCount);
-        remainBar.value = (float)curkillCount / MonsterManager.Instance.StageSpawnCount;
+        
+        if(curkillCount > 0)
+            remainBar.value = (float)curkillCount / MonsterManager.Instance.StageSpawnCount;
     }
 
     private void GameOver()

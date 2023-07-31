@@ -13,9 +13,6 @@ MonoBehaviour:
   m_Name: Bloom
   m_EditorClassIdentifier: 
   active: 1
-  skipIterations:
-    m_OverrideState: 0
-    m_Value: 1
   threshold:
     m_OverrideState: 1
     m_Value: 0.5
@@ -34,12 +31,9 @@ MonoBehaviour:
   highQualityFiltering:
     m_OverrideState: 0
     m_Value: 0
-  downscale:
+  skipIterations:
     m_OverrideState: 0
-    m_Value: 0
-  maxIterations:
-    m_OverrideState: 0
-    m_Value: 6
+    m_Value: 1
   dirtTexture:
     m_OverrideState: 0
     m_Value: {fileID: 0}
@@ -63,55 +57,6 @@ MonoBehaviour:
   mode:
     m_OverrideState: 1
     m_Value: 2
-  neutralHDRRangeReductionMode:
-    m_OverrideState: 0
-    m_Value: 2
-  acesPreset:
-    m_OverrideState: 0
-    m_Value: 3
-  hueShiftAmount:
-    m_OverrideState: 0
-    m_Value: 0
-  detectPaperWhite:
-    m_OverrideState: 0
-    m_Value: 0
-  paperWhite:
-    m_OverrideState: 0
-    m_Value: 300
-  detectBrightnessLimits:
-    m_OverrideState: 0
-    m_Value: 1
-  minNits:
-    m_OverrideState: 0
-    m_Value: 0.005
-  maxNits:
-    m_OverrideState: 0
-    m_Value: 1000
---- !u!114 &-652239675943468170
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ccf1aba9553839d41ae37dd52e9ebcce, type: 3}
-  m_Name: MotionBlur
-  m_EditorClassIdentifier: 
-  active: 1
-  mode:
-    m_OverrideState: 0
-    m_Value: 0
-  quality:
-    m_OverrideState: 1
-    m_Value: 0
-  intensity:
-    m_OverrideState: 1
-    m_Value: 0.5
-  clamp:
-    m_OverrideState: 1
-    m_Value: 0.05
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -128,7 +73,6 @@ MonoBehaviour:
   - {fileID: -8052612419994988406}
   - {fileID: -3929170199086005736}
   - {fileID: 1184182287488141317}
-  - {fileID: -652239675943468170}
 --- !u!114 &1184182287488141317
 MonoBehaviour:
   m_ObjectHideFlags: 3

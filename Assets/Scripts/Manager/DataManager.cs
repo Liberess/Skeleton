@@ -183,6 +183,7 @@ public class DataManager : MonoBehaviour
             mGameData = JsonUtility.FromJson<GameData>(fromJsonData);
 
             mGameData.isNewGame = false;
+            InitGameData();
         }
         else
         {
