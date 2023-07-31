@@ -125,9 +125,8 @@ public class UIManager : MonoBehaviour
 
     private void Update()
     {
-        if (Application.platform == RuntimePlatform.Android ||
-            Application.platform == RuntimePlatform.WindowsEditor)
-        if (gameMgr.IsPlaying && Input.GetKeyDown(KeyCode.Escape))
+#if UNITY_EDITOR
+        if (Input.GetKeyDown(KeyCode.Escape) && gameMgr.IsPlaying)
         {
             if (curOpenPanel)
             {
@@ -139,6 +138,23 @@ public class UIManager : MonoBehaviour
                 gameQuitCanvas.transform.GetChild(0).GetComponent<DOTweenAnimation>().DORestart();
             }
         }
+#else
+        if (Application.platform == RuntimePlatform.Android)
+        {
+            if (Input.GetKeyDown(KeyCode.Escape) && gameMgr.IsPlaying)
+            {
+                if (curOpenPanel)
+                {
+                    OpenPanel();
+                }
+                else
+                {
+                    gameQuitCanvas.SetActive(!gameQuitCanvas.activeSelf);
+                    gameQuitCanvas.transform.GetChild(0).GetComponent<DOTweenAnimation>().DORestart();
+                }
+            }
+        }
+#endif
     }
 
     public void InitializedSkillUI()

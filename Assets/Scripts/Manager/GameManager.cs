@@ -30,10 +30,10 @@ public class GameManager : MonoBehaviour
     public UnityAction NextWaveAction;
     public UnityAction GameOverAction;
 
-    [ShowNonSerializedField] private bool isPlaying = false;
+    [SerializeField] private bool isPlaying = false;
     public bool IsPlaying => isPlaying;
     
-    [ShowNonSerializedField] private EGameState gameState;
+    [SerializeField] private EGameState gameState;
     public EGameState GameState => gameState;
 
     public float Exp
@@ -101,6 +101,9 @@ public class GameManager : MonoBehaviour
 
         GameOverAction += GameOver;
         NextWaveAction += NextStage;
+        
+        isPlaying = false;
+        gameState = EGameState.Main;
     }
 
     private void Start()
@@ -121,12 +124,16 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (Application.platform == RuntimePlatform.Android ||
-            Application.platform == RuntimePlatform.WindowsEditor)
+#if UNITY_EDITOR
+        if (!isPlaying && gameState == EGameState.Main && Input.anyKeyDown)
+            StartGame();
+#else
+        if (Application.platform == RuntimePlatform.Android)
         {
-            if (!isPlaying && Input.anyKeyDown)
+            if (!isPlaying && && gameState == EGameState.Main && Input.anyKeyDown)
                 StartGame();
         }
+#endif
     }
 
     public void StartGame()
@@ -246,6 +253,15 @@ public class GameManager : MonoBehaviour
         Application.Quit();
     }
 
-    private void OnApplicationFocus(bool hasFocus) => isPlaying = hasFocus;
-    private void OnApplicationPause(bool pauseStatus) => isPlaying = !pauseStatus;
+    private void OnApplicationFocus(bool hasFocus)
+    {
+        if (gameState == EGameState.InGame)
+            isPlaying = hasFocus;
+    }
+
+    private void OnApplicationPause(bool pauseStatus)
+    {
+        if (gameState == EGameState.InGame)
+            isPlaying = pauseStatus;
+    }
 }

@@ -49597,16 +49597,6 @@ PrefabInstance:
       objectReference: {fileID: 138829531}
     - target: {fileID: 3447167884519112491, guid: bc13bfd1bacca7c4c987c9856efb59a0,
         type: 3}
-      propertyPath: goldTxt
-      value: 
-      objectReference: {fileID: 2037071062}
-    - target: {fileID: 3447167884519112491, guid: bc13bfd1bacca7c4c987c9856efb59a0,
-        type: 3}
-      propertyPath: karmaTxt
-      value: 
-      objectReference: {fileID: 1289011501}
-    - target: {fileID: 3447167884519112491, guid: bc13bfd1bacca7c4c987c9856efb59a0,
-        type: 3}
       propertyPath: stageTxt
       value: 
       objectReference: {fileID: 558885452}
@@ -49645,11 +49635,6 @@ PrefabInstance:
       propertyPath: gameOverCanvas
       value: 
       objectReference: {fileID: 1450341426}
-    - target: {fileID: 3447167884519112491, guid: bc13bfd1bacca7c4c987c9856efb59a0,
-        type: 3}
-      propertyPath: gameQuitCanvas
-      value: 
-      objectReference: {fileID: 868962823}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bc13bfd1bacca7c4c987c9856efb59a0, type: 3}
 --- !u!1001 &2976126683834110084

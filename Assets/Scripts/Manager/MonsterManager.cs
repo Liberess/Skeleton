@@ -26,7 +26,7 @@ public class MonsterManager : MonoBehaviour
     
     public int StageSpawnCount { get; private set; }
     
-    [HorizontalLine(color: EColor.Orange), BoxGroup("# Spawn Setting"), ShowNonSerializedField]
+    [HorizontalLine(color: EColor.Orange), BoxGroup("# Spawn Setting")]
     private float spawnCycleTime = 5.0f;
     
     [BoxGroup("# Spawn Setting"), SerializeField, Range(0.0f, 60.0f)]
@@ -125,6 +125,7 @@ public class MonsterManager : MonoBehaviour
         if (monsterQueDic[type].Count > 0)
         {
             var obj = monsterQueDic[type].Dequeue();
+            obj.gameObject.SetActive(true);
             return obj;
         }
         else
