@@ -121,13 +121,12 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-#if UNITY_EDITOR
-        if (!isPlaying && Input.anyKeyDown)
-            StartGame();
-#else
-        if (!isPlaying && Input.touchCount > 0)
-            StartGame();
-#endif
+        if (Application.platform == RuntimePlatform.Android ||
+            Application.platform == RuntimePlatform.WindowsEditor)
+        {
+            if (!isPlaying && Input.anyKeyDown)
+                StartGame();
+        }
     }
 
     public void StartGame()
@@ -167,9 +166,6 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator InvokeNextWaveCo(float delay = 0.0f)
     {
-        /*curkillCount = 0;
-        remainBar.value = 0;*/
-        
         yield return new WaitForSeconds(delay);
 
         NextWaveAction?.Invoke();
@@ -249,4 +245,7 @@ public class GameManager : MonoBehaviour
         
         Application.Quit();
     }
+
+    private void OnApplicationFocus(bool hasFocus) => isPlaying = hasFocus;
+    private void OnApplicationPause(bool pauseStatus) => isPlaying = !pauseStatus;
 }

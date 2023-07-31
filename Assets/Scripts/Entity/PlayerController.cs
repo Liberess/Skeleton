@@ -35,6 +35,7 @@ public class PlayerController : Entity
     private bool isControlling = false;
     
     private static readonly int DoSkill = Animator.StringToHash("doSkill");
+    private static readonly int DoDisabledAttack = Animator.StringToHash("doDisabledAttack");
 
     protected override void Start()
     {
@@ -64,7 +65,7 @@ public class PlayerController : Entity
             {
                 isControlling = true;
                 anim.SetBool(IsAttack, false);
-                anim.SetTrigger("doDisabledAttack");
+                anim.SetTrigger(DoDisabledAttack);
                 fsm.ChangeState(EStates.Control, StateTransition.Overwrite);
             }
         };
@@ -84,7 +85,7 @@ public class PlayerController : Entity
             {
                 isControlling = true;
                 anim.SetBool(IsAttack, false);
-                anim.SetTrigger("doDisabledAttack");
+                anim.SetTrigger(DoDisabledAttack);
                 fsm.ChangeState(EStates.Control, StateTransition.Overwrite);
             }
         };

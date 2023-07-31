@@ -117,7 +117,6 @@ public class MonsterManager : MonoBehaviour
         var newObj = Instantiate(monsterQuePrefabDic[type], transform.position, Quaternion.identity);
         newObj.name = string.Concat(monsterQuePrefabDic[type].name, "_", index);
         newObj.gameObject.SetActive(false);
-        newObj.transform.SetParent(transform);
         return newObj.GetComponent<Monster>();
     }
 
@@ -126,15 +125,12 @@ public class MonsterManager : MonoBehaviour
         if (monsterQueDic[type].Count > 0)
         {
             var obj = monsterQueDic[type].Dequeue();
-            obj.transform.SetParent(null);
-            obj.gameObject.SetActive(true);
             return obj;
         }
         else
         {
             var newObj = CreateNewObj(type);
             newObj.gameObject.SetActive(true);
-            newObj.transform.SetParent(null);
             return newObj;
         }
     }
@@ -150,7 +146,6 @@ public class MonsterManager : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
         obj.gameObject.SetActive(false);
-        obj.transform.SetParent(transform);
         monsterQueDic[type].Enqueue(obj);
     }
     #endregion
