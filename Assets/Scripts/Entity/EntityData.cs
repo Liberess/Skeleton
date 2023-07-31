@@ -8,8 +8,8 @@ public class EntityData
     public EEntityType entityType;
 
     public int healthPoint = 10;
-
     public int attackPower = 1;
+    
     [Range(1.0f, 100.0f)] public float attackRange = 1.0f;
     [Range(1.0f, 100.0f)] public float maxAttackRange = 2.0f;
     [Range(0.1f, 100.0f)] public float attackSpeed = 1.0f;

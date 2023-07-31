@@ -153,10 +153,8 @@ public class AudioManager : MonoBehaviour
             }
         }
 
-        bgmDic = bgmDic.OrderBy(obj => 
-            obj.Value.id).ToDictionary(x => x.Key, x => x.Value);
-        sfxDic = sfxDic.OrderBy(obj => 
-            obj.Value.id).ToDictionary(x => x.Key, x => x.Value);
+        bgmDic = bgmDic.OrderBy(obj => obj.Value.id).ToDictionary(x => x.Key, x => x.Value);
+        sfxDic = sfxDic.OrderBy(obj => obj.Value.id).ToDictionary(x => x.Key, x => x.Value);
     }
         
     #endregion

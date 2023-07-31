@@ -213,9 +213,9 @@ public class DataManager : MonoBehaviour
 
 #region 오프라인 보상
 
-public void CalculateOfflineTime() => StartCoroutine(CalculateOfflineTimeCo());
+    public void CalculateOfflineTime() => StartCoroutine(CalculateOfflineTimeCo());
 
-private IEnumerator CalculateOfflineTimeCo()
+    private IEnumerator CalculateOfflineTimeCo()
     {
         UnityWebRequest request = new UnityWebRequest();
 

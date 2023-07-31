@@ -57,47 +57,33 @@ public class PlayerController : Entity
     // Only Used in Attack Animation Event
     private void DisableAttackTrail() => attackTrailRen.enabled = false;
 
+    private void OnJoystickDown()
+    {
+        if (fsm.State != EStates.Skill && !isDashing)
+        {
+            isControlling = true;
+            anim.SetBool(IsAttack, false);
+            anim.SetTrigger(DoDisabledAttack);
+            fsm.ChangeState(EStates.Control, StateTransition.Overwrite);
+        }
+    }
+
+    private void OnJoystickUp()
+    {
+        isControlling = false;
+        if (HasTarget)
+            fsm.ChangeState(EStates.Track);
+        else
+            fsm.ChangeState(EStates.Idle);
+    }
+    
     private void JoystickEventBinding()
     {
-        dynamicJoystick.OnPointerDownAction += () =>
-        {
-            if (fsm.State != EStates.Skill && !isDashing)
-            {
-                isControlling = true;
-                anim.SetBool(IsAttack, false);
-                anim.SetTrigger(DoDisabledAttack);
-                fsm.ChangeState(EStates.Control, StateTransition.Overwrite);
-            }
-        };
-        
-        dynamicJoystick.OnPointerUpAction += () =>
-        {
-            isControlling = false;
-            if (HasTarget)
-                fsm.ChangeState(EStates.Track);
-            else
-                fsm.ChangeState(EStates.Idle);
-        };
-        
-        staticJoystick.OnPointerDownAction += () =>
-        {
-            if (fsm.State != EStates.Skill && !isDashing)
-            {
-                isControlling = true;
-                anim.SetBool(IsAttack, false);
-                anim.SetTrigger(DoDisabledAttack);
-                fsm.ChangeState(EStates.Control, StateTransition.Overwrite);
-            }
-        };
-        
-        staticJoystick.OnPointerUpAction += () =>
-        {
-            isControlling = false;
-            if (HasTarget)
-                fsm.ChangeState(EStates.Track);
-            else
-                fsm.ChangeState(EStates.Idle);
-        };
+        dynamicJoystick.OnPointerDownAction += OnJoystickDown;
+        dynamicJoystick.OnPointerUpAction += OnJoystickUp;
+
+        staticJoystick.OnPointerDownAction += OnJoystickDown;
+        staticJoystick.OnPointerUpAction += OnJoystickUp;
     }
 
     private void Update()
@@ -380,5 +366,16 @@ public class PlayerController : Entity
     {
         dynamicJoystick.gameObject.SetActive(type == EJoystickType.Dynamic && active);
         staticJoystick.transform.parent.gameObject.SetActive(type == EJoystickType.Static && active);
+    }
+
+    private void OnApplicationFocus(bool hasFocus)
+    {
+        if (Application.platform == RuntimePlatform.Android)
+        {
+            if(hasFocus)
+                fsm.ChangeState(EStates.Track);
+            else
+                fsm.ChangeState(EStates.Idle);
+        }
     }
 }
