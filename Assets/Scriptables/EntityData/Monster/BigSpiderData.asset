@@ -17,7 +17,7 @@ MonoBehaviour:
     entityType: 1
     healthPoint: 60
     attackPower: 6
-    attackRange: 1
+    attackRange: 2
     maxAttackRange: 5
     attackSpeed: 1
     maxAttackSecond: 5

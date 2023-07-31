@@ -150,8 +150,8 @@ public class GameManager : MonoBehaviour
         playerCtrl.gameObject.SetActive(false);
         playerCtrl.gameObject.SetActive(true);
   
-        uiMgr.InitializedUI();
-        
+        uiMgr.InitializedProperty();
+
         MonsterManager.Instance.Spawn();
         
         mainCanvas.SetActive(false);

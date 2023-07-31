@@ -21,11 +21,11 @@ public class UIManager : MonoBehaviour
     private TextMeshProUGUI[] skillCoolTimeTxts = new TextMeshProUGUI[3];
     [BoxGroup("# Skill Settings"), SerializeField]
     private Toggle autoUseSkillTog;
-
+    
     private bool[] isCoolSkills = { false, false, false };
     private float[] skillCoolTimes = { 0.0f, 0.0f, 0.0f };
     private float[] curSkillCoolTimes = { 0.0f, 0.0f, 0.0f };
-
+    
     private bool isAutoUseSkill = false;
     private bool isBlockUseSkill = false;
 
@@ -99,6 +99,7 @@ public class UIManager : MonoBehaviour
 
         dynamicJoystickTog.onValueChanged.AddListener((active) =>
         {
+            AudioManager.Instance.PlaySFX(ESFXName.Click);
             dynamicJoystickTog.isOn = active;
             staticJoystickTog.isOn = !active;
             playerCtrl.ControlJoystick(EJoystickType.Dynamic, active);
@@ -106,12 +107,18 @@ public class UIManager : MonoBehaviour
 
         staticJoystickTog.onValueChanged.AddListener((active) =>
         {
+            AudioManager.Instance.PlaySFX(ESFXName.Click);
             dynamicJoystickTog.isOn = !active;
             staticJoystickTog.isOn = active;
             playerCtrl.ControlJoystick(EJoystickType.Static, active);
         });
 
-        InitializedUI();
+        isAutoUseSkill = false;
+        isBlockUseSkill = false;
+
+        InitializedProperty();
+        InitializedSkillUI();
+        
         BindingMenuButton();
         StartCoroutine(SetupEquipmentUICo());
     }
@@ -136,9 +143,11 @@ public class UIManager : MonoBehaviour
         {
             if (Input.GetTouch(0).phase == TouchPhase.Began)
             {
-                OpenPanel();
-
-                if (!curOpenPanel)
+                if (curOpenPanel)
+                {
+                    OpenPanel();
+                }
+                else
                 {
                     gameQuitCanvas.SetActive(!gameQuitCanvas.activeSelf);
                     gameQuitCanvas.transform.GetChild(0).GetComponent<DOTweenAnimation>().DORestart();
@@ -148,12 +157,8 @@ public class UIManager : MonoBehaviour
 #endif
     }
 
-    public void InitializedUI()
+    public void InitializedSkillUI()
     {
-        gameQuitCanvas.SetActive(false);
-
-        UpdateCurrencyUI().Forget();
-
         for (int i = 0; i < dataMgr.PlayerSkillDatas.Length; i++)
         {
             skillCoolTimes[i] = dataMgr.PlayerSkillDatas[i].skillCoolTime;
@@ -161,6 +166,26 @@ public class UIManager : MonoBehaviour
             skillCoolImgs[i].gameObject.SetActive(false);
             skillBtns[i].transform.GetChild(0).GetComponent<Image>().sprite = dataMgr.PlayerSkillDatas[i].skillIcon;
         }
+    }
+
+    public void InitializedProperty()
+    {
+        for (int i = 0; i < isCoolSkills.Length; i++)
+        {
+            isCoolSkills[i] = false;
+            curSkillCoolTimes[i] = 0.0f;
+            skillCoolImgs[i].gameObject.SetActive(false);
+        }
+        
+        gameQuitCanvas.SetActive(false);
+
+        UpdateCurrencyUI().Forget();
+        
+        isBlockUseSkill = false;
+        
+        StopAllCoroutines();
+        if (isAutoUseSkill)
+            SetAutoUseSkillToggle(true);
     }
     
     public void OpenPanel(GameObject panel = null)
@@ -201,6 +226,8 @@ public class UIManager : MonoBehaviour
             menuBtns[i].onClick.RemoveAllListeners();
             menuBtns[i].onClick.AddListener(() =>
             {
+                AudioManager.Instance.PlaySFX(ESFXName.Click);
+                
                 if (menuPanels[index].activeSelf)
                 {
                     OpenPanel();
@@ -294,10 +321,10 @@ public class UIManager : MonoBehaviour
     {
         isAutoUseSkill = isActive;
 
+        StopCoroutine(AutoSkillCo());
+        
         if (isActive)
             StartCoroutine(AutoSkillCo());
-        else
-            StopCoroutine(AutoSkillCo());
     }
 
     private IEnumerator AutoSkillCo()
@@ -398,6 +425,7 @@ public class UIManager : MonoBehaviour
         
         equipWeaponBtn.onClick.AddListener(() =>
         {
+            AudioManager.Instance.PlaySFX(ESFXName.Click);
             equipWeaponBtn.image.color = Color.yellow;
             equipArmorBtn.image.color = Color.white;
         });
@@ -406,6 +434,7 @@ public class UIManager : MonoBehaviour
         
         equipArmorBtn.onClick.AddListener(() =>
         {
+            AudioManager.Instance.PlaySFX(ESFXName.Click);
             equipArmorBtn.image.color = Color.yellow;
             equipWeaponBtn.image.color = Color.white;
         });

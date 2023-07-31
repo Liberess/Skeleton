@@ -48,6 +48,9 @@ public abstract class Entity : LivingEntity
         protected set { targetEntity = value; }
     }
 
+    [BoxGroup("# Attack Settings"), SerializeField]
+    private Transform attackRayPos;
+
     protected bool HasTarget => TargetEntity != null && !TargetEntity.IsDead;
 
     protected float lastAttackTime = 0.0f;
@@ -160,10 +163,17 @@ public abstract class Entity : LivingEntity
     {
         
     }
+    
+    #region Control
 
     protected virtual void Control_Enter()
     {
         anim.SetBool(IsWalk, true);
+    }
+    
+    protected virtual void Control_Update()
+    {
+        
     }
 
     protected virtual void Control_FixedUpdate()
@@ -175,7 +185,9 @@ public abstract class Entity : LivingEntity
     {
        
     }
-    
+
+    #endregion
+
     protected void RotateToTarget()
     {
         Vector3 dir = TargetEntity.transform.position - transform.position;
@@ -248,7 +260,7 @@ public abstract class Entity : LivingEntity
     public virtual void OnAttack1Trigger()
     {
         AttackTargetEntity();
-        anim.SetBool(IsAttack, false);
+        //anim.SetBool(IsAttack, false);
 
         if (targetEntity.IsDead)
         {
@@ -264,8 +276,8 @@ public abstract class Entity : LivingEntity
     protected void AttackTargetEntity(int damage = 0)
     {
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, TargetEntity.transform.position - transform.position, out hit,
-                entityData.attackRange, targetLayer))
+        if (Physics.Raycast(attackRayPos.position, TargetEntity.transform.position - transform.position, out hit,
+                entityData.attackRange, targetLayer) || IsAttached)
         {
             if (hit.collider.gameObject != TargetEntity.gameObject)
             {
@@ -305,6 +317,8 @@ public abstract class Entity : LivingEntity
         StartCoroutine(ImpactMaterialCo());
         base.ApplyDamage(dmgMsg);
     }
+
+    #region Setup Material
 
     [ContextMenu("Set Equip Materials")]
     protected void SetEquipMaterial()
@@ -352,4 +366,6 @@ public abstract class Entity : LivingEntity
             bodyMeshRenderer.sharedMaterial = impactMat;
         }
     }
+
+    #endregion
 }

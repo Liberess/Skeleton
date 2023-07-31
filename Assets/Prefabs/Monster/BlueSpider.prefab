@@ -1269,6 +1269,7 @@ Transform:
   m_Children:
   - {fileID: 5991700494346551984}
   - {fileID: 6007062233607943517}
+  - {fileID: 967467980402519808}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1334,11 +1335,13 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   targetEntity: {fileID: 0}
+  attackRayPos: {fileID: 967467980402519808}
   equipMeshRendererList: []
   bodyMeshRenderer: {fileID: 371570870792073348}
   defaultMats:
   - {fileID: 2100000, guid: 14887445448681045a477043eb111a5d, type: 2}
   impactMat: {fileID: 2100000, guid: 98047bc143d890442967b24dc86969bb, type: 2}
+  state: 0
 --- !u!95 &4138007644949140339
 Animator:
   serializedVersion: 4
@@ -1516,6 +1519,37 @@ Transform:
   m_Father: {fileID: 5773530562926679966}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 22.807695, y: -133.34987, z: 15.190594}
+--- !u!1 &7411166540159897019
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 967467980402519808}
+  m_Layer: 7
+  m_Name: AttackRayPos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &967467980402519808
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7411166540159897019}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3211287809700502337}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7702244104020684963
 GameObject:
   m_ObjectHideFlags: 0

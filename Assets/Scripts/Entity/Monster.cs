@@ -102,6 +102,9 @@ public class Monster : Entity
                 
             if (IsAttackable)
             {
+                rigid.velocity = Vector3.zero;
+                rigid.angularVelocity = Vector3.zero;
+                
                 if (!IsAttached)
                 {
                     fsm.ChangeState(EStates.Track);
@@ -113,9 +116,11 @@ public class Monster : Entity
                 if(anim.GetBool(IsAttack))
                     anim.SetBool(IsAttack, false);
                 anim.SetBool(IsAttack, true);
-                    
-                rigid.velocity = Vector3.zero;
-                rigid.angularVelocity = Vector3.zero;
+            }
+            else
+            {
+                anim.SetBool(IsWalk, false);
+                anim.SetBool(IsAttack, false);
             }
         }
         else

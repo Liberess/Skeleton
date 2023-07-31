@@ -110,12 +110,25 @@ public class PlayerController : Entity
         fsm.Driver.FixedUpdate?.Invoke();
     }
 
-    protected override void Control_FixedUpdate()
+    protected override void Init_Enter()
+    {
+        TargetEntity = null;
+        base.Init_Enter();
+    }
+
+    protected override void Control_Update()
     {
         if (IsDead || !gameMgr.IsPlaying)
             return;
 
         moveVec = new Vector3(moveInputVec.x, 0f, moveInputVec.y) * EntityData.moveSpeed * Time.deltaTime;
+    }
+
+    protected override void Control_FixedUpdate()
+    {
+        if (IsDead || !gameMgr.IsPlaying)
+            return;
+        
         rigid.MovePosition(rigid.position + moveVec);
 
         if (moveVec.sqrMagnitude != 0)
@@ -130,6 +143,9 @@ public class PlayerController : Entity
     
     protected override void Idle_Update()
     {
+        if (IsDead || !gameMgr.IsPlaying)
+            return;
+        
         // 플레이어의 경우에는 복수의 target이 존재하기에,
         // 매번 가장 가까운 target을 확인해야 한다.
         FindNearestMonster().Forget();
@@ -183,7 +199,7 @@ public class PlayerController : Entity
             closetDist = float.MaxValue;
             targetDist = float.MaxValue;
             
-            await UniTask.Yield(PlayerLoopTiming.LastUpdate);
+            await UniTask.Yield(PlayerLoopTiming.FixedUpdate);
         }
     }
 
@@ -195,6 +211,9 @@ public class PlayerController : Entity
 
     protected override void Track_Update()
     {
+        if (IsDead || !gameMgr.IsPlaying)
+            return;
+        
         FindNearestMonster().Forget();
         
         if (HasTarget)
@@ -224,7 +243,7 @@ public class PlayerController : Entity
 
     protected override void Attack_Update()
     {
-        if (moveInputVec.sqrMagnitude != 0)
+        if (isControlling && moveInputVec.sqrMagnitude != 0)
         {
             anim.SetBool(IsWalk, true);
             anim.SetBool(IsAttack, false);
@@ -253,6 +272,11 @@ public class PlayerController : Entity
                 
                 RotateToTarget();
             }
+            else
+            {
+                anim.SetBool(IsWalk, false);
+                anim.SetBool(IsAttack, false);
+            }
         }
         else
         {
@@ -264,7 +288,9 @@ public class PlayerController : Entity
     public override void OnAttack1Trigger()
     {
         AttackTargetEntity(EntityData.attackPower + EntityData.increaseAttackPower);
-        fsm.ChangeState(EStates.Track);
+        
+        if(!HasTarget || !IsAttached)
+            fsm.ChangeState(EStates.Idle);
     }
 
     protected override void Attack_Exit()
@@ -275,12 +301,12 @@ public class PlayerController : Entity
 
     protected override void Skill_Enter()
     {
-        
+        anim.SetBool(IsAttack, false);
     }
 
     protected override void Skill_Exit()
     {
-        
+        anim.SetBool(IsAttack, false);
     }
 
     public void UseSkill(ESkillType skillType)
