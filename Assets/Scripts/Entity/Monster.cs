@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Monster : Entity
 {
+    public EMonsterType MonsterType { get; private set; }
+    
     public EStates state;
 
     protected override void OnEnable()
@@ -42,8 +44,10 @@ public class Monster : Entity
     /// </summary>
     /// <param name="entityData">몬스터의 기본 데이터</param>
     /// <param name="increaseValue">증가될 수치</param>
-    public virtual void SetupEntityData(EntityData entityData, float increaseValue)
+    public virtual void SetupEntityData(EMonsterType monsterType, EntityData entityData, float increaseValue)
     {
+        MonsterType = monsterType;
+        
         EntityData = new EntityData(entityData)
         {
             entityName = entityData.entityName,
@@ -105,6 +109,9 @@ public class Monster : Entity
                 }
 
                 lastAttackTime = Time.time;
+                
+                if(anim.GetBool(IsAttack))
+                    anim.SetBool(IsAttack, false);
                 anim.SetBool(IsAttack, true);
                     
                 rigid.velocity = Vector3.zero;
@@ -120,7 +127,6 @@ public class Monster : Entity
 
     public override void ApplyDamage(DamageMessage dmgMsg)
     {
-        
         AudioManager.Instance.PlaySFX(ESFXName.MonsterHit);
         base.ApplyDamage(dmgMsg);
     }

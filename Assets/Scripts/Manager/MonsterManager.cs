@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using NaughtyAttributes;
@@ -9,45 +10,41 @@ public class MonsterManager : MonoBehaviour
     private GameManager gameMgr;
     private DataManager dataMgr;
     
-    [HorizontalLine(color: EColor.Red), SerializeField, Range(1, 100)]
+    [HorizontalLine(color: EColor.Red), BoxGroup("# Object Pooling"), SerializeField, Range(1, 100)]
     private int monsterInitAmount = 30;
     
-    [SerializeField]
+    [BoxGroup("# Object Pooling"), SerializeField]
     private GameObject[] monsterPrefabs;
     
-    [SerializeField]
+    [BoxGroup("# Object Pooling"), SerializeField]
     private EntitySO[] monsterSOs;
-    
-    private Queue<Monster> monsterQueue = new Queue<Monster>();
 
+    private Dictionary<EMonsterType, Queue<Monster>> monsterQueDic = new Dictionary<EMonsterType, Queue<Monster>>();
+    private Dictionary<EMonsterType, GameObject> monsterQuePrefabDic = new Dictionary<EMonsterType, GameObject>();
+    
     private int curSpawnCount = 0;
     
     public int StageSpawnCount { get; private set; }
     
-    [ShowNonSerializedField]
+    [HorizontalLine(color: EColor.Orange), BoxGroup("# Spawn Setting"), ShowNonSerializedField]
     private float spawnCycleTime = 5.0f;
     
-    [SerializeField, Range(0.0f, 60.0f)]
+    [BoxGroup("# Spawn Setting"), SerializeField, Range(0.0f, 60.0f)]
     private float originSpawnCycleTime = 5.0f;
     
-    [SerializeField]
+    [BoxGroup("# Spawn Setting"), SerializeField]
     private int maxSpawnCount = 100;
 
     private Dictionary<EMonsterType, int> spawnWeightDic = new Dictionary<EMonsterType, int>()
     {
         { EMonsterType.Spider, 100},
-        { EMonsterType.Test1, 50},
-        { EMonsterType.Test2, 1}
+        { EMonsterType.RedSpider, 50},
+        { EMonsterType.YellowSpider, 30},
+        { EMonsterType.GreenSpider, 15},
+        { EMonsterType.BlueSpider, 1}
     };
 
-    [SerializeField]
-    private List<Monster> spawnedMonsterList = new List<Monster>();
-
-    public List<Monster> SpawnedMonsterList
-    {
-        get => spawnedMonsterList;
-        private set => spawnedMonsterList = value;
-    }
+    public List<Monster> SpawnedMonsterList { get; private set; } = new List<Monster>();
 
     private void Awake()
     {
@@ -61,40 +58,64 @@ public class MonsterManager : MonoBehaviour
     {
         gameMgr = GameManager.Instance;
         dataMgr = DataManager.Instance;
-
-        spawnCycleTime = originSpawnCycleTime;
         
-        Initialize(monsterInitAmount);
+        Initialize();
         
         gameMgr.NextWaveAction += () => StartCoroutine(SpawnCo());
-        gameMgr.GameOverAction += () =>
-        {
-            for (int i = spawnedMonsterList.Count - 1; i >= 0; i--)
-            {
-                if (spawnedMonsterList[i] != null)
-                    ReturnObj(spawnedMonsterList[i]);
-                spawnedMonsterList.RemoveAt(i);
-            }
+        gameMgr.GameOverAction += OnGameOver;
+    }
 
-            gameMgr.UpdateRemainMonsterUI(0);
-        };
+    private void OnGameOver()
+    {
+        for (int i = SpawnedMonsterList.Count - 1; i >= 0; i--)
+        {
+            if (SpawnedMonsterList[i] != null)
+                ReturnObj(SpawnedMonsterList[i].MonsterType, SpawnedMonsterList[i]);
+            SpawnedMonsterList.RemoveAt(i);
+        }
+
+        gameMgr.UpdateRemainMonsterUI(0);
     }
     
     #region Object Pooling
-    private void Initialize(int initCount)
+
+    private void Initialize()
     {
-        for (int i = 0; i < monsterPrefabs.Length; i++)
+        spawnCycleTime = originSpawnCycleTime;
+
+        foreach (EMonsterType monsterType in Enum.GetValues(typeof(EMonsterType)))
         {
-            for (int j = 0; j < initCount; j++)
-                monsterQueue.Enqueue(CreateNewObj((EMonsterType)i, j));
+            monsterQuePrefabDic.Add(monsterType, monsterPrefabs[(int)monsterType]);
+            
+            if(monsterType == EMonsterType.BigSpider)
+                continue;
+            
+            // 중간 보스는 따로 초기화 한다.
+            InitializeQueue(monsterType, monsterInitAmount);
         }
+
+        // 중간 보스는 메인 스테이지 단위로 스폰되기에 수가 적어도 괜찮다.
+        InitializeQueue(EMonsterType.BigSpider, monsterInitAmount / monsterInitAmount);
+    }
+        
+    private void InitializeQueue(EMonsterType monsterType, int initCount)
+    {
+        monsterQueDic.Add(monsterType, new Queue<Monster>());
+
+        for (int i = 0; i < initCount; i++)
+            monsterQueDic[monsterType].Enqueue(CreateNewObj(monsterType, i));
     }
 
     private Monster CreateNewObj(EMonsterType type, int index = 0)
     {
-        var monsterPrefab = monsterPrefabs[(int)type];
-        var newObj = Instantiate(monsterPrefab, transform.position, Quaternion.identity);
-        newObj.name = string.Concat(monsterPrefab.name, "_", index);
+        if (!monsterQuePrefabDic.ContainsKey(type))
+            throw new Exception($"해당 {type}의 Key가 존재하지 않습니다.");
+
+        if(!monsterQuePrefabDic[type])
+            throw new Exception($"해당 {type}의 Value가 존재하지 않습니다.");
+
+        var newObj = Instantiate(monsterQuePrefabDic[type], transform.position, Quaternion.identity);
+        newObj.name = string.Concat(monsterQuePrefabDic[type].name, "_", index);
         newObj.gameObject.SetActive(false);
         newObj.transform.SetParent(transform);
         return newObj.GetComponent<Monster>();
@@ -102,9 +123,9 @@ public class MonsterManager : MonoBehaviour
 
     private Monster GetObj(EMonsterType type)
     {
-        if (monsterQueue.Count > 0)
+        if (monsterQueDic[type].Count > 0)
         {
-            var obj = monsterQueue.Dequeue();
+            var obj = monsterQueDic[type].Dequeue();
             obj.transform.SetParent(null);
             obj.gameObject.SetActive(true);
             return obj;
@@ -120,17 +141,17 @@ public class MonsterManager : MonoBehaviour
 
     private Monster InstantiateObj(EMonsterType type) => GetObj(type);
     
-    public void ReturnObj(Monster obj, float delay = 0.0f)
+    public void ReturnObj(EMonsterType type, Monster obj, float delay = 0.0f)
     {
-        StartCoroutine(ReturnObjCo(obj, delay));
+        StartCoroutine(ReturnObjCo(type, obj, delay));
     }
 
-    private IEnumerator ReturnObjCo(Monster obj, float delay)
+    private IEnumerator ReturnObjCo(EMonsterType type, Monster obj, float delay)
     {
         yield return new WaitForSeconds(delay);
         obj.gameObject.SetActive(false);
         obj.transform.SetParent(transform);
-        monsterQueue.Enqueue(obj);
+        monsterQueDic[type].Enqueue(obj);
     }
     #endregion
 
@@ -143,11 +164,13 @@ public class MonsterManager : MonoBehaviour
         if (curSpawnCount > maxSpawnCount)
             curSpawnCount = maxSpawnCount;
         gameMgr.UpdateRemainMonsterUI(curSpawnCount);
-        
-        /*var picker = new Rito.WeightedRandomPicker<EMonsterType>();
-        picker.Add(EMonsterType.Spider, spawnWeightDic[EMonsterType.Spider]);
-        picker.Add(EMonsterType.Test1, spawnWeightDic[EMonsterType.Test1]);
-        picker.Add(EMonsterType.Test2, spawnWeightDic[EMonsterType.Test2]);*/
+
+        var picker = new Rito.WeightedRandomPicker<EMonsterType>();
+        foreach (EMonsterType monsterType in Enum.GetValues(typeof(EMonsterType)))
+        {
+            if (monsterType != EMonsterType.BigSpider)
+                picker.Add(monsterType, spawnWeightDic[monsterType]);
+        }
 
         WaitForSeconds spawnDelay = new WaitForSeconds(spawnCycleTime);
 
@@ -155,13 +178,13 @@ public class MonsterManager : MonoBehaviour
         {
             yield return spawnDelay;
             
-            //var pick = picker.GetRandomPick();
-            var monster = InstantiateObj(EMonsterType.Spider);
+            EMonsterType monsterTypePick = picker.GetRandomPick();
+            var monster = InstantiateObj(monsterTypePick);
             var randPos = Utility.GetRandPointOnNavMesh(Vector3.zero, 50f);
             monster.transform.position = randPos;
 
             float increaseValue = dataMgr.GameData.stageCount * dataMgr.GetStageNumber(EStageNumberType.Main) * 0.4f;
-            monster.SetupEntityData(monsterSOs[(int)EMonsterType.Spider].entityData, increaseValue);
+            monster.SetupEntityData(monsterTypePick, monsterSOs[(int)monsterTypePick].entityData, increaseValue);
 
             monster.DeathAction += () =>
             {
@@ -169,7 +192,7 @@ public class MonsterManager : MonoBehaviour
                 ++gameMgr.curkillCount;
                 ++dataMgr.GameData.killCount;
                 gameMgr.UpdateRemainMonsterUI(--curSpawnCount);
-                StartCoroutine(ReturnObjCo(monster, 1.0f));
+                StartCoroutine(ReturnObjCo(monsterTypePick, monster, 1.0f));
 
                 if (SpawnedMonsterList.Count == 0)
                     gameMgr.StartCoroutine(gameMgr.InvokeNextWaveCo());
@@ -178,17 +201,21 @@ public class MonsterManager : MonoBehaviour
             SpawnedMonsterList.Add(monster);
         }
 
-        /*
-        spawnWeightDic[EMonsterType.Spider] =
-            Mathf.Clamp(spawnWeightDic[EMonsterType.Spider] - dataMgr.GameData.stageCount,
-                0, 100);
-        spawnWeightDic[EMonsterType.Test1] =
-            Mathf.Clamp(spawnWeightDic[EMonsterType.Test1] + dataMgr.GameData.stageCount,
-                0, 99);
-        spawnWeightDic[EMonsterType.Test2] =
-            Mathf.Clamp(spawnWeightDic[EMonsterType.Test2] + dataMgr.GameData.stageCount,
-                0, 99);
-                */
+        foreach (EMonsterType monsterType in Enum.GetValues(typeof(EMonsterType)))
+        {
+            if (spawnWeightDic.TryGetValue(monsterType, out var spawnWeight))
+            {
+                int currentSpawnWeight = spawnWeight;
+
+                int newSpawnWeight = 0;
+                if(monsterType == EMonsterType.Spider)
+                    newSpawnWeight = currentSpawnWeight - dataMgr.GameData.stageCount;
+                else
+                    newSpawnWeight = currentSpawnWeight + dataMgr.GameData.stageCount;
+
+                spawnWeightDic[monsterType] = Mathf.Clamp(newSpawnWeight, 1, 99);
+            }
+        }
 
         spawnCycleTime = Mathf.Clamp(originSpawnCycleTime - dataMgr.GameData.stageCount * 0.01f, 0.2f, originSpawnCycleTime);
         

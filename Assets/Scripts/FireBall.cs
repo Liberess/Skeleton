@@ -4,7 +4,7 @@ public class FireBall : Projectile
 {
     protected override void ReturnObject(float delay = 0.0f)
     {
-        EffectManager.Instance.ReturnObj(EEffectType.Explosion, gameObject, delay);
+        EffectManager.Instance.ReturnObj(EEffectType.FireBall, gameObject, delay);
     }
 
     protected override void OnEnterProcess(Collider other)
@@ -16,6 +16,7 @@ public class FireBall : Projectile
                 
             var explosion = EffectManager.Instance.InstantiateObj(EEffectType.Explosion);
             explosion.transform.position = transform.position;
+            explosion.GetComponent<ParticleSystem>().Play();
 
             foreach (var col in cols)
             {
@@ -24,6 +25,11 @@ public class FireBall : Projectile
             }
             
             ReturnObject();
+
+            GetComponent<SphereCollider>().enabled = false;
+            GetComponent<ParticleSystem>().Stop();
+            EffectManager.Instance.ReturnObj(EEffectType.Explosion, explosion, 1.5f);
+            ReturnObject(2.1f);
         }
     }
 }

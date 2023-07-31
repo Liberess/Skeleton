@@ -10,18 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe426c7df60550c4fb8c895865888610, type: 3}
-  m_Name: SkillSO_PhantomBladeData
+  m_Name: SkillSO_PhantomBlade
   m_EditorClassIdentifier: 
   skillName: "\uD32C\uD140 \uBE14\uB808\uC774\uB4DC"
   skillDescription: "\uB300\uC0C1\uC5D0\uAC8C \uC6D0\uD63C\uC774 \uBAA8\uC778 \uAC80\uAE30\uB97C
     \uB0A0\uB824 {0}% \uD53C\uD574\uB97C \uAC00\uD55C\uB2E4."
   skillType: 0
   skillImpactAmount: 150
-  skillCoolTime: 10
+  skillCoolTime: 15
   skillIcon: {fileID: 21300000, guid: e8ba00f6eaa968644bf2a2f9fca61c0e, type: 3}
-  skillPrefab: {fileID: 0}
   isRangeSkill: 0
   skillImpactRange: 0
-  isProjectileSkill: 0
-  projectileDistance: 0
-  projectileVelocity: 0
+  isProjectileSkill: 1
+  projectileDistance: 15
+  projectileVelocity: 7

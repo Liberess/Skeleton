@@ -19,6 +19,12 @@ public abstract class Projectile : MonoBehaviour
     {
         rigid = GetComponent<Rigidbody>();
     }
+    
+    private void Start()
+    {
+        GetComponent<ParticleSystem>().Play();
+        GetComponent<SphereCollider>().enabled = true;
+    }
 
     protected virtual void Update()
     {

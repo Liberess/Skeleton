@@ -5,8 +5,11 @@ using UnityEngine;
 public enum EMonsterType
 {
     Spider,
-    Test1,
-    Test2
+    RedSpider,
+    YellowSpider,
+    GreenSpider,
+    BlueSpider,
+    BigSpider
 }
 
 public enum ECurrencyType

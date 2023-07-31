@@ -19,10 +19,8 @@ MonoBehaviour:
   skillImpactAmount: 50
   skillCoolTime: 30
   skillIcon: {fileID: 21300000, guid: 948fd7582a9b9814cbeebbfb7e112c72, type: 3}
-  skillPrefab: {fileID: 2889779416595514552, guid: f8b24e37f8710a04c84532ade67f3e21,
-    type: 3}
   isRangeSkill: 1
   skillImpactRange: 3
   isProjectileSkill: 1
-  projectileDistance: 15
+  projectileDistance: 30
   projectileVelocity: 5

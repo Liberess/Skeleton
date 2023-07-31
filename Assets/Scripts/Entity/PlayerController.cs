@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using DragonMobileUI.Scripts;
 using MonsterLove.StateMachine;
@@ -131,7 +132,7 @@ public class PlayerController : Entity
     {
         // 플레이어의 경우에는 복수의 target이 존재하기에,
         // 매번 가장 가까운 target을 확인해야 한다.
-        FindNearestMonster();
+        FindNearestMonster().Forget();
         
         if (HasTarget)
         {
@@ -145,7 +146,7 @@ public class PlayerController : Entity
     /// <summary>
     /// 가장 가까이에 있는 target을 찾는다.
     /// </summary>
-    private void FindNearestMonster()
+    private async UniTaskVoid FindNearestMonster()
     {
         if (monsterMgr.SpawnedMonsterList.Count > 0)
         {
@@ -181,30 +182,39 @@ public class PlayerController : Entity
 
             closetDist = float.MaxValue;
             targetDist = float.MaxValue;
+            
+            await UniTask.Yield(PlayerLoopTiming.LastUpdate);
         }
+    }
+
+    protected override void Track_Enter()
+    {
+        DisableAttackTrail();
+        base.Track_Enter();
     }
 
     protected override void Track_Update()
     {
-        FindNearestMonster();
+        FindNearestMonster().Forget();
         
         if (HasTarget)
         {
-            if(IsAttackable && IsAttached)
+            if (IsAttackable && IsAttached)
+            {
+                RotateToTarget();
                 fsm.ChangeState(EStates.Attack);
+            }
 
             if (!IsAttached && !isControlling)
             {
                 var targetPosition = TargetEntity.transform.position;
                 transform.position = Vector3.MoveTowards(transform.position, targetPosition,
                     EntityData.moveSpeed * Time.deltaTime);
+                RotateToTarget();
             }
             
             rigid.velocity = Vector3.zero;
             rigid.angularVelocity = Vector3.zero;
-            
-            if(!isControlling)
-                RotateToTarget();
         }
         else
         {
@@ -224,8 +234,6 @@ public class PlayerController : Entity
 
         if (HasTarget)
         {
-            RotateToTarget();
-                
             if (IsAttackable)
             {
                 rigid.velocity = Vector3.zero;
@@ -236,9 +244,14 @@ public class PlayerController : Entity
                     fsm.ChangeState(EStates.Track);
                     return;
                 }
-                    
+                
                 lastAttackTime = Time.time;
+                
+                if(anim.GetBool(IsAttack))
+                    anim.SetBool(IsAttack, false);
                 anim.SetBool(IsAttack, true);
+                
+                RotateToTarget();
             }
         }
         else
@@ -256,7 +269,7 @@ public class PlayerController : Entity
 
     protected override void Attack_Exit()
     {
-        anim.SetBool(IsAttack, false);
+        DisableAttackTrail();
         base.Attack_Exit();
     }
 
@@ -276,79 +289,51 @@ public class PlayerController : Entity
         
         int amount = DataManager.Instance.GameData.skillEffectAmounts[(int)skillType];
         int damageAmount = (EntityData.attackPower + EntityData.increaseAttackPower) * (100 + amount) / 100;
-        switch (skillType)
+
+        if (skillType == ESkillType.Recovery)
         {
-            case ESkillType.PhantomBlade:
+            AudioManager.Instance.PlaySFX(ESFXName.Recovery);
+            fsm.ChangeState(EStates.Attack);
+            RecoveryHealthPoint(amount);
+        }
+        else
+        {
+            anim.SetTrigger(DoSkill);
+            
+            SkillSO skillSo = DataManager.Instance.GetSkillSO(skillType);
+            DamageMessage dmgMsg = new DamageMessage(this.gameObject, damageAmount);
+            
+            EEffectType targetType;
+            if (skillType == ESkillType.PhantomBlade)
+            {
+                targetType = EEffectType.PhantomBlade;
                 AudioManager.Instance.PlaySFX(ESFXName.Blade);
-                if (IsAttached)
-                {
-                    anim.SetTrigger(DoSkill);
-                    AttackTargetEntity(damageAmount);
-                }
-                else
-                {
-                    StartCoroutine(DashCo(damageAmount));
-                }
-                break;
-            
-            case ESkillType.FireBall:
-                anim.SetTrigger(DoSkill);
+            }
+            else
+            {
+                targetType = EEffectType.FireBall;
                 AudioManager.Instance.PlaySFX(ESFXName.FireBall);
-                SkillSO skillSo = DataManager.Instance.GetSkillSO(skillType);
-                DamageMessage dmgMsg = new DamageMessage(this.gameObject, damageAmount);
+            }
                 
-                Vector3 fireBallSpawnOffset = Vector3.up;
-                
-                var fireBall = EffectManager.Instance.InstantiateObj(EEffectType.FireBall);
-                fireBall.transform.position = transform.position + fireBallSpawnOffset;
-                
-                // FireBall의 위치에서 Target의 위치까지의 방향 계산
-                Vector3 targetPosition = new Vector3(TargetEntity.transform.position.x, transform.position.y, TargetEntity.transform.position.z);
-                Vector3 fireBallDirection = (targetPosition - fireBall.transform.position).normalized;
-                
-                // FireBall이 계산된 방향을 보도록 설정
-                fireBall.transform.rotation = Quaternion.LookRotation(fireBallDirection);
-                
-                fireBall.GetComponent<Projectile>().SetupProjectile(dmgMsg, targetLayer, skillSo.projectileVelocity,
-                    skillSo.projectileDistance, skillSo.skillImpactRange);
-                break;
+            Vector3 effectSpawnOffset = Vector3.up;
+            var skill = EffectManager.Instance.InstantiateObj(targetType);
+            skill.transform.position = transform.position + effectSpawnOffset;
             
-            case ESkillType.Recovery:
-                AudioManager.Instance.PlaySFX(ESFXName.Recovery);
-                fsm.ChangeState(EStates.Attack);
-                RecoveryHealthPoint(amount);
-                break;
+            // FireBall의 위치에서 Target의 위치까지의 방향 계산
+            Vector3 targetPos = new Vector3(TargetEntity.transform.position.x, skill.transform.position.y, TargetEntity.transform.position.z);
+            Vector3 targetDir = (targetPos - skill.transform.position).normalized;
+                
+            // FireBall이 계산된 방향을 보도록 설정
+            skill.transform.rotation = Quaternion.LookRotation(targetDir);
+                
+            skill.GetComponent<Projectile>().SetupProjectile(dmgMsg, targetLayer, skillSo.projectileVelocity,
+                skillSo.projectileDistance, skillSo.skillImpactRange);
         }
     }
 
     public void OnDisableUseSkill()
     {
         fsm.ChangeState(EStates.Attack);
-    }
-
-    private IEnumerator DashCo(int amount)
-    {
-        isDashing = true;
-        
-        while (true)
-        {
-            yield return null;
-
-            if (!IsAttached)
-            {
-                var targetPosition = TargetEntity.transform.position;
-                transform.position = Vector3.MoveTowards(transform.position, targetPosition,
-                    EntityData.moveSpeed * 2.0f * Time.deltaTime);
-            }
-            else
-            {
-                break;
-            }
-        }
-        
-        anim.SetTrigger(DoSkill);
-        AttackTargetEntity(amount);
-        isDashing = false;
     }
 
     public override void ApplyDamage(DamageMessage dmgMsg)

@@ -24,13 +24,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7688543180831427955}
-  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3138066655577537475
 MonoBehaviour:
@@ -44,8 +44,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a40ac253006e8d47be1d59fcd4316fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  monsterInitAmount: 30
-  monsterPrefabs: []
-  monsterSOs: []
+  monsterInitAmount: 100
+  monsterPrefabs:
+  - {fileID: 6609546405932637348, guid: dab3c31fcd90fc1449c3b92b87284871, type: 3}
+  - {fileID: 6609546405932637348, guid: f7968723b5cb93d4b8a3ff355196a453, type: 3}
+  - {fileID: 6609546405932637348, guid: f409bb2a80f6cf642a27027003e09550, type: 3}
+  - {fileID: 6609546405932637348, guid: 7389159273caddc43a1d1c5da849c0b7, type: 3}
+  - {fileID: 6609546405932637348, guid: 28648b95a25b7b94a86bb26f0a07dada, type: 3}
+  - {fileID: 6609546405932637348, guid: aa73fd1b93a7cb14c8a39200fe5e7e2e, type: 3}
+  monsterSOs:
+  - {fileID: 11400000, guid: 177e173121e3add4aa4528d289b89f82, type: 2}
+  - {fileID: 11400000, guid: 1145409981b4fc9419ea6e5ef8439b50, type: 2}
+  - {fileID: 11400000, guid: d8824efd5cf7f3f4cb0ba7a4e4137b17, type: 2}
+  - {fileID: 11400000, guid: 214a7e270057e464589e9244bfb1774a, type: 2}
+  - {fileID: 11400000, guid: 2bc7b4fa36755aa41902424a44733112, type: 2}
+  - {fileID: 11400000, guid: 902c870a485689948ab461604c3cb690, type: 2}
+  originSpawnCycleTime: 5
   maxSpawnCount: 100
-  spawnPoints: []

@@ -18,8 +18,6 @@ public class SkillSO : ScriptableObject
     public float skillCoolTime;
     [BoxGroup("# Base Skill Settings"), ShowAssetPreview]
     public Sprite skillIcon;
-    [BoxGroup("# Base Skill Settings"), ShowAssetPreview]
-    public GameObject skillPrefab;
 
     [BoxGroup("# Range Skill Settings")]
     public bool isRangeSkill = false;

@@ -181,11 +181,8 @@ public class GameManager : MonoBehaviour
         int mainStageNum = int.Parse(subStr[0]);
         int subStageNum = int.Parse(subStr[1]);
 
-        if (subStageNum < 10)
-        {
-            ++subStageNum;
-        }
-        else
+        ++subStageNum;
+        if(subStageNum > 10)
         {
             ++mainStageNum;
             subStageNum = 1;

@@ -302,9 +302,11 @@ public class UIManager : MonoBehaviour
 
     private IEnumerator AutoSkillCo()
     {
+        WaitForEndOfFrame waitForEndOfFrame = new WaitForEndOfFrame();
+        
         while (isAutoUseSkill && gameMgr.IsPlaying)
         {
-            yield return null;
+            yield return waitForEndOfFrame;
 
             for (int i = 0; i < isCoolSkills.Length; i++)
             {
@@ -323,9 +325,11 @@ public class UIManager : MonoBehaviour
         if (isBlockUseSkill || !gameMgr.IsPlaying)
             return;
         
-        if (skillIndex < 2 && playerCtrl.TargetEntity == null)
+        // 회복을 제외하고는 타겟이 필요하다.
+        if (skillIndex < 2 && (playerCtrl.TargetEntity == null || playerCtrl.TargetEntity.IsDead))
             return;
-        
+
+        // 검기는 적이 화면 안에 있어야 날릴 수 있다.
         if(skillIndex == 0 && !Utility.IsExistObjectInCamera(playerCtrl.TargetEntity.transform))
             return;
 
